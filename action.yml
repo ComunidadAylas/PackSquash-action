@@ -2,7 +2,7 @@ name: 'PackSquash'
 description: 'Official action to run PackSquash in a GitHub Actions workflow.'
 author: 'sya-ri, Alejandro "AlexTMjugador" González'
 inputs:
-  setting_file:
+  settings_file:
     description: 'Use the specified settings file instead of generating one with this action.'
     required: false
     default: ''
@@ -26,8 +26,8 @@ inputs:
     description: 'If true, PackSquash will skip and not print progress messages for system (i.e. clearly not for use with Minecraft) and hidden (i.e. whose name starts with a dot) files and folders.'
     required: false
     default: 'true'
-  allow_optifine_mods:
-    description: 'Add support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
+  allow_optifine_mod:
+    description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
     required: false
     default: 'false'
   sampling_frequency:
@@ -58,13 +58,13 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.setting_file }}
+    - ${{ inputs.settings_file }}
     - ${{ inputs.path }}
     - ${{ inputs.skip_pack_icon }}
     - ${{ inputs.strict_zip_spec_compliance }}
     - ${{ inputs.compress_already_compressed_files }}
     - ${{ inputs.ignore_system_and_hidden_files }}
-    - ${{ inputs.allow_mod_optifine }}
+    - ${{ inputs.allow_optifine_mod }}
     - ${{ inputs.sampling_frequency }}
     - ${{ inputs.target_pitch }}
     - ${{ inputs.minimum_bitrate }}
