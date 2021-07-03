@@ -1,0 +1,76 @@
+name: 'Run PackSquash'
+description: 'Official action to run PackSquash in a GitHub Actions workflow.'
+author: 'sya-ri'
+inputs:
+  setting_file:
+    description: 'Setting by directly specifying the configuration file.'
+    required: false
+    default: ''
+  path:
+    description: 'Relative path to the texture pack directory.'
+    required: false
+    default: '.'
+  skip_pack_icon:
+    description: 'If true, the pack.png file that contains the resource pack icon will not be included in the result ZIP file. As of Minecraft 1.16.3, the icon of server resource packs is not displayed, so this optimization does not have any drawbacks in this case.'
+    required: false
+    default: 'false'
+  strict_zip_spec_compliance:
+    description: 'If false, PackSquash will generate ZIP files that, while readable as normal by the current Minecraft resource pack ZIP file parser and not outright forbidden by the ZIP specification, are rather unconventional and may be rejected by some programs.'
+    required: false
+    default: 'true'
+  compress_already_compressed_files:
+    description: 'If true, PackSquash will try to recompress files that are already compressed by design when adding them to the result ZIP file.'
+    required: false
+    default: 'false'
+  ignore_system_and_hidden_files:
+    description: 'If true, PackSquash will skip and not print progress messages for system (i.e. clearly not for use with Minecraft) and hidden (i.e. whose name starts with a dot) files and folders.'
+    required: false
+    default: 'true'
+  allow_mod_optifine:
+    description: 'Adds .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
+    required: false
+    default: 'false'
+  sampling_frequency:
+    description: 'Specifies the sampling frequency (i.e. number of samples per second) to which the input audio file will be resampled, in Hertz (Hz).'
+    required: false
+    default: '32000'
+  target_pitch:
+    description: 'Sets the in-game pitch shift coefficient that will result in the audio being played back at the original speed, affecting the perceived pitch and tempo.'
+    required: false
+    default: '1.0'
+  minimum_bitrate:
+    description: 'Specifies the minimum bits per second (bps or bit/s) that the OGG encoder will try to use to represent the audio signal.'
+    required: false
+    default: '40000'
+  maximum_bitrate:
+    description: 'Specifies the maximum bits per second (bps or bit/s) that the OGG encoder will try to use to represent the audio signal.'
+    required: false
+    default: '96000'
+  quantize_image:
+    description: 'When true, libimagequant will perform palette quantization on PNG images to reduce the number of different colors to a maximum of 256, in order to save space.'
+    required: false
+    default: 'true'
+  output:
+    description: 'Optimized texture pack filename.'
+    required: false
+    default: 'optimize-texture'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.setting_file }}
+    - ${{ inputs.path }}
+    - ${{ inputs.skip_pack_icon }}
+    - ${{ inputs.strict_zip_spec_compliance }}
+    - ${{ inputs.compress_already_compressed_files }}
+    - ${{ inputs.ignore_system_and_hidden_files }}
+    - ${{ inputs.allow_mod_optifine }}
+    - ${{ inputs.sampling_frequency }}
+    - ${{ inputs.target_pitch }}
+    - ${{ inputs.minimum_bitrate }}
+    - ${{ inputs.maximum_bitrate }}
+    - ${{ inputs.quantize_image }}
+    - ${{ inputs.output }}
+branding:
+  icon: 'archive'
+  color: 'green'
