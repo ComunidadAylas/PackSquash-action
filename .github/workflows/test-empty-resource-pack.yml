@@ -12,7 +12,7 @@ jobs:
         uses: ComunidadAylas/PackSquash-action@v1
         with:
           path: test/empty-resource-pack
-          output: test/empty-resource-pack.zip
+          output_path: test/empty-resource-pack.zip
       - name: Output Optimized
         uses: actions/upload-artifact@v2
         with:

@@ -50,11 +50,11 @@ jobs:
         uses: ComunidadAylas/PackSquash-action@v1
         with:
           path: texture
-      - name: Output Optimized
+      - name: Upload Artifact resource_pack.zip
         uses: actions/upload-artifact@v2
         with:
-          name: optimize-texture
-          path: optimize-texture
+          name: resource_pack.zip
+          path: resource_pack.zip
 ```
 
 ## `[Advanced]` Use Setting File
