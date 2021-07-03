@@ -9,7 +9,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@master
+        uses: ComunidadAylas/PackSquash-action@v1
         with:
           path: test/empty-resource-pack
           output: test/empty-resource-pack.zip

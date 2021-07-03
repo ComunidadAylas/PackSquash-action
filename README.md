@@ -1,4 +1,8 @@
 # PackSquash-action
+
+[![Latest version](https://img.shields.io/github/v/release/ComunidadAylas/PackSquash-action?label=Latest%20version)](https://github.com/ComunidadAylas/PackSquash-action/releases/latest)
+[![PackSquash version](https://img.shields.io/badge/PackSquash%20version-v0.2.1-blue)](https://github.com/ComunidadAylas/PackSquash/releases/tag/v0.2.1)
+
 Official action to run PackSquash in a GitHub Actions workflow.
 
 > A Minecraft resource pack optimizer which aims to achieve the best possible compression, which allows for efficient distribution and slightly improved load times in the game, at good speed. Anecdotal evidence shows that, with the default options, it is able to reduce the size of the Witchcraft & Wizardary resource pack ZIP file by Floo Network (version 1.6.2) from 118 MiB to 57 MiB, a 51.69% size reduction.
