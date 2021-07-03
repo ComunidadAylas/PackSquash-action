@@ -24,6 +24,4 @@ RUN curl -sSL https://api.github.com/repos/ComunidadAylas/PackSquash/releases/ta
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
-
 ENTRYPOINT ["/entrypoint.sh"]
