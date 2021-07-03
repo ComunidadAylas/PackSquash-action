@@ -1,4 +1,4 @@
-name: 'Run PackSquash'
+name: 'Run PackSquash Official'
 description: 'Official action to run PackSquash in a GitHub Actions workflow.'
 author: 'sya-ri'
 inputs:
