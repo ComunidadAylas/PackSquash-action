@@ -1,0 +1,20 @@
+name: Test - EmptyResourcePack
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 1
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@master
+        with:
+          path: test/empty-resource-pack
+          output: test/empty-resource-pack.zip
+      - name: Output Optimized
+        uses: actions/upload-artifact@v2
+        with:
+          name: empty-resource-pack.zip
+          path: test/empty-resource-pack.zip
