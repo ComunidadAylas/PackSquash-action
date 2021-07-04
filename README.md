@@ -32,7 +32,7 @@ This GitHub Actions workflow file uses this action to optimize the resource pack
 
 ##### `.github/workflows/packsquash.yml`
 ```yaml
-name: Optimize resouce pack
+name: Optimize resource pack
 on: [push]
 jobs:
   packsquash:
