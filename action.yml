@@ -19,7 +19,11 @@ inputs:
     required: false
     default: 'true'
   compress_already_compressed_files:
-    description: 'If true, PackSquash will try to recompress files that are already compressed by design when adding them to the result ZIP file.'
+    description: 'Deprecated. Please rename to recompress_compressed_files. If true, PackSquash will try to recompress files that are already compressed by design when adding them to the result ZIP file.'
+    required: false
+    default: ''
+  recompress_compressed_files:
+    description: 'If true, this option makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
     required: false
     default: 'false'
   ignore_system_and_hidden_files:
@@ -63,6 +67,7 @@ runs:
     - ${{ inputs.skip_pack_icon }}
     - ${{ inputs.strict_zip_spec_compliance }}
     - ${{ inputs.compress_already_compressed_files }}
+    - ${{ inputs.recompress_compressed_files }}
     - ${{ inputs.ignore_system_and_hidden_files }}
     - ${{ inputs.allow_optifine_mod }}
     - ${{ inputs.sampling_frequency }}
