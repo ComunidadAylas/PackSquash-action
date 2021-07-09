@@ -4,16 +4,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone repo
+      - name: Clone Repository
         uses: actions/checkout@master
         with:
           fetch-depth: 1
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@v1
+        uses: ComunidadAylas/PackSquash-action@master
         with:
           path: test/empty-resource-pack
           output_path: test/empty-resource-pack.zip
-      - name: Output Optimized
+      - name: Upload Optimized Pack
         uses: actions/upload-artifact@v2
         with:
           name: empty-resource-pack.zip
