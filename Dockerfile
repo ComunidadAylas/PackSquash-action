@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 # https://github.com/ComunidadAylas/PackSquash/wiki/Installation-guide#linux
 RUN apt-get update \
