@@ -43,11 +43,17 @@ jobs:
         uses: actions/checkout@master
         with:
           fetch-depth: 1
+      - name: Cache Optimized Pack
+        uses: actions/cache@v2
+        with:
+          key: ${{ runner.os }}-packsquash-${{ env.cache-name }}-${{ hashFiles('pack') }}
+          path: |
+            resource_pack.zip
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v1
         with:
           path: pack
-      - name: Upload optimized pack
+      - name: Upload Optimized Pack
         uses: actions/upload-artifact@v2
         with:
           name: Optimized resource pack
