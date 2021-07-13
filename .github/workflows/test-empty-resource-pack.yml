@@ -11,7 +11,7 @@ jobs:
       - name: Cache Optimized Pack
         uses: actions/cache@v2
         with:
-          key: ${{ runner.os }}-packsquash-${{ env.cache-name }}-${{ hashFiles('.') }}
+          key: ${{ runner.os }}-packsquash-${{ env.cache-name }}-${{ hashFiles('test') }}
           restore-keys: |
             ${{ runner.os }}-packsquash-${{ env.cache-name }}-
           path: |
