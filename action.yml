@@ -26,6 +26,14 @@ inputs:
     description: 'If true, this option makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
     required: false
     default: 'false'
+  zip_compression_iterations:
+    description: 'The number of Zopfli compression iterations that PackSquash will do when compressing a file of magnitude 1 MiB just before it is added to the generated ZIP file. This affects files whose contents are not already compressed, or all files if recompress_compressed_files is enabled.'
+    required: false
+    default: '20'
+  work_around_minecraft_quirks:
+    description: 'Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks'
+    required: false
+    default: '[]'
   ignore_system_and_hidden_files:
     description: 'If true, PackSquash will skip and not print progress messages for system (i.e. clearly not for use with Minecraft) and hidden (i.e. whose name starts with a dot) files and folders.'
     required: false
@@ -34,6 +42,26 @@ inputs:
     description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
     required: false
     default: 'false'
+  zip_spec_conformance_level:
+    description: 'This option lets you choose the ZIP specification conformance level that is most suitable to your pack and situation.'
+    required: false
+    default: 'pedantic'
+  size_increasing_zip_obfuscation:
+    description: 'If zip_spec_conformance_level is set to disregard, enabling this option will add more protections against inspecting, extracting or tampering with the generated ZIP file that will slightly increase its size.'
+    required: false
+    default: 'false'
+  percentage_of_zip_structures_tuned_for_obfuscation_discretion:
+    description: 'If zip_spec_conformance_level is set to disregard, this option sets the approximate probability for each internal generated ZIP file structure to be stored in a way that favors additional discretion of the fact that protection techniques were used, as opposed to a way that favors increased compressibility of the result ZIP file. '
+    required: false
+    default: '0'
+  never_store_squash_times:
+    description: 'This option controls whether PackSquash will refuse to store the metadata needed to reuse previously generated ZIP files, and likewise not expect such data if the output ZIP file already exists, thus not reusing its contents to speed up the process in any way, no matter what the zip_spec_conformance_level is.'
+    required: false
+    default: 'false'
+  transcode_ogg:
+    description: 'When true, Ogg files will be reencoded again, to apply resampling, channel mixing, pitch shifting and bitrate reduction, which may degrade their quality, but commonly saves quite a bit of space.'
+    required: false
+    default: 'true'
   sampling_frequency:
     description: 'Specifies the sampling frequency (i.e. number of samples per second) to which the input audio file will be resampled, in Hertz (Hz).'
     required: false
@@ -50,10 +78,34 @@ inputs:
     description: 'Specifies the maximum bits per second (bps or bit/s) that the OGG encoder will try to use to represent the audio signal.'
     required: false
     default: '96000'
+  minify_json:
+    description: 'When true, the JSON data will be minified, which removes comments and unnecessary white space, to improve space savings.'
+    required: false
+    default: 'true'
+  delete_bloat_keys:
+    description: 'If this option is set to true, PackSquash will delete known-superfluous keys from JSON files, like credits added by pack authoring tools, that are completely ignored by Minecraft.'
+    required: false
+    default: 'true'
   quantize_image:
     description: 'DO NOT USE. Removed in v0.3.0. When true, libimagequant will perform palette quantization on PNG images to reduce the number of different colors to a maximum of 256, in order to save space.'
     required: false
     default: ''
+  color_quantization_target:
+    description: 'Sets the color quantization target for an image, which affects whether the lossy color quantization process is performed and how.'
+    required: false
+    default: 'eight_bit_depth'
+  maximum_width_and_height:
+    description: 'Sets the maximum width and height of the images that PackSquash will accept without throwing an error.'
+    required: false
+    default: '4096'
+  minify_shader:
+    description: 'When true, the shader source code will be minified, which removes comments and unnecessary white space, to improve space savings.'
+    required: false
+    default: 'true'
+  minify_properties:
+    description: 'When true, the properties will be minified, which removes comments and unnecessary white space, to improve space savings.'
+    required: false
+    default: 'true'
   output_path:
     description: 'File path where the generated ZIP with the resource pack will be stored.'
     required: false
@@ -68,13 +120,26 @@ runs:
     - ${{ inputs.strict_zip_spec_compliance }}
     - ${{ inputs.compress_already_compressed_files }}
     - ${{ inputs.recompress_compressed_files }}
+    - ${{ inputs.zip_compression_iterations }}
+    - ${{ inputs.work_around_minecraft_quirks }}
     - ${{ inputs.ignore_system_and_hidden_files }}
     - ${{ inputs.allow_optifine_mod }}
+    - ${{ inputs.zip_spec_conformance_level }}
+    - ${{ inputs.size_increasing_zip_obfuscation }}
+    - ${{ inputs.percentage_of_zip_structures_tuned_for_obfuscation_discretion }}
+    - ${{ inputs.never_store_squash_times }}
+    - ${{ inputs.transcode_ogg }}
     - ${{ inputs.sampling_frequency }}
     - ${{ inputs.target_pitch }}
     - ${{ inputs.minimum_bitrate }}
     - ${{ inputs.maximum_bitrate }}
+    - ${{ inputs.minify_json }}
+    - ${{ inputs.delete_bloat_keys }}
     - ${{ inputs.quantize_image }}
+    - ${{ inputs.color_quantization_target }}
+    - ${{ inputs.maximum_width_and_height }}
+    - ${{ inputs.minify_shader }}
+    - ${{ inputs.minify_properties }}
     - ${{ inputs.output_path }}
 branding:
   icon: 'archive'
