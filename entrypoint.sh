@@ -101,5 +101,8 @@ echo '::group::Will use these settings:'
 nl -b a $SETTING_FILE
 echo "::endgroup::"
 
+# apply timestamp from git
+./git-set-file-times.sh
+
 # optimize
 packsquash packsquash-settings.toml

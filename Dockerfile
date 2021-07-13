@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # https://github.com/ComunidadAylas/PackSquash/wiki/Installation-guide#linux
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -7,6 +9,8 @@ RUN apt-get update \
     ca-certificates \
     wget \
     unzip \
+    git \
+    tzdata \
     libgstreamer1.0-0 \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
