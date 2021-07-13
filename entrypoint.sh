@@ -56,7 +56,7 @@ quantize_image = $QUANTIZE_IMAGE
   SETTING_FILE=packsquash-settings.toml
 fi
 
-echo 'Will use these settings:' && cat $SETTING_FILE
+echo 'Will use these settings:' && nl -b a $SETTING_FILE
 
 # optimize
 packsquash packsquash-settings.toml
