@@ -12,6 +12,8 @@ jobs:
         uses: actions/cache@v2
         with:
           key: ${{ runner.os }}-packsquash-${{ env.cache-name }}-${{ hashFiles('.') }}
+          restore-keys: |
+            ${{ runner.os }}-packsquash-${{ env.cache-name }}-
           path: |
             test/empty-resource-pack.zip
       - name: Run PackSquash
