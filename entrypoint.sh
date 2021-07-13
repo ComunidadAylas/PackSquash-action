@@ -5,6 +5,9 @@ SETTING_FILE=${1}
 DIRECTORY_PATH=${2}
 SKIP_PACK_ICON=${3}
 STRICT_ZIP_SPEC_COMPLIANCE=${4}
+if [ -n "$STRICT_ZIP_SPEC_COMPLIANCE" ]; then
+    echo '::error ::strict_zip_spec_compliance: Removed in v0.3.0. Delete this option.'
+fi
 COMPRESS_ALREADY_COMPRESSED_FILES=${5}
 if [ -n "$COMPRESS_ALREADY_COMPRESSED_FILES" ]; then
     echo '::warning ::compress_already_compressed_files: Deprecated. Please rename to recompress_compressed_files.'
@@ -24,6 +27,9 @@ TARGET_PITCH=${10}
 MINIMUM_BITRATE=${11}
 MAXIMUM_BITRATE=${12}
 QUANTIZE_IMAGE=${13}
+if [ -n "$QUANTIZE_IMAGE" ]; then
+    echo '::error ::quantize_image: Removed in v0.3.0. Delete this option.'
+fi
 OUTPUT=${14}
 
 # print version
@@ -37,7 +43,6 @@ if [ -z "$SETTING_FILE" ]; then
   echo "
 pack_directory = '$DIRECTORY_PATH'
 skip_pack_icon = $SKIP_PACK_ICON
-strict_zip_spec_compliance = $STRICT_ZIP_SPEC_COMPLIANCE
 recompress_compressed_files = $RECOMPRESS_COMPRESSED_FILES
 ignore_system_and_hidden_files = $IGNORE_SYSTEM_AND_HIDDEN_FILES
 allow_mods = $ALLOW_MODS
@@ -50,7 +55,6 @@ maximum_bitrate = $MAXIMUM_BITRATE
 target_pitch = $TARGET_PITCH
 
 ['**/*.png']
-quantize_image = $QUANTIZE_IMAGE
 " > packsquash-settings.toml
 
   SETTING_FILE=packsquash-settings.toml

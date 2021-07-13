@@ -15,9 +15,9 @@ inputs:
     required: false
     default: 'false'
   strict_zip_spec_compliance:
-    description: 'If false, PackSquash will generate ZIP files that, while readable as normal by the current Minecraft resource pack ZIP file parser and not outright forbidden by the ZIP specification, are rather unconventional and may be rejected by some programs.'
+    description: 'DO NOT USE. Removed in v0.3.0. If false, PackSquash will generate ZIP files that, while readable as normal by the current Minecraft resource pack ZIP file parser and not outright forbidden by the ZIP specification, are rather unconventional and may be rejected by some programs.'
     required: false
-    default: 'true'
+    default: ''
   compress_already_compressed_files:
     description: 'Deprecated. Please rename to recompress_compressed_files. If true, PackSquash will try to recompress files that are already compressed by design when adding them to the result ZIP file.'
     required: false
@@ -51,9 +51,9 @@ inputs:
     required: false
     default: '96000'
   quantize_image:
-    description: 'When true, libimagequant will perform palette quantization on PNG images to reduce the number of different colors to a maximum of 256, in order to save space.'
+    description: 'DO NOT USE. Removed in v0.3.0. When true, libimagequant will perform palette quantization on PNG images to reduce the number of different colors to a maximum of 256, in order to save space.'
     required: false
-    default: 'true'
+    default: ''
   output_path:
     description: 'File path where the generated ZIP with the resource pack will be stored.'
     required: false
