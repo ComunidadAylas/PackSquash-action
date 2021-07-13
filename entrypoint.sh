@@ -46,7 +46,9 @@ MINIFY_PROPERTIES=${26}
 OUTPUT=${27}
 
 # print version
-printf 'PackSquash version: ' && packsquash --version
+echo "::group::PackSquash version:"
+packsquash --version
+echo "::endgroup::"
 
 # change to GitHub WorkSpace Directory
 cd "$GITHUB_WORKSPACE" || exit 1
@@ -95,7 +97,9 @@ minify_properties = $MINIFY_PROPERTIES
   SETTING_FILE=packsquash-settings.toml
 fi
 
-echo 'Will use these settings:' && nl -b a $SETTING_FILE
+echo '::group::Will use these settings:'
+nl -b a $SETTING_FILE
+echo "::endgroup::"
 
 # optimize
 packsquash packsquash-settings.toml
