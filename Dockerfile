@@ -27,5 +27,6 @@ RUN curl -sSL https://api.github.com/repos/ComunidadAylas/PackSquash/releases/ta
  && mv packsquash /usr/local/bin/
 
 COPY entrypoint.sh /entrypoint.sh
+COPY git-set-file-times.sh /git-set-file-times.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
