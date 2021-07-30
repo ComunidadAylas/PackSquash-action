@@ -44,6 +44,7 @@ MAXIMUM_WIDTH_AND_HEIGHT=${24}
 MINIFY_SHADER=${25}
 MINIFY_PROPERTIES=${26}
 OUTPUT=${27}
+CACHE_PATH=${28}
 
 # print version
 echo "::group::PackSquash version:"
@@ -52,6 +53,21 @@ echo "::endgroup::"
 
 # change to GitHub WorkSpace Directory
 cd "$GITHUB_WORKSPACE" || exit 1
+
+# check cache directory exists
+if [ -d $CACHE_PATH ]; then
+  # get system id
+  PACKSQUASH_SYSTEM_ID=`cat "$CACHE_PATH/system_id"`
+
+  # restore last optimized pack
+  cp "$CACHE_PATH/cache_pack.zip" "$OUTPUT"
+else
+  mkdir "$CACHE_PATH"
+
+  # generate system id
+  PACKSQUASH_SYSTEM_ID=`cat /proc/sys/kernel/random/uuid`
+  echo "$PACKSQUASH_SYSTEM_ID" > "$CACHE_PATH/system_id"
+fi
 
 if [ -z "$SETTING_FILE" ]; then
   # generate settings
@@ -106,3 +122,6 @@ echo "::endgroup::"
 
 # optimize
 packsquash packsquash-settings.toml
+
+# save optimized pack
+cp "$OUTPUT" "$CACHE_PATH/cache_pack.zip"

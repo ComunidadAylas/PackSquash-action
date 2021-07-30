@@ -42,19 +42,20 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@master
         with:
-          fetch-depth: 1
-      - name: Cache Optimized Pack
+          fetch-depth: 0 # DON'T EDIT. All Commits Are Required.
+      - name: Cache PackSquash
         uses: actions/cache@v2
         with:
           key: ${{ runner.os }}-packsquash-${{ env.cache-name }}-${{ hashFiles('pack') }}
           restore-keys: |
             ${{ runner.os }}-packsquash-${{ env.cache-name }}-
           path: |
-            resource_pack.zip
+            packsquash_cache
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v1
         with:
           path: pack
+          zip_spec_conformance_level: high # For Use Cache
       - name: Upload Optimized Pack
         uses: actions/upload-artifact@v2
         with:

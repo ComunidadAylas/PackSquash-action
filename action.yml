@@ -110,6 +110,10 @@ inputs:
     description: 'File path where the generated ZIP with the resource pack will be stored.'
     required: false
     default: 'resource_pack.zip'
+  cache_path:
+    description: 'Relative path to the PackSquash cache directory.'
+    required: false
+    default: 'packsquash_cache'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -141,6 +145,7 @@ runs:
     - ${{ inputs.minify_shader }}
     - ${{ inputs.minify_properties }}
     - ${{ inputs.output_path }}
+    - ${{ inputs.cache_path }}
 branding:
   icon: 'archive'
   color: 'orange'
