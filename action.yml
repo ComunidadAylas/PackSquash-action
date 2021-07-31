@@ -122,6 +122,10 @@ inputs:
     description: 'Output the PACKSQUASH_SYSTEM_ID to be used to the log.'
     required: false
     default: 'false'
+  version:
+    description: ''
+    required: false
+    default: 'v0.3.0-rc.1'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -156,6 +160,7 @@ runs:
     - ${{ inputs.cache_path }}
     - ${{ inputs.system_id }}
     - ${{ inputs.print_system_id }}
+    - ${{ inputs.version }}
 branding:
   icon: 'archive'
   color: 'orange'
