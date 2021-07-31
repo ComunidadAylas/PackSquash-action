@@ -91,7 +91,7 @@ nl -b a $INPUT_SETTINGS_FILE
 echo "::endgroup::"
 
 # apply timestamp from git
-./git-set-file-times.sh
+/git-set-file-times.sh
 
 # optimize
 packsquash packsquash-settings.toml
