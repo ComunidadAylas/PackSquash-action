@@ -96,6 +96,12 @@ echo '::group::Will use these settings:'
 nl -b a $INPUT_SETTINGS_FILE
 echo "::endgroup::"
 
+if [ "$INPUT_PRINT_SYSTEM_ID" = "true" ]; then
+  echo '::group::Will use system id:'
+  echo "$PACKSQUASH_SYSTEM_ID"
+  echo "::endgroup::"
+fi
+
 # apply timestamp from git
 /git-set-file-times.sh
 

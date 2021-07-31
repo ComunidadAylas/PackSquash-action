@@ -118,6 +118,10 @@ inputs:
     description: 'The value used for PackSquash. It is recommended to specify nothing, it will be automatically generated and saved in cache_path.'
     required: false
     default: ''
+  print_system_id:
+    description: 'Output the PACKSQUASH_SYSTEM_ID to be used to the log.'
+    required: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -151,6 +155,7 @@ runs:
     - ${{ inputs.output_path }}
     - ${{ inputs.cache_path }}
     - ${{ inputs.system_id }}
+    - ${{ inputs.print_system_id }}
 branding:
   icon: 'archive'
   color: 'orange'
