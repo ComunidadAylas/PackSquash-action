@@ -114,6 +114,10 @@ inputs:
     description: 'Relative path to the PackSquash cache directory.'
     required: false
     default: 'packsquash_cache'
+  system_id:
+    description: 'The value used for PackSquash. It is recommended to specify nothing, it will be automatically generated and saved in cache_path.'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -146,6 +150,7 @@ runs:
     - ${{ inputs.minify_properties }}
     - ${{ inputs.output_path }}
     - ${{ inputs.cache_path }}
+    - ${{ inputs.system_id }}
 branding:
   icon: 'archive'
   color: 'orange'

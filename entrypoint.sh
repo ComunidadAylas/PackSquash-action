@@ -25,19 +25,25 @@ echo "::endgroup::"
 # change to GitHub WorkSpace Directory
 cd "$GITHUB_WORKSPACE" || exit 1
 
+PACKSQUASH_SYSTEM_ID="$INPUT_SYSTEM_ID"
+
 # check cache directory exists
 if [ -d $INPUT_CACHE_PATH ]; then
-  # get system id
-  PACKSQUASH_SYSTEM_ID=`cat "$INPUT_CACHE_PATH/system_id"`
+  if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
+    # get system id
+    PACKSQUASH_SYSTEM_ID=`cat "$INPUT_CACHE_PATH/system_id"`
+  fi
 
   # restore last optimized pack
   cp "$INPUT_CACHE_PATH/cache_pack.zip" "$INPUT_OUTPUT_PATH"
 else
   mkdir "$INPUT_CACHE_PATH"
 
-  # generate system id
-  PACKSQUASH_SYSTEM_ID=`cat /proc/sys/kernel/random/uuid`
-  echo "$PACKSQUASH_SYSTEM_ID" > "$INPUT_CACHE_PATH/system_id"
+  if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
+    # generate system id
+    PACKSQUASH_SYSTEM_ID=`cat /proc/sys/kernel/random/uuid`
+    echo "$PACKSQUASH_SYSTEM_ID" > "$INPUT_CACHE_PATH/system_id"
+  fi
 fi
 
 export PACKSQUASH_SYSTEM_ID
