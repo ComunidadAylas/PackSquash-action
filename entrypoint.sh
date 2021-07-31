@@ -69,6 +69,8 @@ else
   echo "$PACKSQUASH_SYSTEM_ID" > "$CACHE_PATH/system_id"
 fi
 
+export PACKSQUASH_SYSTEM_ID
+
 if [ -z "$SETTING_FILE" ]; then
   # generate settings
   echo "
