@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# if exit code is non-zero, exit sh
+set -e
+
 # options variables
 if [ -n "$INPUT_STRICT_ZIP_SPEC_COMPLIANCE" ]; then
     echo '::error ::strict_zip_spec_compliance: Removed in v0.3.0. Delete this option.'
