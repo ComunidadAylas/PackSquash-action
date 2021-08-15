@@ -32,7 +32,8 @@ case "$INPUT_VERSION" in
        | jq -r ".[0] | .url" \
        | (echo `cat`/'zip') \
        | wget --header="Authorization: token $GITHUB_TOKEN" -qi -
-       unzip zip
+       unzip zip -o
+       rm zip.zip
     fi
   ;;
   'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' )
@@ -45,7 +46,8 @@ case "$INPUT_VERSION" in
        | cut -d : -f 2,3 \
        | tr -d \" \
        | wget -qi -
-      unzip PackSquash.executable.Linux
+      unzip PackSquash.executable.Linux -o
+      rm PackSquash.executable.Linux.zip
     fi
   ;;
   * ) # v0.3.0-rc.1
@@ -54,7 +56,8 @@ case "$INPUT_VERSION" in
      | cut -d : -f 2,3 \
      | tr -d \" \
      | wget -qi -
-    unzip PackSquash.executable.Linux.x64.glibc
+    unzip PackSquash.executable.Linux.x64.glibc -o
+    rm PackSquash.executable.Linux.x64.glibc.zip
   ;;
 esac
 
