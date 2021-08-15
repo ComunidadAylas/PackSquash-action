@@ -81,7 +81,9 @@ if [ -d $INPUT_CACHE_PATH ]; then
   fi
 
   # restore last optimized pack
-  cp "$INPUT_CACHE_PATH/cache_pack.zip" "$INPUT_OUTPUT_PATH"
+  if [ -z "$INPUT_CACHE_PATH/cache_pack.zip" ]; then
+    cp "$INPUT_CACHE_PATH/cache_pack.zip" "$INPUT_OUTPUT_PATH"
+  fi
 else
   mkdir "$INPUT_CACHE_PATH"
 
