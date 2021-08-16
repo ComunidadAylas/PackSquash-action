@@ -1,18 +1,24 @@
 const cache = require('@actions/cache')
-const cached_file_paths = ['pack.zip', 'system_id', 'packsquash-options.toml']
-const cache_key = `packsquash-zip-${process.env.GITHUB_WORKFLOW}`
-const unique_cache_key = `${cache_key}-${Date.now()}`
+const cached_file_paths = ['system_id']
+const cache_key = `packsquash-${process.argv[2]}`
 
 async function run() {
     if (process.argv[2] === 'save') {
-        await cache.saveCache(cached_file_paths, unique_cache_key)
+        await cache.saveCache(cached_file_paths, cache_key)
     } else {
-        await cache.restoreCache(cached_file_paths, unique_cache_key, [cache_key])
+        return await cache.restoreCache(cached_file_paths, cache_key)
     }
 }
 
 // Do the cache operation. If that fails, log the error and return failure
-run().catch((reason) => {
-    console.error(reason)
-    process.exitCode = 1
-})
+run().then(
+    (restored_cache_key) => {
+        if (restored_cache_key !== undefined) {
+            process.stdout.write(restored_cache_key)
+        }
+    },
+    (failure_reason) => {
+        console.error(failure_reason)
+        process.exitCode = 1
+    }
+)
