@@ -73,7 +73,7 @@ inputs:
   zip_spec_conformance_level:
     description: 'This option lets you choose the ZIP specification conformance level that is most suitable to your pack and situation. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_spec_conformance_level for more information.'
     required: false
-    default: 'pedantic'
+    default: 'high'
   size_increasing_zip_obfuscation:
     description: 'If zip_spec_conformance_level is set to disregard, enabling this option will add more protections against inspecting, extracting or tampering with the generated ZIP file that will slightly increase its size.'
     required: false
