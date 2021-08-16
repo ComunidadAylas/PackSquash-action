@@ -23,7 +23,7 @@ RUN apt-get update \
 WORKDIR /opt/node
 RUN npm install @actions/cache @actions/artifact
 
-COPY git-set-file-times.sh /git-set-file-times.sh
+COPY git-set-file-times.pl /git-set-file-times.pl
 COPY actions-cache.js /actions-cache.js
 COPY actions-artifact-upload.js /actions-artifact-upload.js
 
