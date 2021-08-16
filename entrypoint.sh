@@ -128,7 +128,8 @@ if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_OBFUSCATION_QUIRKS" = 'true' ]; then
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
-printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env | tr '\n' ',')"
+# Uncomment when needed. GitHub doesn't like newlines that env outputs
+#printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
 
 # ----------------------
 # Flags based on options
@@ -244,7 +245,7 @@ if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
         "$(current_workflow_id)" 'Optimized pack' || true
-    node actions-cache.mjs restore "$options_file_hash"
+    node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
 fi
 
@@ -315,6 +316,6 @@ echo '::endgroup::'
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/tmp/packsquash_cache_hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    node actions-cache.mjs save "$options_file_hash"
+    node actions-cache.mjs save "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
 fi
