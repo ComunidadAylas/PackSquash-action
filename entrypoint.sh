@@ -18,6 +18,34 @@ download_release_executable() {
     rm -f "$temp_file"
 }
 
+download_latest_artifact() {
+    echo "::debug::Getting API endpoint for latest $4 artifact"
+    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
+        "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
+        | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
+        | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
+
+    echo "::debug::Getting latest $4 artifact download URL from endpoint"
+    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
+        "$latest_artifacts_endpoint" \
+        | jq '.artifacts | map(select(.name == "'"$4"'"))' \
+        | jq -r '.[0].archive_download_url')
+
+    echo "Downloading latest $4 artifact"
+    temp_file=$(mktemp)
+    wget --header="Authorization: token $INPUT_GITHUB_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
+
+    echo "::debug::Extracting $4 artifact archive"
+    unzip -o "$temp_file"
+    rm -f "$temp_file"
+}
+
+current_workflow_id() {
+    wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
+        "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" \
+        | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
+}
+
 # ----------------
 # Check invariants
 # ----------------
@@ -118,28 +146,7 @@ echo "::debug::PackSquash version input variable value: $INPUT_PACKSQUASH_VERSIO
 
 case "$INPUT_PACKSQUASH_VERSION" in
     'latest')
-        if [ -z "$INPUT_GITHUB_TOKEN" ]; then
-            echo '::error::A GitHub API token is required to download the latest PackSquash build. Please set the github_token action parameter to a suitable token.'
-            exit 1
-        else
-            echo '::debug::Getting latest artifact endpoint'
-            latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
-            | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
-            | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
-
-            echo '::debug::Getting latest artifact download URL from API endpoint'
-            latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
-            | jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
-            | jq -r '.[0].archive_download_url')
-
-            echo "Downloading latest PackSquash build from $latest_artifact_download_url"
-            temp_file=$(mktemp)
-            wget --header="Authorization: token $INPUT_GITHUB_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
-
-            echo '::debug::Extracting artifact'
-            unzip -o "$temp_file"
-            rm -f "$temp_file"
-        fi
+        download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 'PackSquash executable (Linux, x64, glibc)'
     ;;
     'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1')
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
@@ -231,7 +238,8 @@ options_file_hash="${options_file_hash%% *}"
 # Restore ./pack.zip from the previous artifact and ./system_id from the cache if needed
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-    node actions-artifact-download.mjs || true
+    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
+        "$(current_workflow_id)" 'Optimized pack' || true
     node actions-cache.mjs restore "$options_file_hash"
     echo '::endgroup::'
 fi
