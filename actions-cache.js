@@ -1,5 +1,5 @@
 const cache = require('@actions/cache')
-const cached_file_paths = ['/pack.zip', '/system_id', '/packsquash-options.toml']
+const cached_file_paths = ['pack.zip', 'system_id', 'packsquash-options.toml']
 const cache_key = `packsquash-zip-${process.env.GITHUB_WORKFLOW}`
 
 async function run() {

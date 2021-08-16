@@ -1,7 +1,7 @@
 const artifact = require('@actions/artifact')
 const artifact_name = `Optimized pack (${process.env.GITHUB_WORKFLOW})`
-const pack_zip = ['/pack.zip']
-const pack_zip_directory = '/'
+const pack_zip = [`${process.cwd()}/pack.zip`]
+const pack_zip_directory = process.cwd()
 
 async function run() {
     const upload_result = await artifact.create()
