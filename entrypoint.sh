@@ -223,8 +223,9 @@ echo '::endgroup::'
 
 # Restore /pack.zip, /system_id and /packsquash-options.toml from the cache if possible and useful
 if [ -n "${cache_may_be_used+x}" ]; then
-  echo '::debug::Restoring cache'
+  echo '::group::Restoring cached data'
   node actions-cache.js restore
+  echo '::endgroup::'
 fi
 
 # Only override the system ID if the user didn't set it explicitly
@@ -293,10 +294,12 @@ fi
 
 cd "$ACTION_WORKING_DIR"
 
-echo '::debug::Uploading generated ZIP file as artifact'
+echo '::group::Upload generated ZIP file as artifact'
 node actions-artifact-upload.js
+echo '::endgroup::'
 
 if [ -n "${cache_may_be_used+x}" ]; then
-  echo '::debug::Saving cache'
+  echo '::group::Caching data for future runs'
   node actions-cache.js save
+  echo '::endgroup::'
 fi
