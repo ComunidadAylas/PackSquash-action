@@ -23,7 +23,7 @@ download_release_executable() {
 }
 
 download_latest_artifact() {
-    echo "::debug::Getting API endpoint for latest $4 artifact"
+    echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
     latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
         "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
         | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
@@ -242,7 +242,7 @@ options_file_hash="${options_file_hash%% *}"
 # Restore ./pack.zip from the previous artifact and ./system_id from the cache if needed
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
+    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
         "$(current_workflow_id)" 'Optimized pack' || true
     node actions-cache.mjs restore "$options_file_hash"
     echo '::endgroup::'
