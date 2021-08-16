@@ -31,10 +31,10 @@ inputs:
   packsquash_version:
     description: 'The PackSquash version the action will use. Please note that too old or too new versions may be incompatible or not properly supported by the action.'
     required: false
-    # FIXME: change to v0.3.0 when it gets released
+    # TODO: change to v0.3.0 when it gets released
     default: 'latest'
   options_file:
-    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs.'
+    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at /opt/action/pack.zip to upload it as an artifact.'
     required: false
     default: ''
   github_token:
