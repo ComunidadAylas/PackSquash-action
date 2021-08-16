@@ -27,7 +27,7 @@ fi
 # Handle deprecated inputs
 # ------------------------
 
-if [ -n "${INPUT_SETTINGS_FILE+x}" ]; then
+if [ -n "$INPUT_SETTINGS_FILE" ]; then
   show_deprecated_warning 'settings_file' 'options_file'
 
   INPUT_OPTIONS_FILE="$INPUT_SETTINGS_FILE"
@@ -107,7 +107,7 @@ case "$INPUT_PACKSQUASH_VERSION" in
       exit 1
     else
       latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
-        | jq '.workflow_runs | map(select(.workflow_id == 5482008 && .conclusion == "success"))' \
+        | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
       latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
