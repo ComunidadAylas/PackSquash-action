@@ -8,8 +8,12 @@ show_deprecated_warning() {
 }
 
 download_release_executable() {
+  echo "Downloading PackSquash executable for release $1 (asset $2)"
+
   temp_file=$(mktemp)
-  wget -q -O "$temp_file" "https://github.com/ComunidadAylas/PackSquash/releases/download/$1/$2"
+  wget -nv -O "$temp_file" "https://github.com/ComunidadAylas/PackSquash/releases/download/$1/$2"
+
+  echo '::debug::Extracting archive'
   unzip -qo "$temp_file"
   rm -f "$temp_file"
 }
@@ -27,6 +31,8 @@ fi
 # ------------------------
 # Handle deprecated inputs
 # ------------------------
+
+echo '::debug::Handling deprecated inputs'
 
 if [ -n "$INPUT_SETTINGS_FILE" ]; then
   show_deprecated_warning 'settings_file' 'options_file'
@@ -67,6 +73,7 @@ fi
 # allow_mods
 ALLOW_MODS='[ '
 if [ "$INPUT_ALLOW_OPTIFINE_MOD" = 'true' ]; then
+  echo '::debug::Allowing OptiFine mod'
   ALLOW_MODS="$ALLOW_MODS'OptiFine'"
 fi
 ALLOW_MODS="$ALLOW_MODS ]"
@@ -75,16 +82,20 @@ ALLOW_MODS="$ALLOW_MODS ]"
 WORK_AROUND_MINECRAFT_QUIRKS='[ '
 if [ "$INPUT_WORK_AROUND_GRAYSCALE_TEXTURES_GAMMA_MISCORRECTION_QUIRK" = 'true' ]; then
   WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS'grayscale_textures_gamma_miscorrection'"
+  echo '::debug::Adding grayscale_textures_gamma_miscorrection quirk'
   minecraft_quirk_added=
 fi
 if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_OBFUSCATION_QUIRKS" = 'true' ]; then
   WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'java8_zip_obfuscation_quirks'"
+  echo '::debug::Adding java8_zip_obfuscation_quirks quirk'
   minecraft_quirk_added=
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
 # PACKSQUASH_SYSTEM_ID environment variable
 export PACKSQUASH_SYSTEM_ID="$INPUT_SYSTEM_ID"
+
+printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
 
 # ----------------------
 # Flags based on options
@@ -94,6 +105,7 @@ if
   [ -n "$INPUT_OPTIONS_FILE" ] || \
   { [ "$INPUT_NEVER_STORE_SQUASH_TIMES" = 'false' ] && [ "$INPUT_ZIP_SPEC_CONFORMANCE_LEVEL" != 'pedantic' ]; }
 then
+  echo '::debug::Setting cache may be used'
   cache_may_be_used=
 fi
 
@@ -101,20 +113,27 @@ fi
 # Download the appropriate PackSquash executable
 # ----------------------------------------------
 
+echo "::debug::PackSquash version input variable value: $INPUT_PACKSQUASH_VERSION"
+
 case "$INPUT_PACKSQUASH_VERSION" in
   'latest')
-	latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
-	| jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
-	| jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
+    echo '::debug::Getting latest artifact endpoint'
+    latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
+    | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
+    | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
-	latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
-	| jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
-	| jq -r '.[0].archive_download_url')
+    echo '::debug::Getting latest artifact download URL from API endpoint'
+    latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
+    | jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
+    | jq -r '.[0].archive_download_url')
 
-	temp_file=$(mktemp)
-	wget --header="Authorization: token $ACTIONS_RUNTIME_TOKEN" -q -O "$temp_file" "$latest_artifact_download_url"
-	unzip -qo "$temp_file"
-	rm -f "$temp_file"
+    echo "Downloading latest PackSquash build from $latest_artifact_download_url"
+    temp_file=$(mktemp)
+    wget --header="Authorization: token $ACTIONS_RUNTIME_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
+
+    echo '::debug::Extracting artifact'
+    unzip -qo "$temp_file"
+    rm -f "$temp_file"
   ;;
   'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1')
     if [ -z "$INPUT_OPTIONS_FILE" ]; then
@@ -198,7 +217,7 @@ echo '::endgroup::'
 
 # Restore /pack.zip, /system_id and /packsquash-options.toml from the cache if possible and useful
 if [ -n "${cache_may_be_used+x}" ]; then
-  echo 'Restoring cache'
+  echo '::debug::Restoring cache'
   node actions-cache.js restore
 fi
 
@@ -213,6 +232,7 @@ echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
 
 # Discard the cached ZIP file if the options have changed, to make sure they are completely honored
 if ! cmp -s current-packsquash-options.toml packsquash-options.toml; then
+  echo '::debug::Cached options file is different to current, discarding cache'
   rm -f pack.zip
 fi
 mv current-packsquash-options.toml packsquash-options.toml
@@ -226,6 +246,7 @@ cd "$GITHUB_WORKSPACE"
 # Make sure the file modification times reflect when they were modified according to git,
 # so the cache works as expected
 if [ -n "${cache_may_be_used+x}" ]; then
+  echo '::debug::Setting repository file modification timestamps'
   "$ACTION_WORKING_DIR"/git-set-file-times.pl
 fi
 
@@ -239,7 +260,7 @@ if [ $? -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
   echo 'PackSquash reported that the cache was unusable. Discarding it and trying again.'
   echo
 
-  rm -f /pack.zip
+  rm -f "$ACTION_WORKING_DIR"/pack.zip
   "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
 else
   set -e
@@ -252,10 +273,10 @@ echo '::endgroup::'
 
 cd "$ACTION_WORKING_DIR"
 
-echo 'Uploading generated ZIP file as artifact'
+echo '::debug::Uploading generated ZIP file as artifact'
 node actions-artifact-upload.js
 
 if [ -n "${cache_may_be_used+x}" ]; then
-  echo 'Saving cache'
+  echo '::debug::Saving cache'
   node actions-cache.js save
 fi
