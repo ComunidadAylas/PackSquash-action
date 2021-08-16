@@ -28,6 +28,10 @@ if [ "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-shallow-repository)" = 'true' 
   exit 1
 fi
 
+# Make sure our working directory is outside the repository, so any
+# temporary file we create does not pollute it
+cd "$ACTION_WORKING_DIR"
+
 # ------------------------
 # Handle deprecated inputs
 # ------------------------
@@ -91,9 +95,6 @@ if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_OBFUSCATION_QUIRKS" = 'true' ]; then
   minecraft_quirk_added=
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
-
-# PACKSQUASH_SYSTEM_ID environment variable
-export PACKSQUASH_SYSTEM_ID="$INPUT_SYSTEM_ID"
 
 printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
 
@@ -227,6 +228,7 @@ if [ -n "${cache_may_be_used+x}" ]; then
 fi
 
 # Only override the system ID if the user didn't set it explicitly
+PACKSQUASH_SYSTEM_ID="$INPUT_SYSTEM_ID"
 if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
   PACKSQUASH_SYSTEM_ID=$(cat system_id 2>/dev/null || true)
 fi
@@ -239,6 +241,11 @@ fi
 # Save whatever system ID we end up using for caching later
 echo "$PACKSQUASH_SYSTEM_ID" > system_id
 echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
+
+# Prevent the actual system ID used from leaking in the logs from now on,
+# and export it to other processes
+echo "::add-mask::$PACKSQUASH_SYSTEM_ID"
+export PACKSQUASH_SYSTEM_ID
 
 # Discard the cached ZIP file if the options have changed, to make sure they are completely honored
 if ! cmp -s current-packsquash-options.toml packsquash-options.toml; then
@@ -276,6 +283,7 @@ if [ $packsquash_exit_code -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
   "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
   echo '::endgroup::'
 elif [ $packsquash_exit_code -ne 0 ]; then
+  # Any other PackSquash error
   exit $packsquash_exit_code
 fi
 
