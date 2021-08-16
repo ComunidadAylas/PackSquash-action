@@ -117,23 +117,28 @@ echo "::debug::PackSquash version input variable value: $INPUT_PACKSQUASH_VERSIO
 
 case "$INPUT_PACKSQUASH_VERSION" in
   'latest')
-    echo '::debug::Getting latest artifact endpoint'
-    latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
-    | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
-    | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
+    if [ -z "$INPUT_GITHUB_TOKEN" ]; then
+      echo '::error::A GitHub API token is required to download the latest PackSquash build. Please set the github_token action parameter to a suitable token.'
+      exit 1
+    else
+      echo '::debug::Getting latest artifact endpoint'
+      latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
+      | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
+      | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
-    echo '::debug::Getting latest artifact download URL from API endpoint'
-    latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
-    | jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
-    | jq -r '.[0].archive_download_url')
+      echo '::debug::Getting latest artifact download URL from API endpoint'
+      latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
+      | jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
+      | jq -r '.[0].archive_download_url')
 
-    echo "Downloading latest PackSquash build from $latest_artifact_download_url"
-    temp_file=$(mktemp)
-    wget --header="Authorization: token $ACTIONS_RUNTIME_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
+      echo "Downloading latest PackSquash build from $latest_artifact_download_url"
+      temp_file=$(mktemp)
+      wget --header="Authorization: token $INPUT_GITHUB_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
 
-    echo '::debug::Extracting artifact'
-    unzip -qo "$temp_file"
-    rm -f "$temp_file"
+      echo '::debug::Extracting artifact'
+      unzip -qo "$temp_file"
+      rm -f "$temp_file"
+    fi
   ;;
   'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1')
     if [ -z "$INPUT_OPTIONS_FILE" ]; then

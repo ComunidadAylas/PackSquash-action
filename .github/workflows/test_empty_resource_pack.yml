@@ -11,4 +11,5 @@ jobs:
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@master
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           path: test/empty_resource_pack
