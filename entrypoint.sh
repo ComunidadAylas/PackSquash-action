@@ -128,7 +128,7 @@ if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_OBFUSCATION_QUIRKS" = 'true' ]; then
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
-printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
+printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env | tr '\n' ',')"
 
 # ----------------------
 # Flags based on options
