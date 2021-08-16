@@ -232,8 +232,7 @@ options_file_hash="${options_file_hash%% *}"
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     node actions-artifact-download.js || true
-    cache_hit=$(node actions-cache.js restore "$options_file_hash")
-    echo "::debug::cache_hit value: $cache_hit"
+    node actions-cache.js restore "$options_file_hash"
     echo '::endgroup::'
 fi
 
@@ -270,7 +269,7 @@ fi
 # Run PackSquash
 echo '::group::PackSquash output'
 set +e
-"$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
+"$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
 packsquash_exit_code=$?
 set -e
 echo '::endgroup::'
@@ -281,7 +280,7 @@ case $packsquash_exit_code in
         rm -f "$ACTION_WORKING_DIR"/pack.zip
 
         echo '::group::PackSquash output (discarded cache)'
-        "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
+        "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
         echo '::endgroup::'
     ;;
     0) ;;
@@ -301,7 +300,7 @@ echo '::group::Upload generated ZIP file as artifact'
 node actions-artifact-upload.js
 echo '::endgroup::'
 
-if [ -n "${cache_may_be_used+x}" ] && [ -z "$cache_hit" ]; then
+if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/tmp/packsquash_cache_hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
     node actions-cache.js save "$options_file_hash"

@@ -1,20 +1,22 @@
-const cache = require('@actions/cache')
-const cached_file_paths = ['system_id']
+import { writeFileSync } from 'fs'
+import { saveCache, restoreCache } from '@actions/cache'
+
+const cached_file_paths = ['pack.zip']
 const cache_key = `packsquash-${process.argv[2]}`
 
 async function run() {
     if (process.argv[2] === 'save') {
-        await cache.saveCache(cached_file_paths, cache_key)
+        await saveCache(cached_file_paths, cache_key)
     } else {
-        return await cache.restoreCache(cached_file_paths, cache_key)
+        return await restoreCache(cached_file_paths, cache_key, [cache_key]) !== undefined
     }
 }
 
 // Do the cache operation. If that fails, log the error and return failure
 run().then(
     (restored_cache_key) => {
-        if (restored_cache_key !== undefined) {
-            process.stdout.write(restored_cache_key)
+        if (restored_cache_key === true) {
+            writeFileSync('/tmp/packsquash_cache_hit', '')
         }
     },
     (failure_reason) => {

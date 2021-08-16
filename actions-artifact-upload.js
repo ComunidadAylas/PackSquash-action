@@ -1,10 +1,11 @@
-const artifact = require('@actions/artifact')
+import { create } from '@actions/artifact'
+
 const artifact_name = 'Optimized pack'
 const pack_zip = [`${process.cwd()}/pack.zip`]
 const pack_zip_directory = process.cwd()
 
 async function run() {
-    const upload_result = await artifact.create()
+    const upload_result = await create()
         .uploadArtifact(artifact_name, pack_zip, pack_zip_directory)
 
     // Set an error exit code if no artifact is to be uploaded, or we
