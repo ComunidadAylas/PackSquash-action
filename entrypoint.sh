@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 readonly UNUSABLE_CACHE_ERROR_CODE=129
-readonly ACTION_WORKING_DIR=$(pwd)
+readonly ACTION_WORKING_DIR="$PWD"
 
 show_deprecated_warning() {
   printf '::warning::The %s option is deprecated and will be removed in the future. Please use %s instead.\n' "$1" "$2"

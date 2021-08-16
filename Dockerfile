@@ -26,4 +26,4 @@ RUN npm install @actions/cache @actions/artifact
 
 COPY git-set-file-times.pl actions-cache.js actions-artifact-upload.js entrypoint.sh ./
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/opt/action/entrypoint.sh"]
