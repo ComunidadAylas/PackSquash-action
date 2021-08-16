@@ -165,7 +165,7 @@ chmod +x packsquash
 
 # Print PackSquash version
 echo '::group::PackSquash version'
-./packsquash --version
+./packsquash --version 2>&1
 echo '::endgroup::'
 
 # ---------------------------

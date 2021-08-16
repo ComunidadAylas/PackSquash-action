@@ -1,7 +1,6 @@
 FROM node:buster
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV NODE_ENV=production
+ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
 
 WORKDIR /opt/action
 
@@ -17,12 +16,8 @@ RUN apt-get update \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
  && apt-get -y clean \
- && rm -rf /var/lib/apt/lists/*
-
-# Install npm packages we will use for caching and uploading artifacts.
-# Use WORKDIR to work around npm quirks:
-# https://stackoverflow.com/questions/57534295/npm-err-tracker-idealtree-already-exists-while-creating-the-docker-image-for
-RUN npm install @actions/cache @actions/artifact
+ && rm -rf /var/lib/apt/lists/* \
+ && npm install @actions/cache @actions/artifact
 
 COPY git-set-file-times.pl actions-cache.mjs actions-artifact-download.mjs actions-artifact-upload.mjs entrypoint.sh ./
 
