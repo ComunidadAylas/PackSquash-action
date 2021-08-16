@@ -231,7 +231,7 @@ options_file_hash="${options_file_hash%% *}"
 # Restore ./pack.zip from the previous artifact and ./system_id from the cache if needed
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-    node actions-artifact-download.js
+    node actions-artifact-download.js || true
     cache_hit=$(node actions-cache.js restore "$options_file_hash")
     echo "::debug::cache_hit value: $cache_hit"
     echo '::endgroup::'
