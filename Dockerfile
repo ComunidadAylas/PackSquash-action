@@ -1,16 +1,15 @@
-FROM ubuntu:20.04
+FROM node:buster
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV NODE_ENV=production
 
+# Install packages we need in the entrypoint, and PackSquash dependencies. See:
 # https://github.com/ComunidadAylas/PackSquash/wiki/Installation-guide#linux
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
     jq \
-    wget \
     unzip \
-    git \
+    zstd \
     tzdata \
     libgstreamer1.0-0 \
     gstreamer1.0-plugins-good \
@@ -18,7 +17,13 @@ RUN apt-get update \
  && apt-get -y clean \
  && rm -rf /var/lib/apt/lists/*
 
-COPY entrypoint.sh /entrypoint.sh
+# Install npm packages we will use for caching and uploading artifacts
+RUN npm install @actions/cache @actions/artifact
+
 COPY git-set-file-times.sh /git-set-file-times.sh
+COPY actions-cache.js /actions-cache.js
+COPY actions-artifact-upload.js /actions-artifact-upload.js
+
+COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

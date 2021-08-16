@@ -1,12 +1,10 @@
-name: Docker Image CI
+name: Docker image CI
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@master
-        with:
-          fetch-depth: 1
+        uses: actions/checkout@v2
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag packsquash-action:$(date +%s)
