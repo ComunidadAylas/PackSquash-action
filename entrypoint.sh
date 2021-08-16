@@ -231,8 +231,8 @@ options_file_hash="${options_file_hash%% *}"
 # Restore ./pack.zip from the previous artifact and ./system_id from the cache if needed
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-    node actions-artifact-download.js || true
-    node actions-cache.js restore "$options_file_hash"
+    node actions-artifact-download.mjs || true
+    node actions-cache.mjs restore "$options_file_hash"
     echo '::endgroup::'
 fi
 
@@ -297,12 +297,12 @@ esac
 cd "$ACTION_WORKING_DIR"
 
 echo '::group::Upload generated ZIP file as artifact'
-node actions-artifact-upload.js
+node actions-artifact-upload.mjs
 echo '::endgroup::'
 
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/tmp/packsquash_cache_hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    node actions-cache.js save "$options_file_hash"
+    node actions-cache.mjs save "$options_file_hash"
     echo '::endgroup::'
 fi
