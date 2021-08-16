@@ -3,6 +3,8 @@ FROM node:buster
 ENV DEBIAN_FRONTEND=noninteractive
 ENV NODE_ENV=production
 
+WORKDIR /opt/action
+
 # Install packages we need in the entrypoint, and PackSquash dependencies. See:
 # https://github.com/ComunidadAylas/PackSquash/wiki/Installation-guide#linux
 RUN apt-get update \
@@ -20,13 +22,8 @@ RUN apt-get update \
 # Install npm packages we will use for caching and uploading artifacts.
 # Use WORKDIR to work around npm quirks:
 # https://stackoverflow.com/questions/57534295/npm-err-tracker-idealtree-already-exists-while-creating-the-docker-image-for
-WORKDIR /opt/node
 RUN npm install @actions/cache @actions/artifact
 
-COPY git-set-file-times.pl /git-set-file-times.pl
-COPY actions-cache.js /actions-cache.js
-COPY actions-artifact-upload.js /actions-artifact-upload.js
+COPY git-set-file-times.pl actions-cache.js actions-artifact-upload.js entrypoint.sh .
 
-COPY entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]

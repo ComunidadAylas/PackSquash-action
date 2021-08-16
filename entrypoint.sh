@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
 readonly UNUSABLE_CACHE_ERROR_CODE=129
+readonly ACTION_WORKING_DIR=$(pwd)
 
 show_deprecated_warning() {
   printf '::warning::The %s option is deprecated and will be removed in the future. Please use %s instead.\n' "$1" "$2"
@@ -17,7 +18,7 @@ download_release_executable() {
 # Check invariants
 # ----------------
 
-echo "Checking that the repository checkout at $GITHUB_WORKSPACE is suitable"
+echo "::debug::Checking that the repository checkout at $GITHUB_WORKSPACE is suitable"
 if [ "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-shallow-repository)" = 'true' ]; then
   echo '::error::The full commit history of the repository must be checked out for this action to work. Please set the fetch-depth parameter of actions/checkout to 0.'
   exit 1
@@ -102,23 +103,18 @@ fi
 
 case "$INPUT_PACKSQUASH_VERSION" in
   'latest')
-    if [ -z "$INPUT_GITHUB_TOKEN" ]; then
-      echo '::error::A GitHub API token is needed to download the latest PackSquash build.'
-      exit 1
-    else
-      latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
-        | jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
-        | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
+	latest_artifacts_endpoint=$(curl -sSL 'https://api.github.com/repos/ComunidadAylas/PackSquash/actions/runs?branch=master&status=completed' \
+	| jq '.workflow_runs | map(select(.workflow_id == 5482008 and .conclusion == "success"))' \
+	| jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
-      latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
-        | jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
-        | jq -r '.[0].archive_download_url')
+	latest_artifact_download_url=$(curl -sSL "$latest_artifacts_endpoint" \
+	| jq '.artifacts | map(select(.name == "PackSquash executable (Linux, x64, glibc)"))' \
+	| jq -r '.[0].archive_download_url')
 
-      temp_file=$(mktemp)
-      wget --header="Authorization: token $INPUT_GITHUB_TOKEN" -q -O "$temp_file" "$latest_artifact_download_url"
-      unzip -qo "$temp_file"
-      rm -f "$temp_file"
-    fi
+	temp_file=$(mktemp)
+	wget --header="Authorization: token $ACTIONS_RUNTIME_TOKEN" -q -O "$temp_file" "$latest_artifact_download_url"
+	unzip -qo "$temp_file"
+	rm -f "$temp_file"
   ;;
   'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1')
     if [ -z "$INPUT_OPTIONS_FILE" ]; then
@@ -139,7 +135,7 @@ case "$INPUT_PACKSQUASH_VERSION" in
   ;;
 esac
 
-chmod +x packsquash
+chmod a+x packsquash
 
 # Print PackSquash version
 echo '::group::PackSquash version'
@@ -163,7 +159,7 @@ zip_spec_conformance_level = '$INPUT_ZIP_SPEC_CONFORMANCE_LEVEL'
 size_increasing_zip_obfuscation = $INPUT_SIZE_INCREASING_ZIP_OBFUSCATION
 percentage_of_zip_structures_tuned_for_obfuscation_discretion = $INPUT_PERCENTAGE_OF_ZIP_STRUCTURES_TUNED_FOR_OBFUSCATION_DISCRETION
 never_store_squash_times = $INPUT_NEVER_STORE_SQUASH_TIMES
-output_file_path = '/pack.zip'
+output_file_path = '$ACTION_WORKING_DIR/pack.zip'
 
 ['**/*.{og[ga],mp3,wav,flac}']
 transcode_ogg = $INPUT_TRANSCODE_OGG
@@ -230,13 +226,13 @@ cd "$GITHUB_WORKSPACE"
 # Make sure the file modification times reflect when they were modified according to git,
 # so the cache works as expected
 if [ -n "${cache_may_be_used+x}" ]; then
-  /git-set-file-times.pl
+  "$ACTION_WORKING_DIR"/git-set-file-times.pl
 fi
 
 # Run PackSquash
 echo '::group::PackSquash output'
 set +e
-/packsquash /packsquash-options.toml
+"$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
 if [ $? -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
   set -e
   echo
@@ -244,7 +240,7 @@ if [ $? -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
   echo
 
   rm -f /pack.zip
-  /packsquash /packsquash-options.toml
+  "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
 else
   set -e
 fi
@@ -253,6 +249,8 @@ echo '::endgroup::'
 # ------------------------------------
 # Upload artifact and update the cache
 # ------------------------------------
+
+cd "$ACTION_WORKING_DIR"
 
 echo 'Uploading generated ZIP file as artifact'
 node actions-artifact-upload.js

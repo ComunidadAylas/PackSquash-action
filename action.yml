@@ -37,10 +37,6 @@ inputs:
     description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs.'
     required: false
     default: ''
-  github_token:
-    description: 'The GitHub API authentication token that will be used for operations that require authentication.'
-    required: false
-    default: ''
   # Inputs that set PackSquash options
   recompress_compressed_files:
     description: 'If true, this option makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
