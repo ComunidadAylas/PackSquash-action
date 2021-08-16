@@ -24,6 +24,6 @@ RUN apt-get update \
 # https://stackoverflow.com/questions/57534295/npm-err-tracker-idealtree-already-exists-while-creating-the-docker-image-for
 RUN npm install @actions/cache @actions/artifact
 
-COPY git-set-file-times.pl actions-cache.js actions-artifact-upload.js entrypoint.sh ./
+COPY git-set-file-times.pl actions-cache.js actions-artifact-download.js actions-artifact-upload.js entrypoint.sh ./
 
 ENTRYPOINT ["/opt/action/entrypoint.sh"]
