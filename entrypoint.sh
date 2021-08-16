@@ -3,6 +3,10 @@
 readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 
+# ----------------
+# Useful functions
+# ----------------
+
 show_deprecated_warning() {
     printf '::warning::The %s option is deprecated and will be removed in the future. Please use %s instead.\n' "$1" "$2"
 }
@@ -283,7 +287,7 @@ set -e
 echo '::endgroup::'
 case $packsquash_exit_code in
     "$UNUSABLE_CACHE_ERROR_CODE")
-        echo 'PackSquash reported that the cache was unusable. Discarding it and trying again.'
+        echo '::warning::PackSquash reported that the cache was unusable. Discarding it and trying again.'
 
         rm -f "$ACTION_WORKING_DIR"/pack.zip
 

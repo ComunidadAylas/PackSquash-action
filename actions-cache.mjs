@@ -1,8 +1,8 @@
 import { writeFileSync } from 'fs'
 import { saveCache, restoreCache } from '@actions/cache'
 
-const cached_file_paths = ['pack.zip']
-const cache_key = `packsquash-${process.argv[3]}`
+const cached_file_paths = ['system_id']
+const cache_key = `packsquash-${process.argv[3]}-0`
 
 async function run() {
     if (process.argv[2] === 'save') {
