@@ -1,7 +1,7 @@
 #!/bin/sh -e
 
 readonly UNUSABLE_CACHE_ERROR_CODE=129
-readonly ACTION_WORKING_DIR="$PWD"
+readonly ACTION_WORKING_DIR='/opt/action'
 
 show_deprecated_warning() {
   printf '::warning::The %s option is deprecated and will be removed in the future. Please use %s instead.\n' "$1" "$2"
@@ -231,6 +231,11 @@ if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
   PACKSQUASH_SYSTEM_ID=$(cat system_id 2>/dev/null || true)
 fi
 
+# If we don't have an UUID, ask the kernel for one. This UUID is generated with a CSPRNG
+if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
+  PACKSQUASH_SYSTEM_ID=$(cat /proc/sys/kernel/random/uuid)
+fi
+
 # Save whatever system ID we end up using for caching later
 echo "$PACKSQUASH_SYSTEM_ID" > system_id
 echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
@@ -259,18 +264,20 @@ fi
 echo '::group::PackSquash output'
 set +e
 "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
-if [ $? -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
-  set -e
-  echo
+packsquash_exit_code=$?
+set -e
+echo '::endgroup::'
+if [ $packsquash_exit_code -eq $UNUSABLE_CACHE_ERROR_CODE ]; then
   echo 'PackSquash reported that the cache was unusable. Discarding it and trying again.'
-  echo
 
   rm -f "$ACTION_WORKING_DIR"/pack.zip
+
+  echo '::group::PackSquash output (discarded cache)'
   "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml
-else
-  set -e
+  echo '::endgroup::'
+elif [ $packsquash_exit_code -ne 0 ]; then
+  exit $packsquash_exit_code
 fi
-echo '::endgroup::'
 
 # ------------------------------------
 # Upload artifact and update the cache
