@@ -159,11 +159,11 @@ case "$INPUT_PACKSQUASH_VERSION" in
   ;;
 esac
 
-chmod a+x packsquash
+chmod +x packsquash
 
 # Print PackSquash version
 echo '::group::PackSquash version'
-packsquash --version
+./packsquash --version
 echo '::endgroup::'
 
 # ---------------------------
