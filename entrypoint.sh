@@ -198,7 +198,7 @@ minify_json = $INPUT_MINIFY_JSON
 delete_bloat_keys = $INPUT_DELETE_BLOAT_JSON_KEYS
 
 ['**/*.png']
-image_data_compression_iterations = '$INPUT_IMAGE_DATA_COMPRESSION_ITERATIONS'
+image_data_compression_iterations = $INPUT_IMAGE_DATA_COMPRESSION_ITERATIONS
 color_quantization_target = '$INPUT_IMAGE_COLOR_QUANTIZATION_TARGET'
 maximum_width_and_height = $INPUT_MAXIMUM_IMAGE_WIDTH_AND_HEIGHT
 skip_alpha_optimizations = $INPUT_SKIP_IMAGE_ALPHA_OPTIMIZATIONS
