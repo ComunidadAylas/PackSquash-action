@@ -288,11 +288,11 @@ set -e
 echo '::endgroup::'
 case $packsquash_exit_code in
     "$UNUSABLE_CACHE_ERROR_CODE")
-        echo '::warning::PackSquash reported that the cache was unusable. Discarding it and trying again.'
+        echo '::warning::PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it and trying again.'
 
         rm -f "$ACTION_WORKING_DIR"/pack.zip
 
-        echo '::group::PackSquash output (discarded cache)'
+        echo '::group::PackSquash output (discarded previous ZIP file)'
         "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
         echo '::endgroup::'
     ;;
