@@ -2,30 +2,13 @@ name: 'PackSquash'
 description: 'Official action to run PackSquash in a GitHub Actions workflow.'
 author: 'sya-ri, Alejandro "AlexTMjugador" González'
 inputs:
-  # Deprecated inputs for removal
-  settings_file:
-    description: 'This option is deprecated and will be removed in the future. Please use options_file instead.'
-    required: false
-    default: ''
-  strict_zip_spec_compliance:
-    description: 'This option is deprecated and will be removed in the future. Please use zip_spec_conformance_level instead.'
-    required: false
-    default: ''
-  compress_already_compressed_files:
-    description: 'This option is deprecated and will be removed in the future. Please use recompress_compressed_files instead.'
-    required: false
-    default: ''
-  quantize_image:
-    description: 'This option is deprecated and will be removed in the future. Please use image_color_quantization_target instead.'
-    required: false
-    default: ''
   # Action options
   path:
     description: 'Relative path from the repository root to the pack directory.'
     required: false
     default: '.'
   system_id:
-    description: 'The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what are you doing, it is recommended to leave this option unset, as doing so will let the action generate and use a suitable system identifier automatically.'
+    description: 'The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what are you doing, it is recommended to leave this parameter unset, as doing so will let the action generate and use a suitable system identifier automatically.'
     required: false
     default: ''
   packsquash_version:
@@ -34,11 +17,11 @@ inputs:
     # TODO: change to v0.3.0 when it gets released
     default: 'latest'
   options_file:
-    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at /opt/action/pack.zip to upload it as an artifact.'
+    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at /opt/action/pack.zip.'
     required: false
     default: ''
   github_token:
-    description: 'The GitHub API authentication token that will be used for operations that require authentication.'
+    description: 'The GitHub API authentication token that will be used for operations that may require authentication. A token is required to download the "latest" PackSquash version, or for the action to work in private repositories.'
     required: false
     default: ''
   action_cache_revision:
@@ -47,7 +30,7 @@ inputs:
     default: ''
   # Inputs that set PackSquash options
   recompress_compressed_files:
-    description: 'If true, this option makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
+    description: 'If true, this parameter makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
     required: false
     default: 'false'
   zip_compression_iterations:
@@ -55,11 +38,11 @@ inputs:
     required: false
     default: '20'
   work_around_grayscale_textures_gamma_miscorrection_quirk:
-    description: 'This option sets the whether a quirk with grayscale textures will be worked around. You should only change the default value of this option if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
+    description: 'This parameter sets the whether a quirk with grayscale textures will be worked around. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
     default: 'false'
   work_around_java8_zip_obfuscation_quirks:
-    description: 'This option sets the whether a quirk with how older Minecraft versions deal with ZIP file protection will be worked around. You should only change the default value of this option if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
+    description: 'This parameter sets the whether a quirk with how older Minecraft versions deal with ZIP file protection will be worked around. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
     default: 'false'
   allow_optifine_mod:
@@ -75,47 +58,47 @@ inputs:
     required: false
     default: 'true'
   zip_spec_conformance_level:
-    description: 'This option lets you choose the ZIP specification conformance level that is most suitable to your pack and situation. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_spec_conformance_level for more information.'
+    description: 'This parameter lets you choose the ZIP specification conformance level that is most suitable to your pack and situation. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_spec_conformance_level for more information.'
     required: false
     default: 'high'
   size_increasing_zip_obfuscation:
-    description: 'If zip_spec_conformance_level is set to disregard, enabling this option will add more protections against inspecting, extracting or tampering with the generated ZIP file that will slightly increase its size.'
+    description: 'If zip_spec_conformance_level is set to disregard, enabling this parameter will add more protections against inspecting, extracting or tampering with the generated ZIP file that will slightly increase its size.'
     required: false
     default: 'false'
   percentage_of_zip_structures_tuned_for_obfuscation_discretion:
-    description: 'If zip_spec_conformance_level is set to disregard, this option sets the approximate probability for each internal generated ZIP file structure to be stored in a way that favors additional discretion of the fact that protection techniques were used, as opposed to a way that favors increased compressibility of the result ZIP file. '
+    description: 'If zip_spec_conformance_level is set to disregard, this parameter sets the approximate probability for each internal generated ZIP file structure to be stored in a way that favors additional discretion of the fact that protection techniques were used, as opposed to a way that favors increased compressibility of the result ZIP file.'
     required: false
     default: '0'
   never_store_squash_times:
-    description: 'This option controls whether PackSquash will refuse to store the metadata needed to reuse previously generated ZIP files, and likewise not expect such data if the output ZIP file already exists, thus not reusing its contents to speed up the process in any way, no matter what the zip_spec_conformance_level is.'
+    description: 'This parameter controls whether PackSquash will refuse to store the metadata needed to reuse previously generated ZIP files, and likewise not expect such data if the output ZIP file already exists, thus not reusing its contents to speed up the process in any way, no matter what the zip_spec_conformance_level is.'
     required: false
     default: 'false'
   transcode_ogg:
     description: 'When true, Ogg files will be reencoded again, to apply resampling, channel mixing, pitch shifting and bitrate reduction, which may degrade their quality, but commonly saves quite a bit of space.'
     required: false
     default: 'true'
-  sampling_frequency:
+  audio_sampling_frequency:
     description: 'Specifies the sampling frequency (i.e. number of samples per second) to which the input audio files will be resampled, in Hertz (Hz).'
     required: false
     default: '32000'
-  target_pitch:
+  target_audio_pitch:
     description: 'Sets the in-game pitch shift coefficient that will result in the audio files being played back at the original speed, affecting the perceived pitch and tempo.'
     required: false
     default: '1.0'
-  minimum_bitrate:
+  minimum_audio_bitrate:
     description: 'Specifies the minimum bits per second (bps or bit/s) that the Ogg encoder will try to use to represent audio signals in audio files.'
     required: false
     default: '40000'
-  maximum_bitrate:
+  maximum_audio_bitrate:
     description: 'Specifies the maximum bits per second (bps or bit/s) that the Ogg encoder will try to use to represent audio signals in audio files.'
     required: false
     default: '96000'
-  minify_json:
+  minify_json_files:
     description: 'When true, JSON files will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false
     default: 'true'
   delete_bloat_json_keys:
-    description: 'If this option is set to true, PackSquash will delete known-superfluous keys from JSON files, like credits added by pack authoring tools, that are completely ignored by Minecraft.'
+    description: 'If this parameter is set to true, PackSquash will delete known-superfluous keys from JSON files, like credits added by pack authoring tools, that are completely ignored by Minecraft.'
     required: false
     default: 'true'
   image_data_compression_iterations:
@@ -127,18 +110,18 @@ inputs:
     required: false
     default: 'eight_bit_depth'
   maximum_image_width_and_height:
-    description: 'Sets the maximum width and height of the image files that PackSquash will accept without throwing an error.'
+    description: 'Sets the maximum width and height of the image files that PackSquash will accept without throwing an error. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#maximum_width_and_height for more details about the rationale of this option.'
     required: false
     default: '8192'
   skip_image_alpha_optimizations:
-    description: 'If true, this option prevents the color values of completely transparent pixels in image files from being changed in order to achieve better compression.'
+    description: 'If true, this parameter prevents the color values of completely transparent pixels in image files from being changed in order to achieve better compression.'
     required: false
     default: 'false'
   minify_shaders:
     description: 'When true, the source code of shaders will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false
     default: 'true'
-  minify_properties:
+  minify_properties_files:
     description: 'When true, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false
     default: 'true'

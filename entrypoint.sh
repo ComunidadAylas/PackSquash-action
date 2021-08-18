@@ -7,15 +7,6 @@ readonly ACTION_WORKING_DIR='/opt/action'
 # Useful functions
 # ----------------
 
-# Shows a warning message indicating that an option is deprecated, and that
-# another one should be used instead.
-# Parameters:
-# $1: deprecated option name
-# $2: substitute option name
-show_deprecated_warning() {
-    printf '::warning::The %s option is deprecated and will be removed in the future. Please use %s instead.\n' "$1" "$2"
-}
-
 # Downloads the specified PackSquash release executable.
 # Parameters:
 # $1: release tag
@@ -81,44 +72,6 @@ fi
 # Make sure our working directory is outside the repository, so any
 # temporary file we create does not pollute it
 cd "$ACTION_WORKING_DIR"
-
-# ------------------------
-# Handle deprecated inputs
-# ------------------------
-
-echo '::debug::Handling deprecated inputs'
-
-if [ -n "$INPUT_SETTINGS_FILE" ]; then
-    show_deprecated_warning 'settings_file' 'options_file'
-
-    INPUT_OPTIONS_FILE="$INPUT_SETTINGS_FILE"
-fi
-
-if [ -n "$INPUT_STRICT_ZIP_SPEC_COMPLIANCE" ]; then
-    show_deprecated_warning 'strict_zip_spec_compliance' 'zip_spec_conformance_level'
-
-    if [ "$INPUT_STRICT_ZIP_SPEC_COMPLIANCE" = 'true' ]; then
-        INPUT_ZIP_SPEC_CONFORMANCE_LEVEL='high'
-    else
-        INPUT_ZIP_SPEC_CONFORMANCE_LEVEL='disregard'
-    fi
-fi
-
-if [ -n "$INPUT_COMPRESS_ALREADY_COMPRESSED_FILES" ]; then
-    show_deprecated_warning 'compress_already_compressed_files' 'recompress_compressed_files'
-
-    INPUT_RECOMPRESS_COMPRESSED_FILES="$INPUT_COMPRESS_ALREADY_COMPRESSED_FILES"
-fi
-
-if [ -n "$INPUT_QUANTIZE_IMAGE" ]; then
-    show_deprecated_warning 'quantize_image' 'image_color_quantization_target'
-
-    if [ "$INPUT_QUANTIZE_IMAGE" = 'true' ]; then
-        INPUT_IMAGE_COLOR_QUANTIZATION_TARGET='eight_bit_depth'
-    else
-        INPUT_IMAGE_COLOR_QUANTIZATION_TARGET='none'
-    fi
-fi
 
 # ----------------------------------------------------------
 # Handle options that need to be converted to another format
@@ -219,13 +172,13 @@ output_file_path = '$ACTION_WORKING_DIR/pack.zip'
 
 ['**/*.{og[ga],mp3,wav,flac}']
 transcode_ogg = $INPUT_TRANSCODE_OGG
-sampling_frequency = $INPUT_SAMPLING_FREQUENCY
-minimum_bitrate = $INPUT_MINIMUM_BITRATE
-maximum_bitrate = $INPUT_MAXIMUM_BITRATE
-target_pitch = $INPUT_TARGET_PITCH
+sampling_frequency = $INPUT_AUDIO_SAMPLING_FREQUENCY
+minimum_bitrate = $INPUT_MINIMUM_AUDIO_BITRATE
+maximum_bitrate = $INPUT_MAXIMUM_AUDIO_BITRATE
+target_pitch = $INPUT_TARGET_AUDIO_PITCH
 
-['**/*.{json,jsonc}']
-minify_json = $INPUT_MINIFY_JSON
+['**/*.{json,jsonc,mcmeta}']
+minify_json = $INPUT_MINIFY_JSON_FILES
 delete_bloat_keys = $INPUT_DELETE_BLOAT_JSON_KEYS
 
 ['**/*.png']
@@ -238,7 +191,7 @@ skip_alpha_optimizations = $INPUT_SKIP_IMAGE_ALPHA_OPTIMIZATIONS
 minify_shader = $INPUT_MINIFY_SHADERS
 
 ['**/*.properties']
-minify_properties = $INPUT_MINIFY_PROPERTIES
+minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
 OPTIONS_FILE
 else
     cp "$GITHUB_WORKSPACE/$INPUT_OPTIONS_FILE" packsquash-options.toml
@@ -250,7 +203,8 @@ echo '::endgroup::'
 
 # Calculate the options file hash, so we can discard the cache if the options
 # are not the same. We consider that collisions do not happen; if they do,
-# they should be easily fixable by tweaking the options file a bit anyway
+# they should be easily fixable by tweaking the options file a bit or chaging
+# the cache version
 options_file_hash=$(md5sum packsquash-options.toml)
 options_file_hash="${options_file_hash%% *}"
 
@@ -306,7 +260,7 @@ set -e
 echo '::endgroup::'
 case $packsquash_exit_code in
     "$UNUSABLE_CACHE_ERROR_CODE")
-        echo '::warning::PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it and trying again.'
+        echo '::warning::PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.'
 
         rm -f "$ACTION_WORKING_DIR"/pack.zip
 
