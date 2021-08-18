@@ -59,6 +59,25 @@ current_workflow_id() {
         | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
 }
 
+# Runs PackSquash with the options file available at a conventional path. An action log
+# group will be created, and a problem matcher associated with the PackSquash output,
+# to highlight any potential errors or warnings that may need user attention.
+# Parameters:
+# $1: a descriptive string to append to the action log group that will
+# contain PackSquash output.
+run_packsquash() {
+    echo "::group::PackSquash output${1:+ ($1)}"
+    echo '::add-matcher::packsquash-problem-matcher.json'
+    echo '! Testing error matcher'
+    echo '* Testing warning matcher'
+    "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
+    packsquash_exit_code=$?
+    echo '::remove-matcher owner=packsquash-error::'
+    echo '::remove-matcher owner=packsquash-warning::'
+    echo '::endgroup::'
+    return $packsquash_exit_code
+}
+
 # ----------------
 # Check invariants
 # ----------------
@@ -251,22 +270,18 @@ if [ -n "${cache_may_be_used+x}" ]; then
     "$ACTION_WORKING_DIR"/git-set-file-times.pl
 fi
 
-# Run PackSquash
-echo '::group::PackSquash output'
+# Finally, use PackSquash to optimize the pack
 set +e
-"$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
+run_packsquash
 packsquash_exit_code=$?
 set -e
-echo '::endgroup::'
 case $packsquash_exit_code in
     "$UNUSABLE_CACHE_ERROR_CODE")
         echo '::warning::PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.'
 
         rm -f "$ACTION_WORKING_DIR"/pack.zip
 
-        echo '::group::PackSquash output (discarded previous ZIP file)'
-        "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
-        echo '::endgroup::'
+        run_packsquash 'discarded previous ZIP file'
     ;;
     0) ;;
     *)
