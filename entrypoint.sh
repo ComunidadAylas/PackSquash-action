@@ -68,8 +68,6 @@ current_workflow_id() {
 run_packsquash() {
     echo "::group::PackSquash output${1:+ ($1)}"
     echo '::add-matcher::packsquash-problem-matcher.json'
-    echo '! Testing error matcher'
-    echo '* Testing warning matcher'
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
     packsquash_exit_code=$?
     echo '::remove-matcher owner=packsquash-error::'
@@ -78,15 +76,9 @@ run_packsquash() {
     return $packsquash_exit_code
 }
 
-# ----------------
-# Check invariants
-# ----------------
-
-echo "::debug::Checking that the repository checkout at $GITHUB_WORKSPACE is suitable"
-if [ "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-shallow-repository)" = 'true' ]; then
-    echo '::error::The full commit history of the repository must be checked out for this action to work. Please set the fetch-depth parameter of actions/checkout to 0.'
-    exit 1
-fi
+# -----------------
+# Set preconditions
+# -----------------
 
 # Make sure our working directory is outside the repository, so any
 # temporary file we create does not pollute it
@@ -131,6 +123,16 @@ if
 then
     echo '::debug::Setting cache may be used flag'
     cache_may_be_used=
+fi
+
+# If caching may be used (more precisely, the git-set-file-times.pl would run), check that the repo
+# is not a shallow one, because if it is we will be missing file modification time data
+if [ -n "${cache_may_be_used+x}" ]; then
+    echo "::debug::Checking that the repository checkout at $GITHUB_WORKSPACE is not shallow"
+    if [ "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-shallow-repository)" = 'true' ]; then
+        echo '::error::The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.'
+        exit 1
+    fi
 fi
 
 # ----------------------------------------------
