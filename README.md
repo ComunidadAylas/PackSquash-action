@@ -45,7 +45,7 @@ The parameters in this section are used to automatically generate an [options fi
 | [`minify_properties_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_properties) | `true` | When `true`, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings. |
 
 
-### ‼️ Advanced action parameters
+### Advanced action parameters
 
 The action also supports additional parameters that might come in handy for more specific use cases. It shouldn't be necessary to set them for most circumstances, though.
 
