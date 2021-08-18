@@ -63,8 +63,8 @@ current_workflow_id() {
 # group will be created, and a problem matcher associated with the PackSquash output,
 # to highlight any potential errors or warnings that may need user attention.
 # Parameters:
-# $1: a descriptive string to append to the action log group that will
-# contain PackSquash output.
+# $1: a descriptive string to append to the action log group that will contain
+# PackSquash output.
 run_packsquash() {
     echo "::group::PackSquash output${1:+ ($1)}"
     echo '::add-matcher::packsquash-problem-matcher.json'
@@ -125,8 +125,8 @@ then
     cache_may_be_used=
 fi
 
-# If caching may be used (more precisely, the git-set-file-times.pl would run), check that the repo
-# is not a shallow one, because if it is we will be missing file modification time data
+# If caching may be used (more precisely, the git-set-file-times.pl script would be executed),
+# check that the repo is not a shallow one, because if it is we will be missing time data
 if [ -n "${cache_may_be_used+x}" ]; then
     echo "::debug::Checking that the repository checkout at $GITHUB_WORKSPACE is not shallow"
     if [ "$(git -C "$GITHUB_WORKSPACE" rev-parse --is-shallow-repository)" = 'true' ]; then
