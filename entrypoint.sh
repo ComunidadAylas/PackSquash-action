@@ -98,14 +98,14 @@ ALLOW_MODS="$ALLOW_MODS ]"
 
 # work_around_minecraft_quirks
 WORK_AROUND_MINECRAFT_QUIRKS='[ '
-if [ "$INPUT_WORK_AROUND_GRAYSCALE_TEXTURES_GAMMA_MISCORRECTION_QUIRK" = 'true' ]; then
-    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS'grayscale_textures_gamma_miscorrection'"
-    echo '::debug::Adding grayscale_textures_gamma_miscorrection quirk'
+if [ "$INPUT_WORK_AROUND_GRAYSCALE_IMAGES_GAMMA_MISCORRECTION_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS'grayscale_images_gamma_miscorrection'"
+    echo '::debug::Adding grayscale_images_gamma_miscorrection quirk'
     minecraft_quirk_added=
 fi
-if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_OBFUSCATION_QUIRKS" = 'true' ]; then
-    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'java8_zip_obfuscation_quirks'"
-    echo '::debug::Adding java8_zip_obfuscation_quirks quirk'
+if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_PARSING_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'java8_zip_parsing'"
+    echo '::debug::Adding java8_zip_parsing quirk'
     minecraft_quirk_added=
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
@@ -145,7 +145,7 @@ case "$INPUT_PACKSQUASH_VERSION" in
     'latest')
         download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 'PackSquash executable (Linux, x64, glibc)'
     ;;
-    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1')
+    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1')
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
             echo '::error::Using older PackSquash versions without an options file is not supported.'
             exit 1
