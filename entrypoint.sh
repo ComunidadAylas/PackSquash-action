@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+readlink /proc/self/fd/1
+
 readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 
@@ -62,7 +64,7 @@ current_workflow_id() {
         printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
     else
         echo "::error::Could not get the current workflow ID: $(cat /tmp/workflow_id_stderr)"
-        exit 1
+        kill $$
     fi
 }
 
