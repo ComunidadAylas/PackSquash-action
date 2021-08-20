@@ -3,8 +3,8 @@ FROM node:buster
 ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
 
 # Override the working directory. GitHub does not recommend this, but it is
-# needed for npm install to work, and we want to do not touch the GitHub
-# workspace as much as possible.
+# needed for npm install to work, and we want to not touch the GitHub
+# workspace as much as possible, to leave it pristine for any next steps.
 # See: https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
 WORKDIR /opt/action
 
