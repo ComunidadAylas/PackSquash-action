@@ -16,7 +16,7 @@ async function run() {
 run().then(
     (restored_cache_key) => {
         if (restored_cache_key === true) {
-            writeFileSync('/tmp/packsquash_cache_hit', '')
+            writeFileSync('/run/packsquash-cache-hit', '')
         }
     },
     (failure_reason) => {

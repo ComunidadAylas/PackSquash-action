@@ -58,13 +58,13 @@ download_latest_artifact() {
 get_current_workflow_id() {
     if [ -z "${CURRENT_WORKFLOW_ID+x}" ]; then
         response=$(wget${INPUT_GITHUB_TOKEN:+ --header "Authorization: Bearer $INPUT_GITHUB_TOKEN"} -nv -O - \
-            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/run/workflow-id-stderr || true)
 
         if [ -n "$response" ]; then
-            rm -f /tmp/workflow_id_stderr
+            rm -f /run/workflow-id-stderr
             CURRENT_WORKFLOW_ID=$(printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id')
         else
-            echo "::error::Could not get the current workflow ID: $(cat /tmp/workflow_id_stderr)"
+            echo "::error::Could not get the current workflow ID: $(cat /run/workflow-id-stderr)"
             exit 1
         fi
     fi
@@ -363,7 +363,7 @@ echo '::group::Upload generated ZIP file as artifact'
 node actions-artifact-upload.mjs
 echo '::endgroup::'
 
-if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/tmp/packsquash_cache_hit' ]; then
+if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
     node actions-cache.mjs save "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
