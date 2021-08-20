@@ -292,6 +292,8 @@ if [ -n "${cache_may_be_used+x}" ]; then
             "$current_workflow_id" 'Optimized pack' || true
         node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
         echo '::endgroup::'
+    else
+        echo '::debug::Could not get the current workflow ID. It may be the first time this workflow is run.'
     fi
 fi
 
