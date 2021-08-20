@@ -158,7 +158,7 @@ fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
 # Uncomment when needed. GitHub doesn't like newlines that env outputs
-#printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
+printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
 
 # ----------------------
 # Flags based on options
