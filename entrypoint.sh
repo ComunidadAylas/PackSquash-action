@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-readlink /proc/self/fd/1
-
 readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 
@@ -53,18 +51,21 @@ download_latest_artifact() {
     rm -f "$temp_file"
 }
 
-# Gets the workflow ID of the action that is running this container.
+# Gets the workflow ID of the action that is running this container, and stores it at
+# the CURRENT_WORKFLOW_ID variable, if it was not already retrieved.
 # This function has no parameters.
-current_workflow_id() {
-    response=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: token $INPUT_GITHUB_TOKEN'"} -nv -O - \
-        "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
+get_current_workflow_id() {
+    if [ -z "${CURRENT_WORKFLOW_ID+x}" ]; then
+        response=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: token $INPUT_GITHUB_TOKEN'"} -nv -O - \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
 
-    if [ -n "$response" ]; then
-        rm -f /tmp/workflow_id_stderr
-        printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
-    else
-        echo "::error::Could not get the current workflow ID: $(cat /tmp/workflow_id_stderr)"
-        kill $$
+        if [ -n "$response" ]; then
+            rm -f /tmp/workflow_id_stderr
+            CURRENT_WORKFLOW_ID=$(printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id')
+        else
+            echo "::error::Could not get the current workflow ID: $(cat /tmp/workflow_id_stderr)"
+            exit 1
+        fi
     fi
 }
 
@@ -294,8 +295,9 @@ options_file_hash="${options_file_hash%% *}"
 # needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
+    get_current_workflow_id
     download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
-        "$(current_workflow_id)" 'Optimized pack' || true
+        "$CURRENT_WORKFLOW_ID" 'Optimized pack' || true
     node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
 fi
