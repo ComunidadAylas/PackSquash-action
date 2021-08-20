@@ -65,7 +65,7 @@ get_current_workflow_id() {
             CURRENT_WORKFLOW_ID=$(printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id')
         else
             echo "::error::Could not get the current workflow ID: $(cat /run/workflow-id-stderr)"
-            exit 1
+            return 1
         fi
     fi
 }
