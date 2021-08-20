@@ -2,6 +2,16 @@ FROM node:buster
 
 ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
 
+# Make sure the problem matcher is copied to whatever working directory
+# GitHub may expect. GitHub documentation and working experience suggests
+# that both the host and the guest container share the GitHub workspace,
+# which is the default working directory
+COPY packsquash-problem-matcher.json .
+
+# Override the working directory. GitHub does not recommend this, but it is
+# needed for npm install to work, and we want to do not touch the GitHub
+# workspace as much as possible.
+# See: https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#workdir
 WORKDIR /opt/action
 
 # Install packages we need in the entrypoint, and PackSquash dependencies. See:
