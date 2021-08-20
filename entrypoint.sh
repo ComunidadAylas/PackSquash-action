@@ -51,7 +51,8 @@ download_latest_artifact() {
     rm -f "$temp_file"
 }
 
-# Gets the workflow ID of the action that is running this container.
+# Gets the workflow ID of the action that is running this container. This workflow ID will
+# be an empty string if the workflow has not been run yet.
 # This function has no parameters.
 current_workflow_id() {
     wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
@@ -235,13 +236,17 @@ options_file_hash="${options_file_hash%% *}"
 # Restore cache
 # -------------
 
-# Restore ./pack.zip from the previous artifact and ./system_id from the cache if needed
+# Restore ./pack.zip from the previous artifact and ./system_id from the cache if
+# needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
-    echo '::group::Restoring cached data'
-    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
-        "$(current_workflow_id)" 'Optimized pack' || true
-    node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
-    echo '::endgroup::'
+    current_workflow_id=$(current_workflow_id)
+    if [ -n "$current_workflow_id" ]; then
+        echo '::group::Restoring cached data'
+        download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
+            "$current_workflow_id" 'Optimized pack' || true
+        node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+        echo '::endgroup::'
+    fi
 fi
 
 # Only override the system ID if the user didn't set it explicitly
