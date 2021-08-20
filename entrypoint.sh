@@ -67,6 +67,33 @@ current_workflow_id() {
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
+    cat <<PACKSQUASH_PROBLEM_MATCHER > "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json
+{
+    "problemMatcher": [
+        {
+            "owner": "packsquash-error",
+            "severity": "error",
+            "pattern": [
+                {
+                    "regexp": "^! (.+)$",
+                    "message": 1
+                }
+            ]
+        },
+        {
+            "owner": "packsquash-warning",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "^\\* (.+)$",
+                    "message": 1
+                }
+            ]
+        }
+    ]
+}
+PACKSQUASH_PROBLEM_MATCHER
+
     echo "::group::PackSquash output${1:+ ($1)}"
     echo '::add-matcher::packsquash-problem-matcher.json'
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
