@@ -180,8 +180,10 @@ if [ -z "$INPUT_OPTIONS_FILE" ]; then
     cat <<OPTIONS_FILE > packsquash-options.toml
 pack_directory = '$INPUT_PATH'
 skip_pack_icon = $INPUT_SKIP_PACK_ICON
+validate_pack_metadata_file = $INPUT_VALIDATE_PACK_METADATA_FILE
 recompress_compressed_files = $INPUT_RECOMPRESS_COMPRESSED_FILES
 zip_compression_iterations = $INPUT_ZIP_COMPRESSION_ITERATIONS
+automatic_minecraft_quirks_detection = $INPUT_AUTOMATIC_MINECRAFT_QUIRKS_DETECTION
 work_around_minecraft_quirks = $WORK_AROUND_MINECRAFT_QUIRKS
 ignore_system_and_hidden_files = $INPUT_IGNORE_SYSTEM_AND_HIDDEN_FILES
 allow_mods = $ALLOW_MODS

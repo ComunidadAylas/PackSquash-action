@@ -37,6 +37,10 @@ inputs:
     description: 'The number of Zopfli compression iterations that PackSquash will do when compressing a file of magnitude 1 MiB just before it is added to the generated ZIP file. This affects files whose contents are not already compressed, or all files if recompress_compressed_files is enabled.'
     required: false
     default: '20'
+  automatic_minecraft_quirks_detection:
+    description: 'Sets whether PackSquash will automatically deduce an appropriate set of Minecraft quirks that affect how pack files can be optimized, by looking at the pack files, or not. If automatic quirk detection is enabled (set to true), any other parameters for working around specific quirks will be ignored.'
+    required: false
+    default: 'true'
   work_around_grayscale_images_gamma_miscorrection_quirk:
     description: 'This parameter sets whether a quirk with grayscale images will be worked around. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
@@ -53,6 +57,10 @@ inputs:
     description: 'If true, the pack.png file that contains the resource pack icon will not be included in the result ZIP file. As of Minecraft 1.16.3, the icon of server resource packs is not displayed, so this optimization does not have any drawbacks in this case.'
     required: false
     default: 'false'
+  validate_pack_metadata_file:
+    description: 'If true, the pack metadata file, pack.mcmeta, will be parsed and validated for errors. Otherwise, it will not be validated. Validating the pack metadata is usually a good thing, because Minecraft requires it to load a pack.'
+    required: false
+    default: 'true'
   ignore_system_and_hidden_files:
     description: 'If true, PackSquash will skip and not print progress messages for system (i.e. clearly not for use with Minecraft) and hidden (i.e. whose name starts with a dot) files and folders.'
     required: false
