@@ -67,7 +67,7 @@ current_workflow_id() {
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
-    cat <<PACKSQUASH_PROBLEM_MATCHER > "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json
+    cat <<'PACKSQUASH_PROBLEM_MATCHER' > "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json
 {
     "problemMatcher": [
         {
