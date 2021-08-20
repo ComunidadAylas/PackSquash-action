@@ -31,13 +31,13 @@ download_packsquash_release_executable() {
 # $4: name of the artifact to download
 download_latest_artifact() {
     echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
-    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
+    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: token $INPUT_GITHUB_TOKEN'"} -nv -O - \
         "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
         | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     echo "::debug::Getting latest $4 artifact download URL from endpoint"
-    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
+    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: token $INPUT_GITHUB_TOKEN'"} -nv -O - \
         "$latest_artifacts_endpoint" \
         | jq '.artifacts | map(select(.name == "'"$4"'"))' \
         | jq -r '.[0].archive_download_url')
@@ -54,7 +54,7 @@ download_latest_artifact() {
 # Gets the workflow ID of the action that is running this container.
 # This function has no parameters.
 current_workflow_id() {
-    response=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
+    response=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: token $INPUT_GITHUB_TOKEN'"} -nv -O - \
         "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
 
     if [ -n "$response" ]; then
@@ -76,7 +76,7 @@ run_packsquash() {
     # Make a backup of any packsquash-problem-matcher.json file that may be in the workspace
     mv -f \
         "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json \
-        /tmp/packsquash-problem-matcher.json.back \
+        /tmp/packsquash-problem-matcher.json.bak \
         >/dev/null 2>&1 || true
 
     # Create a packsquash-problem-matcher.json file that will be in the GitHub workspace
@@ -122,7 +122,7 @@ PACKSQUASH_PROBLEM_MATCHER
     # workspace if possible
     rm -f "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json >/dev/null 2>&1 || true
     mv -f \
-        /tmp/packsquash-problem-matcher.json.back \
+        /tmp/packsquash-problem-matcher.json.bak \
         "$GITHUB_WORKSPACE"/packsquash-problem-matcher.json \
         >/dev/null 2>&1 || true
 
