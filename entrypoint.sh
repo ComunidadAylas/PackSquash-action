@@ -31,13 +31,13 @@ download_packsquash_release_executable() {
 # $4: name of the artifact to download
 download_latest_artifact() {
     echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
-    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
+    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
         "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
         | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     echo "::debug::Getting latest $4 artifact download URL from endpoint"
-    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
+    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
         "$latest_artifacts_endpoint" \
         | jq '.artifacts | map(select(.name == "'"$4"'"))' \
         | jq -r '.[0].archive_download_url')
@@ -51,13 +51,19 @@ download_latest_artifact() {
     rm -f "$temp_file"
 }
 
-# Gets the workflow ID of the action that is running this container. This workflow ID will
-# be an empty string if the workflow has not been run yet.
+# Gets the workflow ID of the action that is running this container.
 # This function has no parameters.
 current_workflow_id() {
-    wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -q -O - \
-        "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" \
-        | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
+    response=$(wget${INPUT_GITHUB_TOKEN:+ --header=\'Authorization: token $INPUT_GITHUB_TOKEN\'} -nv -O - \
+        "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
+
+    if [ -n "$response" ]; then
+        rm -f /tmp/workflow_id_stderr
+        printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id'
+    else
+        echo "::error::Could not get the current workflow ID: $(cat /tmp/workflow_id_stderr)"
+        exit 1
+    fi
 }
 
 # Runs PackSquash with the options file available at a conventional path. An action log
@@ -285,16 +291,11 @@ options_file_hash="${options_file_hash%% *}"
 # Restore ./pack.zip from the previous artifact and ./system_id from the cache if
 # needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
-    current_workflow_id=$(current_workflow_id)
-    if [ -n "$current_workflow_id" ]; then
-        echo '::group::Restoring cached data'
-        download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
-            "$current_workflow_id" 'Optimized pack' || true
-        node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
-        echo '::endgroup::'
-    else
-        echo '::debug::Could not get the current workflow ID. It may be the first time this workflow is run.'
-    fi
+    echo '::group::Restoring cached data'
+    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
+        "$(current_workflow_id)" 'Optimized pack' || true
+    node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+    echo '::endgroup::'
 fi
 
 # Only override the system ID if the user didn't set it explicitly
