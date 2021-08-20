@@ -33,13 +33,13 @@ download_latest_artifact() {
     echo "Downloading latest $4 artifact"
 
     echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
-    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: Bearer $INPUT_GITHUB_TOKEN'"} -nv -O - \
+    latest_artifacts_endpoint=$(wget${INPUT_GITHUB_TOKEN:+ --header "Authorization: Bearer $INPUT_GITHUB_TOKEN"} -nv -O - \
         "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
         | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     echo "::debug::Getting latest $4 artifact download URL from endpoint"
-    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: Bearer $INPUT_GITHUB_TOKEN'"} -nv -O - \
+    latest_artifact_download_url=$(wget${INPUT_GITHUB_TOKEN:+ --header "Authorization: Bearer $INPUT_GITHUB_TOKEN"} -nv -O - \
         "$latest_artifacts_endpoint" \
         | jq '.artifacts | map(select(.name == "'"$4"'"))' \
         | jq -r '.[0].archive_download_url')
@@ -57,11 +57,8 @@ download_latest_artifact() {
 # This function has no parameters.
 get_current_workflow_id() {
     if [ -z "${CURRENT_WORKFLOW_ID+x}" ]; then
-        set -xv
-        echo "$INPUT_GITHUB_TOKEN" | awk -vFS="" -vOFS="" '{$1=$1" "}1'
-        response=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: Bearer $INPUT_GITHUB_TOKEN'"} -nv -O - \
+        response=$(wget${INPUT_GITHUB_TOKEN:+ --header "Authorization: Bearer $INPUT_GITHUB_TOKEN"} -nv -O - \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
-        set +xv
 
         if [ -n "$response" ]; then
             rm -f /tmp/workflow_id_stderr

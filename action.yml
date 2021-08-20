@@ -21,7 +21,7 @@ inputs:
     required: false
     default: ''
   github_token:
-    description: 'The GitHub API authentication token that will be used for operations that may require authentication. A token is required to download the "latest" PackSquash version, or for the action to work in private repositories.'
+    description: 'The GitHub API authentication token that will be used for operations that may require authentication. A token is required to download the "latest" PackSquash version.'
     required: false
     default: ${{ github.token }}
   action_cache_revision:
