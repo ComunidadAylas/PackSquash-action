@@ -57,8 +57,11 @@ download_latest_artifact() {
 # This function has no parameters.
 get_current_workflow_id() {
     if [ -z "${CURRENT_WORKFLOW_ID+x}" ]; then
+        set -xv
+        echo "$INPUT_GITHUB_TOKEN" | awk -vFS="" -vOFS="" '{$1=$1" "}1'
         response=$(wget${INPUT_GITHUB_TOKEN:+ --header="'Authorization: Bearer $INPUT_GITHUB_TOKEN'"} -nv -O - \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/tmp/workflow_id_stderr || true)
+        set +xv
 
         if [ -n "$response" ]; then
             rm -f /tmp/workflow_id_stderr
