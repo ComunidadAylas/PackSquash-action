@@ -11,7 +11,7 @@ These parameters are specific to the action, and the only ones you may need to s
 | Parameter | Default value | Description |
 |---|---|---|
 | `path` | `.` (repository root) | Relative path from the repository root to the pack directory. |
-| `github_token` | `${{ github.token }}` | The GitHub API authentication token that will be used for operations that may require authentication. A token is required to download the `latest` PackSquash version. |
+| `github_token` | `${{ secrets.GITHUB_TOKEN }}` | The GitHub API authentication token that will be used for operations that may require authentication. A token is required to download the `latest` PackSquash version. |
 
 ### Action parameters that set PackSquash options
 
