@@ -1,11 +1,11 @@
 import { writeFileSync } from 'fs'
 import { saveCache, restoreCache } from '@actions/cache'
 
-const cached_file_paths = ['system_id']
-const cache_key = `packsquash-${process.argv[3]}-0-${process.argv[4]}`
+const cached_file_paths = [process.argv[2]]
+const cache_key = `packsquash-${process.argv[4]}-0-${process.argv[5]}`
 
 async function run() {
-    if (process.argv[2] === 'save') {
+    if (process.argv[3] === 'save') {
         await saveCache(cached_file_paths, cache_key)
     } else {
         return await restoreCache(cached_file_paths, cache_key, [cache_key]) !== undefined

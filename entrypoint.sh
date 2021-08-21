@@ -2,6 +2,8 @@
 
 readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
+readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
+readonly PACK_ZIP_ARTIFACT_NAME='Optimized pack'
 
 # ----------------
 # Useful functions
@@ -250,7 +252,7 @@ zip_spec_conformance_level = '$INPUT_ZIP_SPEC_CONFORMANCE_LEVEL'
 size_increasing_zip_obfuscation = $INPUT_SIZE_INCREASING_ZIP_OBFUSCATION
 percentage_of_zip_structures_tuned_for_obfuscation_discretion = $INPUT_PERCENTAGE_OF_ZIP_STRUCTURES_TUNED_FOR_OBFUSCATION_DISCRETION
 never_store_squash_times = $INPUT_NEVER_STORE_SQUASH_TIMES
-output_file_path = '$ACTION_WORKING_DIR/pack.zip'
+output_file_path = '$PACK_ZIP_PATH'
 
 ['**/*.{og[ga],mp3,wav,flac}']
 transcode_ogg = $INPUT_TRANSCODE_OGG
@@ -294,14 +296,15 @@ options_file_hash="${options_file_hash%% *}"
 # Restore cache
 # -------------
 
-# Restore ./pack.zip from the previous artifact and ./system_id from the cache if
+# Restore the pack ZIP from the previous artifact and ./system_id from the cache if
 # needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     get_current_workflow_id
     download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
-        "$CURRENT_WORKFLOW_ID" 'Optimized pack' || true
-    node actions-cache.mjs restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+        "$CURRENT_WORKFLOW_ID" "$PACK_ZIP_ARTIFACT_NAME" || true
+    mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
+    node actions-cache.mjs 'system_id' restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
 fi
 
@@ -344,7 +347,7 @@ case $packsquash_exit_code in
     "$UNUSABLE_CACHE_ERROR_CODE")
         echo '::warning::PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.'
 
-        rm -f "$ACTION_WORKING_DIR"/pack.zip
+        rm -f "$PACK_ZIP_PATH"
 
         run_packsquash 'discarded previous ZIP file'
     ;;
@@ -362,12 +365,12 @@ esac
 cd "$ACTION_WORKING_DIR"
 
 echo '::group::Upload generated ZIP file as artifact'
-node actions-artifact-upload.mjs
+node actions-artifact-upload.mjs "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$PACK_ZIP_ARTIFACT_NAME"
 echo '::endgroup::'
 
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    node actions-cache.mjs save "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+    node actions-cache.mjs 'system_id' save "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
 fi

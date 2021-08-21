@@ -1,12 +1,12 @@
 import { create } from '@actions/artifact'
 
-const artifact_name = 'Optimized pack'
-const pack_zip = [`${process.cwd()}/pack.zip`]
-const pack_zip_directory = process.cwd()
+const artifact_name = process.argv[4]
+const artifact_file = [process.argv[3]]
+const artifact_file_directory = process.argv[2]
 
 async function run() {
     const upload_result = await create()
-        .uploadArtifact(artifact_name, pack_zip, pack_zip_directory)
+        .uploadArtifact(artifact_name, artifact_file, artifact_file_directory)
 
     // Set an error exit code if no artifact is to be uploaded, or we
     // failed to upload it
