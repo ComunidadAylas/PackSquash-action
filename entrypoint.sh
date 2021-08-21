@@ -77,11 +77,19 @@ get_current_workflow_id() {
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
-    # Create a packsquash-problem-matcher.json file that will be in the GitHub workspace
+    readonly PROBLEM_MATCHER_FILE_NAME=packsquash-problem-matcher.json.tmp
+
+    # Make a backup of any problem matcher file that may be in the workspace
+    mv -f \
+        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
+        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
+        >/dev/null 2>&1 || true
+
+    # Create a problem matcher definition file that will be in the GitHub workspace
     # directory, which is shared with the host, where the runner expects to find problem
     # matchers. Idea from:
     # https://github.community/t/problem-matcher-not-found-in-docker-action/16814/2
-    cat <<'PACKSQUASH_PROBLEM_MATCHER' > "$GITHUB_WORKSPACE"/../packsquash-problem-matcher.json
+    cat <<'PACKSQUASH_PROBLEM_MATCHER' > "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME"
 {
     "problemMatcher": [
         {
@@ -109,12 +117,20 @@ run_packsquash() {
 PACKSQUASH_PROBLEM_MATCHER
 
     echo "::group::PackSquash output${1:+ ($1)}"
-    echo '::add-matcher::../packsquash-problem-matcher.json'
+    echo "::add-matcher::$PROBLEM_MATCHER_FILE_NAME"
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
     packsquash_exit_code=$?
     echo '::remove-matcher owner=packsquash-error::'
     echo '::remove-matcher owner=packsquash-warning::'
     echo '::endgroup::'
+
+    # Restore a backup of a problem matcher definition file that may be in the
+    # workspace if possible
+    rm -f "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" >/dev/null 2>&1 || true
+    mv -f \
+        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
+        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
+        >/dev/null 2>&1 || true
 
     return $packsquash_exit_code
 }
