@@ -4,6 +4,7 @@ readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
 readonly PACK_ZIP_ARTIFACT_NAME='Optimized pack'
+readonly PROBLEM_MATCHER_FILE_NAME=packsquash-problem-matcher.json.tmp
 
 # ----------------
 # Useful functions
@@ -79,8 +80,6 @@ get_current_workflow_id() {
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
-    readonly PROBLEM_MATCHER_FILE_NAME=packsquash-problem-matcher.json.tmp
-
     # Make a backup of any problem matcher file that may be in the workspace
     mv -f \
         "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
