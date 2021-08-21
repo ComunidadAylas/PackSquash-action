@@ -99,7 +99,7 @@ run_packsquash() {
             "severity": "error",
             "pattern": [
                 {
-                    "regexp": "^! (.+)$",
+                    "regexp": "^! ((?!Invalid stick parity bit).)+$",
                     "message": 1
                 }
             ]
