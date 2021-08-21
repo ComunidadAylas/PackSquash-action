@@ -145,6 +145,9 @@ PACKSQUASH_PROBLEM_MATCHER
 # temporary file we create does not pollute it
 cd "$ACTION_WORKING_DIR"
 
+# Make sure the directory where we will put the generated pack exists
+mkdir -p "${PACK_ZIP_PATH%/*}"
+
 # ----------------------------------------------------------
 # Handle options that need to be converted to another format
 # ----------------------------------------------------------
