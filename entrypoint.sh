@@ -118,6 +118,10 @@ run_packsquash() {
 }
 PACKSQUASH_PROBLEM_MATCHER
 
+    # Try to prevent the host runner not finding the problem matcher file sometimes by
+    # ensuring the problem matcher file write is persisted to the filesystem
+    sync
+
     echo "::group::PackSquash output${1:+ ($1)}"
     echo "::add-matcher::$PROBLEM_MATCHER_FILE_NAME"
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
