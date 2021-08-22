@@ -1,6 +1,6 @@
 # PackSquash-action [![Latest version](https://img.shields.io/github/v/release/ComunidadAylas/PackSquash-action?label=Latest%20version)](https://github.com/ComunidadAylas/PackSquash-action/releases/latest) [![Uses PackSquash version](https://img.shields.io/badge/Uses%20PackSquash%20version-v0.3.0-red)](https://github.com/ComunidadAylas/PackSquash/releases/tag/v0.3.0)
 
-Official action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
+Official action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
 
 ## 📝 Usage
 
