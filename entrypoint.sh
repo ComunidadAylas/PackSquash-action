@@ -119,7 +119,7 @@ PACKSQUASH_PROBLEM_MATCHER
 
     # Try to prevent the host runner not finding the problem matcher file sometimes by
     # ensuring the problem matcher file write is persisted to the filesystem
-    sync
+    sync "$PROBLEM_MATCHER_FILE_NAME"
 
     # After making sure that the problem matcher file is visible for the runner, tell it
     # to add the matchers it contains
