@@ -4,7 +4,7 @@ readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
 readonly PACK_ZIP_ARTIFACT_NAME='Optimized pack'
-readonly PROBLEM_MATCHER_FILE_NAME=packsquash-problem-matcher.json.tmp
+readonly PROBLEM_MATCHER_FILE_NAME='packsquash-problem-matcher.json'
 
 # ----------------
 # Useful functions
@@ -121,21 +121,26 @@ PACKSQUASH_PROBLEM_MATCHER
     # ensuring the problem matcher file write is persisted to the filesystem
     sync
 
-    echo "::group::PackSquash output${1:+ ($1)}"
+    # After making sure that the problem matcher file is visible for the runner, tell it
+    # to add the matchers it contains
     echo "::add-matcher::$PROBLEM_MATCHER_FILE_NAME"
-    "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
-    packsquash_exit_code=$?
-    echo '::remove-matcher owner=packsquash-error::'
-    echo '::remove-matcher owner=packsquash-warning::'
-    echo '::endgroup::'
 
-    # Restore a backup of a problem matcher definition file that may be in the
-    # workspace if possible
+    # Cleanup the temporary problem matcher file before PackSquash runs, so nothing else
+    # gets to see it. Restore a backup of a problem matcher definition file that may be
+    # in the workspace if possible
     rm -f "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" >/dev/null 2>&1 || true
     mv -f \
         /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
         "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
         >/dev/null 2>&1 || true
+
+    echo "::group::PackSquash output${1:+ ($1)}"
+    "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
+    packsquash_exit_code=$?
+    echo '::endgroup::'
+
+    echo '::remove-matcher owner=packsquash-error::'
+    echo '::remove-matcher owner=packsquash-warning::'
 
     return $packsquash_exit_code
 }
