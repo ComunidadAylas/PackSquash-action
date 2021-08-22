@@ -76,7 +76,7 @@ jobs:
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@master
+        uses: ComunidadAylas/PackSquash-action@v2
         with:
           path: pack
 ```
