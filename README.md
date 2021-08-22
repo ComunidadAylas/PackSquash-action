@@ -11,7 +11,7 @@ These parameters are specific to the action, and the only ones you may need to s
 | Parameter | Default value | Description |
 |---|---|---|
 | `path` | `.` (repository root) | Relative path from the repository root to the pack directory. |
-| `github_token` | `${{ github.token }}` | The GitHub API authentication token that will be used for operations that may require authentication. Documentation about the default token is available [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow). |
+| `token` | `${{ github.token }}` | The GitHub API authentication token that will be used for operations that may require authentication. Documentation about the default token is available [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow). |
 
 ### Action parameters that set PackSquash options
 
@@ -60,7 +60,7 @@ The action also supports additional parameters that might come in handy for more
 
 ## ⚙️ Example
 
-This GitHub Actions workflow file uses this action to optimize the resource pack contained in the `pack` directory of the repository (if your pack is at the root of the repository, you may change that path to `.`). It runs for every push to the repository, so a ZIP file with the optimized resource pack will be generated for any change. `github_token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories. The generated optimized resource pack file is uploaded as an artifact that can be downloaded later.
+This GitHub Actions workflow file uses this action to optimize the resource pack contained in the `pack` directory of the repository (if your pack is at the root of the repository, you may change that path to `.`). It runs for every push to the repository, so a ZIP file with the optimized resource pack will be generated for any change. `token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories. The generated optimized resource pack file is uploaded as an artifact that can be downloaded later.
 
 ##### `.github/workflows/packsquash.yml`
 ```yaml
