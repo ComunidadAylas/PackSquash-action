@@ -9,6 +9,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@master
+        uses: ./ # Uses an action in the root directory
         with:
           path: test/empty_resource_pack
