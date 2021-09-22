@@ -122,7 +122,8 @@ PACKSQUASH_PROBLEM_MATCHER
     # This is not always enough because the system call is not honoured as we expect
     # (GitHub runner bug?), so let's also wait a bit before continuing
     sync "$PROBLEM_MATCHER_FILE_NAME"
-    sleep 1
+    echo 'Please check if the problem matcher file is created'
+    sleep 60
 
     # After making sure that the problem matcher file is visible for the runner, tell it
     # to add the matchers it contains
