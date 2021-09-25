@@ -1,0 +1,24 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "packsquash-error",
+            "severity": "error",
+            "pattern": [
+                {
+                    "regexp": "^! ((?!Invalid stick parity bit).)+$",
+                    "message": 1
+                }
+            ]
+        },
+        {
+            "owner": "packsquash-warning",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "^\\* (.+)$",
+                    "message": 1
+                }
+            ]
+        }
+    ]
+}

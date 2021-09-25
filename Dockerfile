@@ -17,6 +17,9 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/* \
  && npm install --prefix /opt/action @actions/cache @actions/artifact
 
-COPY git-set-file-times.pl actions-cache.mjs actions-artifact-upload.mjs entrypoint.sh /opt/action/
+COPY \
+git-set-file-times.pl actions-cache.mjs actions-artifact-upload.mjs \
+packsquash-problem-matcher.json entrypoint.sh \
+/opt/action/
 
 ENTRYPOINT ["/opt/action/entrypoint.sh"]
