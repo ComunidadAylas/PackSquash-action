@@ -86,7 +86,7 @@ run_packsquash() {
     return $packsquash_exit_code
 }
 
-echo "::debug::Value of RUNNER_TEMP: $RUNNER_TEMP"
+echo "::debug::Value of script name: $0"
 
 # -----------------
 # Set preconditions
