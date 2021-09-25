@@ -1,4 +1,4 @@
-FROM node:buster
+FROM node:bullseye
 
 ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
 
