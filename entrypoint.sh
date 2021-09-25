@@ -4,6 +4,7 @@ readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
 readonly PACK_ZIP_ARTIFACT_NAME='Optimized pack'
+readonly PROBLEM_MATCHER_FILE_NAME='packsquash-problem-matcher.json'
 
 # ----------------
 # Useful functions
@@ -73,15 +74,77 @@ get_current_workflow_id() {
 }
 
 # Runs PackSquash with the options file available at a conventional path. An action log
-# group will be created.
+# group will be created, and a problem matcher associated with the PackSquash output,
+# to highlight any potential errors or warnings that may need user attention.
 # Parameters:
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
+    # Make a backup of any problem matcher file that may be in the workspace
+    mv -f \
+        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
+        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
+        >/dev/null 2>&1 || true
+
+    # Create a problem matcher definition file that will be in the GitHub workspace
+    # directory, which is shared with the host, where the runner expects to find problem
+    # matchers. Idea from:
+    # https://github.community/t/problem-matcher-not-found-in-docker-action/16814/2
+    cat <<'PACKSQUASH_PROBLEM_MATCHER' > "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME"
+{
+    "problemMatcher": [
+        {
+            "owner": "packsquash-error",
+            "severity": "error",
+            "pattern": [
+                {
+                    "regexp": "^! ((?!Invalid stick parity bit).)+$",
+                    "message": 1
+                }
+            ]
+        },
+        {
+            "owner": "packsquash-warning",
+            "severity": "warning",
+            "pattern": [
+                {
+                    "regexp": "^\\* (.+)$",
+                    "message": 1
+                }
+            ]
+        }
+    ]
+}
+PACKSQUASH_PROBLEM_MATCHER
+
+    # Try to prevent the host runner not finding the problem matcher file sometimes by
+    # ensuring the problem matcher file write is persisted to the filesystem.
+    # This is not always enough because the system call is not honoured as we expect
+    # (GitHub runner bug?), so let's also wait a bit before continuing
+    sync "$PROBLEM_MATCHER_FILE_NAME"
+    echo 'Please check if the problem matcher file is created'
+    sleep 60
+
+    # After making sure that the problem matcher file is visible for the runner, tell it
+    # to add the matchers it contains
+    echo "::add-matcher::$PROBLEM_MATCHER_FILE_NAME"
+
+    # Cleanup the temporary problem matcher file before PackSquash runs, so nothing else
+    # gets to see it. Restore a backup of a problem matcher definition file that may be
+    # in the workspace if possible
+    rm -f "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" >/dev/null 2>&1 || true
+    mv -f \
+        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
+        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
+        >/dev/null 2>&1 || true
+
     echo "::group::PackSquash output${1:+ ($1)}"
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
     packsquash_exit_code=$?
     echo '::endgroup::'
+
+    echo '::remove-matcher owner=packsquash-error::'
+    echo '::remove-matcher owner=packsquash-warning::'
 
     return $packsquash_exit_code
 }
