@@ -80,59 +80,7 @@ get_current_workflow_id() {
 # $1: a descriptive string to append to the action log group that will contain
 # PackSquash output.
 run_packsquash() {
-    # Make a backup of any problem matcher file that may be in the workspace
-    mv -f \
-        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
-        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
-        >/dev/null 2>&1 || true
-
-    # Create a problem matcher definition file that will be in the GitHub workspace
-    # directory, which is shared with the host, where the runner expects to find problem
-    # matchers. Idea from:
-    # https://github.community/t/problem-matcher-not-found-in-docker-action/16814/2
-    cat <<'PACKSQUASH_PROBLEM_MATCHER' > "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME"
-{
-    "problemMatcher": [
-        {
-            "owner": "packsquash-error",
-            "severity": "error",
-            "pattern": [
-                {
-                    "regexp": "^! ((?!Invalid stick parity bit).)+$",
-                    "message": 1
-                }
-            ]
-        },
-        {
-            "owner": "packsquash-warning",
-            "severity": "warning",
-            "pattern": [
-                {
-                    "regexp": "^\\* (.+)$",
-                    "message": 1
-                }
-            ]
-        }
-    ]
-}
-PACKSQUASH_PROBLEM_MATCHER
-
-    # Try to prevent the host runner not finding the problem matcher file sometimes by
-    # ensuring the problem matcher file write is persisted to the filesystem
-    sync "$PROBLEM_MATCHER_FILE_NAME"
-
-    # After making sure that the problem matcher file is visible for the runner, tell it
-    # to add the matchers it contains
-    echo "::add-matcher::$PROBLEM_MATCHER_FILE_NAME"
-
-    # Cleanup the temporary problem matcher file before PackSquash runs, so nothing else
-    # gets to see it. Restore a backup of a problem matcher definition file that may be
-    # in the workspace if possible
-    rm -f "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" >/dev/null 2>&1 || true
-    mv -f \
-        /tmp/"$PROBLEM_MATCHER_FILE_NAME.bak" \
-        "$GITHUB_WORKSPACE"/"$PROBLEM_MATCHER_FILE_NAME" \
-        >/dev/null 2>&1 || true
+    echo "::add-matcher::$HOME/$PROBLEM_MATCHER_FILE_NAME"
 
     echo "::group::PackSquash output${1:+ ($1)}"
     "$ACTION_WORKING_DIR"/packsquash "$ACTION_WORKING_DIR"/packsquash-options.toml 2>&1
@@ -155,6 +103,19 @@ cd "$ACTION_WORKING_DIR"
 
 # Make sure the directory where we will put the generated pack exists
 mkdir -p "${PACK_ZIP_PATH%/*}"
+
+# Put the problem matcher file we will use in the home directory.
+# This directory is shared with the host runner via a Docker volume (-v
+# option in docker run), and according to the GitHub documentation is meant
+# to contain user-related data, which is close enough. Also, a contributor
+# to the Actions Toolkit repo suggests putting this kind of files there:
+# https://github.com/actions/toolkit/issues/305#issuecomment-585515210
+# Interestingly, $RUNNER_TEMP usually contains this home directory as a
+# subdirectory, but using that or another subdirectory of it is either
+# less appropriate or convenient.
+# Relevant documentation about these shared volumes:
+# https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#file-systems
+mv packsquash-problem-matcher.json "$HOME"
 
 # ----------------------------------------------------------
 # Handle options that need to be converted to another format
