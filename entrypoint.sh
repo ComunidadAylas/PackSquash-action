@@ -174,9 +174,26 @@ fi
 
 echo "::debug::PackSquash version input variable value: $INPUT_PACKSQUASH_VERSION"
 
+machine=$(uname -m)
+
+echo "::debug::Environment of the machine to run: $machine"
+
 case "$INPUT_PACKSQUASH_VERSION" in
     'latest')
-        download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 'PackSquash executable (Linux, x64, glibc)'
+        case "$machine" in
+            'x86_64')
+                asset_name='PackSquash executable (Linux, x64, glibc)'
+            ;;
+            'arm64' | 'aarch64')
+                asset_name='PackSquash executable (Linux, AArch64-ARM64, glibc)'
+            ;;
+            *)
+                echo "::error::Using PackSquash on $machine is not supported."
+                exit 1
+            ;;
+        esac
+
+        download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 "$asset_name"
     ;;
     'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1')
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
@@ -184,8 +201,23 @@ case "$INPUT_PACKSQUASH_VERSION" in
             exit 1
         else
             if [ "$INPUT_PACKSQUASH_VERSION" = 'v0.3.0-rc.1' ]; then
-                asset_name='PackSquash.executable.Linux.x64.glibc.zip'
+                case "$machine" in
+                    'x86_64')
+                        asset_name='PackSquash.executable.Linux.x64.glibc.zip'
+                    ;;
+                    'arm64' | 'aarch64')
+                        asset_name='PackSquash.executable.Linux.AArch64-ARM64.glibc.zip'
+                    ;;
+                    *)
+                        echo "::error::Using PackSquash on $machine is not supported."
+                        exit 1
+                    ;;
+                esac
             else
+                if [ "$machine" != 'x86_64' ]; then
+                    echo "::error::Using older PackSquash versions on $machine is not supported."
+                    exit 1
+                fi
                 asset_name='PackSquash.executable.Linux.zip'
             fi
 
@@ -194,7 +226,20 @@ case "$INPUT_PACKSQUASH_VERSION" in
     ;;
     *)
         # Another release that does not require any special handling
-        download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" 'PackSquash.executable.Linux.x64.glibc.zip'
+        case "$machine" in
+            'x86_64')
+                asset_name='PackSquash.executable.Linux.x64.glibc.zip'
+            ;;
+            'arm64' | 'aarch64')
+                asset_name='PackSquash.executable.Linux.AArch64-ARM64.glibc.zip'
+            ;;
+            *)
+                echo "::error::Using PackSquash on $machine is not supported."
+                exit 1
+            ;;
+        esac
+
+        download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "$asset_name"
     ;;
 esac
 
