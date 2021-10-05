@@ -93,6 +93,19 @@ run_packsquash() {
     return $packsquash_exit_code
 }
 
+# Prints an unsupported machine type error message, hinting some possible solutions to
+# the user, and then aborts the script execution with an error.
+# Parameters:
+# $1: the affected PackSquash version.
+# $2: if not null, hints to use another runner or request support for this machine type.
+# $3: if not null, hints to upgrade to a newer PackSquash version.
+readonly MACHINE_TYPE_ERROR_UNSUPPORTED_HINT='Please use a runner with a supported architecture, or request support for it.'
+readonly MACHINE_TYPE_ERROR_UPGRADE_HINT='A newer version might add support for this architecture.'
+print_unsupported_machine_error() {
+    echo "::error::$1 does not support $machine.${2:+ $MACHINE_TYPE_ERROR_UNSUPPORTED_HINT}${3:+ $MACHINE_TYPE_ERROR_UPGRADE_HINT}"
+    exit 1
+}
+
 # -----------------
 # Set preconditions
 # -----------------
@@ -174,18 +187,51 @@ fi
 
 echo "::debug::PackSquash version input variable value: $INPUT_PACKSQUASH_VERSION"
 
+machine=$(uname -m)
+
+echo "::debug::Container machine type: $machine"
+
 case "$INPUT_PACKSQUASH_VERSION" in
     'latest')
-        download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 'PackSquash executable (Linux, x64, glibc)'
+        case "$machine" in
+            'x86_64')
+                machine_infix='x64'
+            ;;
+            'arm64' | 'aarch64')
+                machine_infix='AArch64-ARM64'
+            ;;
+            *)
+                print_unsupported_machine_error 'The latest PackSquash build' 'y' ''
+            ;;
+        esac
+
+        download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 "PackSquash executable (Linux, $machine_infix, glibc)"
     ;;
     'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1')
+        # Historical releases
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
             echo '::error::Using older PackSquash versions without an options file is not supported.'
             exit 1
         else
             if [ "$INPUT_PACKSQUASH_VERSION" = 'v0.3.0-rc.1' ]; then
-                asset_name='PackSquash.executable.Linux.x64.glibc.zip'
+                case "$machine" in
+                    'x86_64')
+                        machine_infix='x64'
+                    ;;
+                    'arm64' | 'aarch64')
+                        machine_infix='AArch64-ARM64'
+                    ;;
+                    *)
+                        print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
+                    ;;
+                esac
+
+                asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
             else
+                if [ "$machine" != 'x86_64' ]; then
+                    print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
+                fi
+
                 asset_name='PackSquash.executable.Linux.zip'
             fi
 
@@ -193,8 +239,20 @@ case "$INPUT_PACKSQUASH_VERSION" in
         fi
     ;;
     *)
-        # Another release that does not require any special handling
-        download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" 'PackSquash.executable.Linux.x64.glibc.zip'
+        # Current releases
+        case "$machine" in
+            'x86_64')
+                machine_infix='x64'
+            ;;
+            'arm64' | 'aarch64')
+                machine_infix='AArch64-ARM64'
+            ;;
+            *)
+                print_unsupported_machine_error 'PackSquash' 'y' 'y'
+            ;;
+        esac
+
+        download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "PackSquash.executable.Linux.${machine_infix}.glibc.zip"
     ;;
 esac
 
