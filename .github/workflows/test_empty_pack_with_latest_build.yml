@@ -1,0 +1,22 @@
+name: Test - Empty resource pack (latest PackSquash build)
+on:
+  schedule:
+    # Check the action works with the latest PackSquash build every
+    # 2 days. Ideally we should check this when a commit is pushed
+    # to the master branch of the PackSquash repository, but doing
+    # so requires a PAT to send a repository_dispatch dispatch event,
+    # and we do not want to mess with that
+    - cron: '0 12 * * 1,3,5,0'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run PackSquash
+        uses: ./ # Uses an action in the root directory
+        with:
+          packsquash_version: latest
+          path: test/empty_resource_pack
