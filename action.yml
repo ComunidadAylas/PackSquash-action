@@ -28,7 +28,7 @@ inputs:
     required: false
     default: ''
   artifact_name:
-    description: ''
+    description: 'The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where several ZIP files are generated.'
     required: false
     default: 'Optimized pack'
   # Inputs that set PackSquash options
