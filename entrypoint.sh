@@ -3,7 +3,6 @@
 readonly UNUSABLE_CACHE_ERROR_CODE=129
 readonly ACTION_WORKING_DIR='/opt/action'
 readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
-readonly PACK_ZIP_ARTIFACT_NAME='Optimized pack'
 readonly PROBLEM_MATCHER_FILE_NAME='packsquash-problem-matcher.json'
 
 # ----------------
@@ -332,7 +331,7 @@ if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     get_current_workflow_id
     download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
-        "$CURRENT_WORKFLOW_ID" "$PACK_ZIP_ARTIFACT_NAME" || true
+        "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME" || true
     mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
     node actions-cache.mjs 'system_id' restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
@@ -395,7 +394,7 @@ esac
 cd "$ACTION_WORKING_DIR"
 
 echo '::group::Upload generated ZIP file as artifact'
-node actions-artifact-upload.mjs "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$PACK_ZIP_ARTIFACT_NAME"
+node actions-artifact-upload.mjs "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$INPUT_ARTIFACT_NAME"
 echo '::endgroup::'
 
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
