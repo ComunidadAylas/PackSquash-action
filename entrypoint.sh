@@ -250,7 +250,7 @@ case "$INPUT_PACKSQUASH_VERSION" in
             download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "$asset_name"
         fi
     ;;
-    *)
+    'v0.3.1')
         # Current releases
         case "$machine" in
             'x86_64')
@@ -265,6 +265,10 @@ case "$INPUT_PACKSQUASH_VERSION" in
         esac
 
         download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "PackSquash.executable.Linux.${machine_infix}.glibc.zip"
+    ;;
+    *)
+        echo "::error::Not found PackSquash version: $INPUT_PACKSQUASH_VERSION"
+        exit 1
     ;;
 esac
 
