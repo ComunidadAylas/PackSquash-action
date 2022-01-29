@@ -216,13 +216,14 @@ case "$INPUT_PACKSQUASH_VERSION" in
 
         download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 "PackSquash executable (Linux, $machine_infix, glibc)"
     ;;
-    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1')
+    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1' | 'v0.3.0')
         # Historical releases
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
             echo '::error::Using older PackSquash versions without an options file is not supported.'
             exit 1
         else
-            if [ "$INPUT_PACKSQUASH_VERSION" = 'v0.3.0-rc.1' ]; then
+            case "$INPUT_PACKSQUASH_VERSION" in
+            'v0.3.0-rc.1' | 'v0.3.0')
                 case "$machine" in
                     'x86_64')
                         machine_infix='x64'
@@ -236,13 +237,15 @@ case "$INPUT_PACKSQUASH_VERSION" in
                 esac
 
                 asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
-            else
+                ;;
+            *)
                 if [ "$machine" != 'x86_64' ]; then
                     print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
                 fi
 
                 asset_name='PackSquash.executable.Linux.zip'
-            fi
+                ;;
+            esac
 
             download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "$asset_name"
         fi
