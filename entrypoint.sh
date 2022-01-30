@@ -292,6 +292,7 @@ recompress_compressed_files = $INPUT_RECOMPRESS_COMPRESSED_FILES
 zip_compression_iterations = $INPUT_ZIP_COMPRESSION_ITERATIONS
 automatic_minecraft_quirks_detection = $INPUT_AUTOMATIC_MINECRAFT_QUIRKS_DETECTION
 work_around_minecraft_quirks = $WORK_AROUND_MINECRAFT_QUIRKS
+automatic_asset_types_mask_detection = $INPUT_AUTOMATIC_ASSET_TYPES_MASK_DETECTION
 ignore_system_and_hidden_files = $INPUT_IGNORE_SYSTEM_AND_HIDDEN_FILES
 allow_mods = $ALLOW_MODS
 zip_spec_conformance_level = '$INPUT_ZIP_SPEC_CONFORMANCE_LEVEL'
