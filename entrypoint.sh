@@ -148,6 +148,12 @@ ALLOW_MODS='[ '
 if [ "$INPUT_ALLOW_OPTIFINE_MOD" = 'true' ]; then
     echo '::debug::Allowing OptiFine mod'
     ALLOW_MODS="$ALLOW_MODS'OptiFine'"
+    allow_mods_added=
+fi
+if [ "$INPUT_ALLOW_MTR3_MOD" = 'true' ]; then
+    echo '::debug::Allowing MinecraftTransitRailway3 mod'
+    ALLOW_MODS="$ALLOW_MODS${allow_mods_added+, }'Minecraft Transit Railway 3'"
+    allow_mods_added=
 fi
 ALLOW_MODS="$ALLOW_MODS ]"
 

@@ -56,6 +56,10 @@ inputs:
     description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
     required: false
     default: 'false'
+  allow_mtr3_mod:
+    description: ''
+    required: false
+    default: 'false'
   skip_pack_icon:
     description: 'If true, the pack.png file that contains the resource pack icon will not be included in the result ZIP file. As of Minecraft 1.16.3, the icon of server resource packs is not displayed, so this optimization does not have any drawbacks in this case.'
     required: false
