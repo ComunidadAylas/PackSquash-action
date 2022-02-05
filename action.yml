@@ -32,11 +32,11 @@ inputs:
     required: false
     default: 'Optimized pack'
   log_emoji:
-    description: ''
+    description: 'If true, PackSquash use emoji in log messages.'
     required: false
     default: 'true'
   log_color:
-    description: ''
+    description: 'If true, PackSquash use color in log messages.'
     required: false
     default: 'true'
   # Inputs that set PackSquash options
