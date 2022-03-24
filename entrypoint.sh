@@ -40,11 +40,21 @@ download_latest_artifact() {
         | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
+    if [ "$latest_artifacts_endpoint" = 'null' ]; then
+        echo "::error::Could not get the API endpoint to download the latest $4 artifact from"
+        return 1
+    fi
+
     echo "::debug::Getting latest $4 artifact download URL from endpoint"
     latest_artifact_download_url=$(wget${INPUT_TOKEN:+ --header "Authorization: Bearer $INPUT_TOKEN"} -nv -O - \
         "$latest_artifacts_endpoint" \
         | jq '.artifacts | map(select(.name == "'"$4"'"))' \
         | jq -r '.[0].archive_download_url')
+
+    if [ -z "$latest_artifact_download_url" ]; then
+        echo "::Could not get the download URL for the latest $4 artifact"
+        return 2
+    fi
 
     temp_file=$(mktemp)
     wget --header="Authorization: Bearer $INPUT_TOKEN" -nv -O "$temp_file" "$latest_artifact_download_url"
@@ -330,7 +340,7 @@ options_file_hash="${options_file_hash%% *}"
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     get_current_workflow_id
-    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)" \
+    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
         "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME" || true
     mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
     node actions-cache.mjs 'system_id' restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
