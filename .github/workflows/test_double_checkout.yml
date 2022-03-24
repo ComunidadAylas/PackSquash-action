@@ -1,10 +1,12 @@
-name: Test - Empty resource pack (actions/checkout@v3)
-on: [push, workflow_dispatch]
+name: Test - Double checkout
+on: [workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Clone repository (again)
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
