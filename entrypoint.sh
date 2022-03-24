@@ -41,7 +41,7 @@ download_latest_artifact() {
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     if [ "$latest_artifacts_endpoint" = 'null' ]; then
-        echo "::error::Could not get the API endpoint to download the latest $4 artifact from"
+        echo "Could not get the information API endpoint for the latest $4 artifacts" >&2
         return 1
     fi
 
@@ -52,7 +52,7 @@ download_latest_artifact() {
         | jq -r '.[0].archive_download_url')
 
     if [ -z "$latest_artifact_download_url" ]; then
-        echo "::Could not get the download URL for the latest $4 artifact"
+        echo "Could not get the download URL for the latest $4 artifact" >&2
         return 2
     fi
 
@@ -340,8 +340,12 @@ options_file_hash="${options_file_hash%% *}"
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
     get_current_workflow_id
-    download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
-        "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME" || true
+    if ! download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
+        "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME"; then
+        echo '::warning::Could not fetch the ZIP file generated in the last run. PackSquash will thus not be' \
+             'able to reuse it to speed up processing. This is a normal occurence when running a workflow for' \
+             'the first time, or after a long time since its last execution.'
+    fi
     mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
     node actions-cache.mjs 'system_id' restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
     echo '::endgroup::'
