@@ -338,7 +338,7 @@ minimum_bitrate = $INPUT_MINIMUM_AUDIO_BITRATE
 maximum_bitrate = $INPUT_MAXIMUM_AUDIO_BITRATE
 target_pitch = $INPUT_TARGET_AUDIO_PITCH
 
-['**/*.{json,jsonc,mcmeta}']
+['**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}']
 minify_json = $INPUT_MINIFY_JSON_FILES
 delete_bloat_keys = $INPUT_DELETE_BLOAT_JSON_KEYS
 always_allow_json_comments = $INPUT_ALWAYS_ALLOW_JSON_COMMENTS
