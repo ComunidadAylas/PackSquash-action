@@ -361,9 +361,7 @@ strip_legacy_language_bom = $INPUT_STRIP_LEGACY_LANGUAGE_FILES_BOM
 minify_command_function = $INPUT_MINIFY_COMMAND_FUNCTION_FILES
 
 ['**/*.properties']
-minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
-
-$FORCE_INCLUDE_FILES
+minify_properties = $INPUT_MINIFY_PROPERTIES_FILES${FORCE_INCLUDE_FILES:+$(printf '\n\n%s\n' "$FORCE_INCLUDE_FILES")}
 OPTIONS_FILE
 else
     cp "$GITHUB_WORKSPACE/$INPUT_OPTIONS_FILE" packsquash-options.toml
