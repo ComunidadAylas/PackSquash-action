@@ -174,6 +174,11 @@ if [ "$INPUT_WORK_AROUND_RESTRICTIVE_BANNER_LAYER_TEXTURE_FORMAT_CHECK_QUIRK" = 
     echo '::debug::Adding restrictive_banner_layer_texture_format_check quirk'
     minecraft_quirk_added=
 fi
+if [ "$INPUT_WORK_AROUND_BAD_ENTITY_EYE_LAYER_TEXTURE_TRANSPARENCY_BLENDING_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'bad_entity_eye_layer_texture_transparency_blending'"
+    echo '::debug::Adding bad_entity_eye_layer_texture_transparency_blending quirk'
+    minecraft_quirk_added=
+fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
 # Uncomment when needed. GitHub doesn't like newlines that env outputs
