@@ -343,6 +343,9 @@ minify_shader = $INPUT_MINIFY_SHADERS
 minify_legacy_language = $INPUT_MINIFY_LEGACY_LANGUAGE_FILES
 strip_legacy_language_bom = $INPUT_STRIP_LEGACY_LANGUAGE_FILES_BOM
 
+['**/*.mcfunction']
+minify_command_function = $INPUT_MINIFY_COMMAND_FUNCTION_FILES
+
 ['**/*.properties']
 minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
 OPTIONS_FILE
