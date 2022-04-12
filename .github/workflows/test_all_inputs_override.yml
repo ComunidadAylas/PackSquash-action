@@ -1,4 +1,4 @@
-name: Test - All Input Override
+name: Test - All inputs override
 on: [push]
 jobs:
   build:
