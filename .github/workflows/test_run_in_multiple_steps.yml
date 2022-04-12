@@ -1,11 +1,10 @@
-name: Test - Empty resource pack
+name: Test - Run in multiple steps
 on:
   push:
   pull_request:
     types:
       - opened
       - synchronize
-  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,3 +17,9 @@ jobs:
         uses: ./ # Uses an action in the root directory
         with:
           path: test/empty_resource_pack
+          artifact_name: 'Optimized pack 1'
+      - name: Run PackSquash
+        uses: ./
+        with:
+          path: test/empty_resource_pack
+          artifact_name: 'Optimized pack 2'

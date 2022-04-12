@@ -1,5 +1,12 @@
 name: Static analysis - ShellCheck
-on: [push]
+on:
+  push:
+    paths:
+      - entrypoint.sh
+  pull_request:
+    types:
+      - opened
+      - synchronize
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -148,6 +148,12 @@ ALLOW_MODS='[ '
 if [ "$INPUT_ALLOW_OPTIFINE_MOD" = 'true' ]; then
     echo '::debug::Allowing OptiFine mod'
     ALLOW_MODS="$ALLOW_MODS'OptiFine'"
+    allow_mods_added=
+fi
+if [ "$INPUT_ALLOW_MTR3_MOD" = 'true' ]; then
+    echo '::debug::Allowing Minecraft Transit Railway 3 mod'
+    ALLOW_MODS="$ALLOW_MODS${allow_mods_added+, }'Minecraft Transit Railway 3'"
+    allow_mods_added=
 fi
 ALLOW_MODS="$ALLOW_MODS ]"
 
@@ -163,7 +169,31 @@ if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_PARSING_QUIRK" = 'true' ]; then
     echo '::debug::Adding java8_zip_parsing quirk'
     minecraft_quirk_added=
 fi
+if [ "$INPUT_WORK_AROUND_RESTRICTIVE_BANNER_LAYER_TEXTURE_FORMAT_CHECK_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'restrictive_banner_layer_texture_format_check'"
+    echo '::debug::Adding restrictive_banner_layer_texture_format_check quirk'
+    minecraft_quirk_added=
+fi
+if [ "$INPUT_WORK_AROUND_BAD_ENTITY_EYE_LAYER_TEXTURE_TRANSPARENCY_BLENDING_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'bad_entity_eye_layer_texture_transparency_blending'"
+    echo '::debug::Adding bad_entity_eye_layer_texture_transparency_blending quirk'
+    minecraft_quirk_added=
+fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
+
+# force_include_files
+FORCE_INCLUDE_FILES=''
+while read -r file_name; do
+  if [ -n "$file_name" ]; then
+    FORCE_INCLUDE_FILES="$FORCE_INCLUDE_FILES${force_include_file_added+
+
+}['$file_name']
+force_include = true"
+    force_include_file_added=
+  fi
+done <<FORCE_INCLUDE_FILE_LIST
+$INPUT_FORCE_INCLUDE_FILES
+FORCE_INCLUDE_FILE_LIST
 
 # Uncomment when needed. GitHub doesn't like newlines that env outputs
 #printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
@@ -216,38 +246,41 @@ case "$INPUT_PACKSQUASH_VERSION" in
 
         download_latest_artifact 'ComunidadAylas/PackSquash' 'master' 5482008 "PackSquash executable (Linux, $machine_infix, glibc)"
     ;;
-    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1')
+    'v0.1.0' | 'v0.1.1' | 'v0.1.2' | 'v0.2.0' | 'v0.2.1' | 'v0.3.0-rc.1' | 'v0.3.0')
         # Historical releases
         if [ -z "$INPUT_OPTIONS_FILE" ]; then
             echo '::error::Using older PackSquash versions without an options file is not supported.'
             exit 1
         else
-            if [ "$INPUT_PACKSQUASH_VERSION" = 'v0.3.0-rc.1' ]; then
-                case "$machine" in
-                    'x86_64')
-                        machine_infix='x64'
-                    ;;
-                    'arm64' | 'aarch64')
-                        machine_infix='AArch64-ARM64'
-                    ;;
-                    *)
+            case "$INPUT_PACKSQUASH_VERSION" in
+                'v0.3.0-rc.1' | 'v0.3.0')
+                    case "$machine" in
+                        'x86_64')
+                            machine_infix='x64'
+                        ;;
+                        'arm64' | 'aarch64')
+                            machine_infix='AArch64-ARM64'
+                        ;;
+                        *)
+                            print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
+                        ;;
+                    esac
+
+                    asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
+                ;;
+                *)
+                    if [ "$machine" != 'x86_64' ]; then
                         print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
-                    ;;
-                esac
+                    fi
 
-                asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
-            else
-                if [ "$machine" != 'x86_64' ]; then
-                    print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
-                fi
-
-                asset_name='PackSquash.executable.Linux.zip'
-            fi
+                    asset_name='PackSquash.executable.Linux.zip'
+                ;;
+            esac
 
             download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "$asset_name"
         fi
     ;;
-    *)
+    'v0.3.1')
         # Current releases
         case "$machine" in
             'x86_64')
@@ -262,6 +295,10 @@ case "$INPUT_PACKSQUASH_VERSION" in
         esac
 
         download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "PackSquash.executable.Linux.${machine_infix}.glibc.zip"
+    ;;
+    *)
+        echo "::error::Unsupported PackSquash version: $INPUT_PACKSQUASH_VERSION"
+        exit 1
     ;;
 esac
 
@@ -285,6 +322,7 @@ recompress_compressed_files = $INPUT_RECOMPRESS_COMPRESSED_FILES
 zip_compression_iterations = $INPUT_ZIP_COMPRESSION_ITERATIONS
 automatic_minecraft_quirks_detection = $INPUT_AUTOMATIC_MINECRAFT_QUIRKS_DETECTION
 work_around_minecraft_quirks = $WORK_AROUND_MINECRAFT_QUIRKS
+automatic_asset_types_mask_detection = $INPUT_AUTOMATIC_ASSET_TYPES_MASK_DETECTION
 ignore_system_and_hidden_files = $INPUT_IGNORE_SYSTEM_AND_HIDDEN_FILES
 allow_mods = $ALLOW_MODS
 zip_spec_conformance_level = '$INPUT_ZIP_SPEC_CONFORMANCE_LEVEL'
@@ -300,21 +338,30 @@ minimum_bitrate = $INPUT_MINIMUM_AUDIO_BITRATE
 maximum_bitrate = $INPUT_MAXIMUM_AUDIO_BITRATE
 target_pitch = $INPUT_TARGET_AUDIO_PITCH
 
-['**/*.{json,jsonc,mcmeta}']
+['**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}']
 minify_json = $INPUT_MINIFY_JSON_FILES
 delete_bloat_keys = $INPUT_DELETE_BLOAT_JSON_KEYS
+always_allow_json_comments = $INPUT_ALWAYS_ALLOW_JSON_COMMENTS
 
 ['**/*.png']
 image_data_compression_iterations = $INPUT_IMAGE_DATA_COMPRESSION_ITERATIONS
 color_quantization_target = '$INPUT_IMAGE_COLOR_QUANTIZATION_TARGET'
+color_quantization_dithering_level = $INPUT_IMAGE_COLOR_QUANTIZATION_DITHERING_LEVEL
 maximum_width_and_height = $INPUT_MAXIMUM_IMAGE_WIDTH_AND_HEIGHT
 skip_alpha_optimizations = $INPUT_SKIP_IMAGE_ALPHA_OPTIMIZATIONS
 
 ['**/*.{fsh,vsh}']
 minify_shader = $INPUT_MINIFY_SHADERS
 
+['**/*.lang']
+minify_legacy_language = $INPUT_MINIFY_LEGACY_LANGUAGE_FILES
+strip_legacy_language_bom = $INPUT_STRIP_LEGACY_LANGUAGE_FILES_BOM
+
+['**/*.mcfunction']
+minify_command_function = $INPUT_MINIFY_COMMAND_FUNCTION_FILES
+
 ['**/*.properties']
-minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
+minify_properties = $INPUT_MINIFY_PROPERTIES_FILES${FORCE_INCLUDE_FILES:+$(printf '\n\n%s\n' "$FORCE_INCLUDE_FILES")}
 OPTIONS_FILE
 else
     cp "$GITHUB_WORKSPACE/$INPUT_OPTIONS_FILE" packsquash-options.toml
@@ -367,6 +414,12 @@ fi
 echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
 echo "::add-mask::$PACKSQUASH_SYSTEM_ID"
 export PACKSQUASH_SYSTEM_ID
+
+# Set PackSquash emoji and color options
+PACKSQUASH_EMOJI="$(if [ "$INPUT_SHOW_EMOJI_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_EMOJI
+PACKSQUASH_COLOR="$(if [ "$INPUT_ENABLE_COLOR_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_COLOR
 
 # -----------------
 # Optimize the pack
