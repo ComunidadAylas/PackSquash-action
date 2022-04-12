@@ -128,6 +128,10 @@ inputs:
     description: 'If this parameter is set to true, PackSquash will delete known-superfluous keys from JSON files, like credits added by pack authoring tools, that are completely ignored by Minecraft.'
     required: false
     default: 'true'
+  always_allow_json_comments:
+    description: ''
+    required: false
+    default: 'true'
   image_data_compression_iterations:
     description: 'Sets the number of Zopfli compression iterations that PackSquash will do to compress raw pixel data in image files that amounts to a magnitude of 1 MiB.'
     required: false

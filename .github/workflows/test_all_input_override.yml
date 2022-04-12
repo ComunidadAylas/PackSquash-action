@@ -34,6 +34,7 @@ jobs:
           maximum_audio_bitrate: 128000 # <- 96000
           minify_json_files: false # <- true
           delete_bloat_json_keys: false # <- true
+          always_allow_json_comments: false # <- true
           image_data_compression_iterations: 15 # <- 5
           image_color_quantization_target: none # <- auto
           maximum_image_width_and_height: 4096 # <- 8192

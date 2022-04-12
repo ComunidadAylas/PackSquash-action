@@ -317,6 +317,7 @@ target_pitch = $INPUT_TARGET_AUDIO_PITCH
 ['**/*.{json,jsonc,mcmeta}']
 minify_json = $INPUT_MINIFY_JSON_FILES
 delete_bloat_keys = $INPUT_DELETE_BLOAT_JSON_KEYS
+always_allow_json_comments = $INPUT_ALWAYS_ALLOW_JSON_COMMENTS
 
 ['**/*.png']
 image_data_compression_iterations = $INPUT_IMAGE_DATA_COMPRESSION_ITERATIONS
