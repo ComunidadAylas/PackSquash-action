@@ -60,6 +60,10 @@ inputs:
     description: 'This parameter sets whether a quirk with how older Minecraft versions read ZIP files will be worked around, that may render them unable to read the ZIP files PackSquash generates when `zip_spec_conformance_level` is set to `disregard`. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
     default: 'false'
+  work_around_restrictive_banner_layer_texture_format_check_quirk:
+    description: ''
+    required: false
+    default: 'false'
   allow_optifine_mod:
     description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
     required: false

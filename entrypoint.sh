@@ -169,6 +169,11 @@ if [ "$INPUT_WORK_AROUND_JAVA8_ZIP_PARSING_QUIRK" = 'true' ]; then
     echo '::debug::Adding java8_zip_parsing quirk'
     minecraft_quirk_added=
 fi
+if [ "$INPUT_WORK_AROUND_RESTRICTIVE_BANNER_LAYER_TEXTURE_FORMAT_CHECK_QUIRK" = 'true' ]; then
+    WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS${minecraft_quirk_added+, }'restrictive_banner_layer_texture_format_check'"
+    echo '::debug::Adding restrictive_banner_layer_texture_format_check quirk'
+    minecraft_quirk_added=
+fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
 # Uncomment when needed. GitHub doesn't like newlines that env outputs

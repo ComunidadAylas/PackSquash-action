@@ -17,6 +17,7 @@ jobs:
           automatic_minecraft_quirks_detection: false # <- true
           work_around_grayscale_images_gamma_miscorrection_quirk: true # <- false
           work_around_java8_zip_parsing_quirk: true # <- false
+          work_around_restrictive_banner_layer_texture_format_check_quirk: true # <- false
           allow_optifine_mod: true # <- false
           allow_mtr3_mod: true # <- false
           skip_pack_icon: true # <- false
