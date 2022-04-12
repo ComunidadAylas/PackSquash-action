@@ -182,8 +182,6 @@ fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
 # force_include_files
-FORCE_INCLUDE_FILES_LIST="$(mktemp)"
-echo "$INPUT_FORCE_INCLUDE_FILES" > "$FORCE_INCLUDE_FILES_LIST"
 FORCE_INCLUDE_FILES=''
 while read -r file_name; do
   if [ -n "$file_name" ]; then
@@ -193,7 +191,9 @@ while read -r file_name; do
 force_include = true"
     force_include_file_added=
   fi
-done < "$FORCE_INCLUDE_FILES_LIST"
+done <<FORCE_INCLUDE_FILE_LIST
+$INPUT_FORCE_INCLUDE_FILES
+FORCE_INCLUDE_FILE_LIST
 
 # Uncomment when needed. GitHub doesn't like newlines that env outputs
 #printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
