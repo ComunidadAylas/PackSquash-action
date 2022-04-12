@@ -253,27 +253,27 @@ case "$INPUT_PACKSQUASH_VERSION" in
             exit 1
         else
             case "$INPUT_PACKSQUASH_VERSION" in
-            'v0.3.0-rc.1' | 'v0.3.0')
-                case "$machine" in
-                    'x86_64')
-                        machine_infix='x64'
-                    ;;
-                    'arm64' | 'aarch64')
-                        machine_infix='AArch64-ARM64'
-                    ;;
-                    *)
-                        print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
-                    ;;
-                esac
+                'v0.3.0-rc.1' | 'v0.3.0')
+                    case "$machine" in
+                        'x86_64')
+                            machine_infix='x64'
+                        ;;
+                        'arm64' | 'aarch64')
+                            machine_infix='AArch64-ARM64'
+                        ;;
+                        *)
+                            print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
+                        ;;
+                    esac
 
-                asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
+                    asset_name="PackSquash.executable.Linux.${machine_infix}.glibc.zip"
                 ;;
-            *)
-                if [ "$machine" != 'x86_64' ]; then
-                    print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
-                fi
+                *)
+                    if [ "$machine" != 'x86_64' ]; then
+                        print_unsupported_machine_error "PackSquash $INPUT_PACKSQUASH_VERSION" '' 'y'
+                    fi
 
-                asset_name='PackSquash.executable.Linux.zip'
+                    asset_name='PackSquash.executable.Linux.zip'
                 ;;
             esac
 
