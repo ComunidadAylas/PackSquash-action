@@ -67,8 +67,8 @@ The action also supports additional parameters that might come in handy for more
 | `options_file` | Generated from the action parameters | Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at `/var/lib/packsquash/pack.zip`, and it will use the options file you provide verbatim, overriding any other PackSquash option parameter you set. |
 | `action_cache_revision` | `﻿` (empty string) | The revision of the cache the action uses internally. You should only need to bump this revision if for some reason you want the action to not reuse any cached information, like the system identifier. This will render any previously generated ZIP file unusable for speed optimizations. |
 | `artifact_name` | `Optimized pack` | The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where several ZIP files are generated. |
-| `log_emoji` | `true` | If true, PackSquash use emoji in log messages. |
-| `log_color` | `true` | If true, PackSquash use color in log messages. |
+| `show_emoji_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to use emojis in the logs it generates, which looks prettier. Otherwise, plain ASCII decoration characters will be used instead. |
+| `enable_color_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages won't be colored. |
 
 ## ⚙️ Example
 

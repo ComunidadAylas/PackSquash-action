@@ -31,12 +31,12 @@ inputs:
     description: 'The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where several ZIP files are generated.'
     required: false
     default: 'Optimized pack'
-  log_emoji:
-    description: 'If true, PackSquash use emoji in log messages.'
+  show_emoji_in_packsquash_logs:
+    description: 'If true, the action will instruct PackSquash to use emojis in the logs it generates, which looks prettier. Otherwise, plain ASCII decoration characters will be used instead.'
     required: false
     default: 'true'
-  log_color:
-    description: 'If true, PackSquash use color in log messages.'
+  enable_color_in_packsquash_logs:
+    description: 'If true, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages won't be colored.'
     required: false
     default: 'true'
   # Inputs that set PackSquash options

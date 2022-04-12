@@ -416,9 +416,9 @@ echo "::add-mask::$PACKSQUASH_SYSTEM_ID"
 export PACKSQUASH_SYSTEM_ID
 
 # Set PackSquash emoji and color options
-PACKSQUASH_EMOJI="$(if [ "$INPUT_LOG_EMOJI" = 'true' ]; then echo 'show'; fi)"
+PACKSQUASH_EMOJI="$(if [ "$INPUT_SHOW_EMOJI_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
 export PACKSQUASH_EMOJI
-PACKSQUASH_COLOR="$(if [ "$INPUT_LOG_COLOR" = 'true' ]; then echo 'show'; fi)"
+PACKSQUASH_COLOR="$(if [ "$INPUT_ENABLE_COLOR_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
 export PACKSQUASH_COLOR
 
 # -----------------
