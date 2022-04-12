@@ -131,7 +131,7 @@ inputs:
   image_data_compression_iterations:
     description: 'Sets the number of Zopfli compression iterations that PackSquash will do to compress raw pixel data in image files that amounts to a magnitude of 1 MiB.'
     required: false
-    default: '3'
+    default: '5'
   image_color_quantization_target:
     description: 'Sets the color quantization target for image files, which affects whether the lossy color quantization process is performed and how.'
     required: false
