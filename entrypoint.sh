@@ -417,13 +417,11 @@ echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
 echo "::add-mask::$PACKSQUASH_SYSTEM_ID"
 export PACKSQUASH_SYSTEM_ID
 
-# Enable PackSquash emoji, color
-if [ "$INPUT_LOG_EMOJI" = 'true' ]; then
-  export PACKSQUASH_EMOJI=show
-fi
-if [ "$INPUT_LOG_COLOR" = 'true' ]; then
-  export PACKSQUASH_COLOR=show
-fi
+# Set PackSquash emoji and color options
+PACKSQUASH_EMOJI="$(if [ "$INPUT_LOG_EMOJI" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_EMOJI
+PACKSQUASH_COLOR="$(if [ "$INPUT_LOG_COLOR" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_COLOR
 
 # -----------------
 # Optimize the pack
