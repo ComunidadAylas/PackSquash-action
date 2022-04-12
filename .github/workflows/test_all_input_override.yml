@@ -35,7 +35,7 @@ jobs:
           minify_json_files: false # <- true
           delete_bloat_json_keys: false # <- true
           image_data_compression_iterations: 15 # <- 5
-          image_color_quantization_target: none # <- eight_bit_depth
+          image_color_quantization_target: none # <- auto
           maximum_image_width_and_height: 4096 # <- 8192
           skip_image_alpha_optimizations: true # <- false
           minify_shaders: false # <- true
