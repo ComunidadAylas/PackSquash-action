@@ -36,7 +36,7 @@ inputs:
     required: false
     default: 'true'
   enable_color_in_packsquash_logs:
-    description: 'If true, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages won't be colored.'
+    description: 'If true, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored.'
     required: false
     default: 'true'
   # Inputs that set PackSquash options
