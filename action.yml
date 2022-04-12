@@ -49,7 +49,7 @@ inputs:
     required: false
     default: '20'
   automatic_minecraft_quirks_detection:
-    description: 'Sets whether PackSquash will automatically deduce an appropriate set of Minecraft quirks that affect how pack files can be optimized, by looking at the pack files, or not. If automatic quirk detection is enabled (set to true), any other parameters for working around specific quirks will be ignored.'
+    description: 'Sets whether PackSquash will automatically deduce an appropriate set of Minecraft quirks that affect how pack files can be optimized, by looking at the pack files, or not. If automatic quirk detection is enabled (set to true), any other parameters for working around specific quirks will be ignored. Enabling this feature implies validating the pack metadata file, even if validate_pack_metadata_file is set to false.'
     required: false
     default: 'true'
   work_around_grayscale_images_gamma_miscorrection_quirk:
@@ -61,23 +61,23 @@ inputs:
     required: false
     default: 'false'
   work_around_restrictive_banner_layer_texture_format_check_quirk:
-    description: ''
+    description: 'This parameter sets whether a quirk with how older Minecraft versions parse shield and banner textures in certain formats will be worked around. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
     default: 'false'
   work_around_bad_entity_eye_layer_texture_transparency_blending_quirk:
-    description: ''
+    description: 'This parameter sets whether a quirk with how Minecraft parses eye layer textures with transparent pixels will be worked around. You should only change the default value if needed. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks for more details.'
     required: false
     default: 'false'
   automatic_asset_types_mask_detection:
-    description: ''
+    description: 'If true, PackSquash will attempt to automatically deduce the appropriate set of pack files to include in the generated ZIP by checking what Minecraft versions it targets, according to the pack format version in the pack.mcmeta file. Otherwise, PackSquash will include any file it recognizes no matter what. Enabling this feature implies validating the pack metadata file, even if validate_pack_metadata_file is set to false.'
     required: false
     default: 'true'
   allow_optifine_mod:
-    description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
+    description: 'Adds support for .properties files. From PackSquash v0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support. From PackSquash v0.3.1 onwards, the extensions .jpmc and .jemc are accepted to indicate the usage of comments.'
     required: false
     default: 'false'
   allow_mtr3_mod:
-    description: ''
+    description: 'Adds support for Blockbench modded entity model projects for custom train models in the mtr asset namespace, stored as .bbmodel or .bbmodelc files.'
     required: false
     default: 'false'
   skip_pack_icon:
@@ -85,7 +85,7 @@ inputs:
     required: false
     default: 'false'
   validate_pack_metadata_file:
-    description: 'If true, the pack metadata file, pack.mcmeta, will be parsed and validated for errors. Otherwise, it will not be validated. Validating the pack metadata is usually a good thing, because Minecraft requires it to load a pack.'
+    description: 'If true, the pack metadata file, pack.mcmeta, will be parsed and validated for errors. Otherwise, it will not be validated, unless other options imply doing so. Validating the pack metadata is usually a good thing, because Minecraft requires it to load a pack.'
     required: false
     default: 'true'
   ignore_system_and_hidden_files:
@@ -137,7 +137,7 @@ inputs:
     required: false
     default: 'true'
   always_allow_json_comments:
-    description: ''
+    description: 'If true, PackSquash will allow comments in JSON files whose usual extension does not end with an extra c letter, which explicitly marks the file as having an extended JSON format that may contain comments. If false, comments will only be allowed in JSON files with those specific extensions: .jsonc, .mcmetac, etc.'
     required: false
     default: 'true'
   image_data_compression_iterations:
@@ -149,7 +149,7 @@ inputs:
     required: false
     default: 'auto'
   image_color_quantization_dithering_level:
-    description: ''
+    description: 'Sets the level of dithering that will be applied when quantizing colors in image files. This option has no effect if color_quantization_target is not set to perform color quantization.'
     required: false
     default: '0.85'
   maximum_image_width_and_height:
@@ -165,15 +165,15 @@ inputs:
     required: false
     default: 'true'
   minify_legacy_language_files:
-    description: ''
+    description: 'If true, the legacy language files will be minified: empty lines and comments will be removed. This saves space and improves parsing performance. If false, those files will still be validated for errors but left as they are.'
     required: false
     default: 'true'
   strip_legacy_language_files_bom:
-    description: ''
+    description: 'If true, the BOM in the first line of legacy language files will be stripped. This usually saves space and avoids user confusion. When false, this behavior is disabled, which may be necessary if the pack relies on the BOM character to be present in any of these files.'
     required: false
     default: 'true'
   minify_command_function_files:
-    description: ''
+    description: 'If true, the command function files will be minified: empty lines and comments will be removed. This saves space and improves parsing performance. If false, the files will still be validated for errors but left as they are.'
     required: false
     default: 'true'
   minify_properties_files:
@@ -181,7 +181,7 @@ inputs:
     required: false
     default: 'true'
   force_include_files:
-    description: ''
+    description: 'A list of file path glob patterns to always include in the generated ZIP file, even if PackSquash does not recognize such files as assets. These files are copied as-is, but not optimized in any specific way, so this option does not substitute proper PackSquash support for assets used by the game. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#custom-files for more details about the custom files feature.'
     required: false
     default: ''
 runs:
