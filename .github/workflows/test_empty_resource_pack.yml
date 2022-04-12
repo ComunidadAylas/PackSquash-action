@@ -1,5 +1,11 @@
 name: Test - Empty resource pack
-on: [push, workflow_dispatch]
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
