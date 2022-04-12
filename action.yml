@@ -164,6 +164,10 @@ inputs:
     description: 'When true, the source code of shaders will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false
     default: 'true'
+  minify_legacy_language_files:
+    description: ''
+    required: false
+    default: 'true'
   minify_properties_files:
     description: 'When true, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false

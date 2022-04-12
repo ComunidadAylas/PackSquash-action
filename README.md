@@ -50,6 +50,7 @@ The parameters in this section are used to automatically generate an [options fi
 | [`maximum_image_width_and_height`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#maximum_width_and_height) | `8192` | Sets the maximum width and height of the image files that PackSquash will accept without throwing an error. Please read [the relevant documentation](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#maximum_width_and_height) for more details about the rationale of this option. |
 | [`skip_image_alpha_optimizations`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#skip_alpha_optimizations) | `false` | If `true`, this parameter prevents the color values of completely transparent pixels in image files from being changed in order to achieve better compression. |
 | [`minify_shaders`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_shader) | `true` | When `true`, the source code of shaders will be minified, which removes comments and unnecessary white space, to improve space savings. |
+| [`minify_legacy_language_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_legacy_language) | `true` |  |
 | [`minify_properties_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_properties) | `true` | When `true`, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings. |
 
 

@@ -339,6 +339,9 @@ skip_alpha_optimizations = $INPUT_SKIP_IMAGE_ALPHA_OPTIMIZATIONS
 ['**/*.{fsh,vsh}']
 minify_shader = $INPUT_MINIFY_SHADERS
 
+['**/*.lang']
+minify_legacy_language = $INPUT_MINIFY_LEGACY_LANGUAGE_FILES
+
 ['**/*.properties']
 minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
 OPTIONS_FILE
