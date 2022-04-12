@@ -148,6 +148,10 @@ inputs:
     description: 'Sets the color quantization target for image files, which affects whether the lossy color quantization process is performed and how.'
     required: false
     default: 'auto'
+  image_color_quantization_dithering_level:
+    description: ''
+    required: false
+    default: '0.85'
   maximum_image_width_and_height:
     description: 'Sets the maximum width and height of the image files that PackSquash will accept without throwing an error. Please read https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#maximum_width_and_height for more details about the rationale of this option.'
     required: false

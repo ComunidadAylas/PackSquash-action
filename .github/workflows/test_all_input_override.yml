@@ -39,6 +39,7 @@ jobs:
           always_allow_json_comments: false # <- true
           image_data_compression_iterations: 15 # <- 5
           image_color_quantization_target: none # <- auto
+          image_color_quantization_dithering_level: 1 # <- 0.85
           maximum_image_width_and_height: 4096 # <- 8192
           skip_image_alpha_optimizations: true # <- false
           minify_shaders: false # <- true
