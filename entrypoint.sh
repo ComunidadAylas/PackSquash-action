@@ -341,6 +341,7 @@ minify_shader = $INPUT_MINIFY_SHADERS
 
 ['**/*.lang']
 minify_legacy_language = $INPUT_MINIFY_LEGACY_LANGUAGE_FILES
+strip_legacy_language_bom = $INPUT_STRIP_LEGACY_LANGUAGE_FILES_BOM
 
 ['**/*.properties']
 minify_properties = $INPUT_MINIFY_PROPERTIES_FILES

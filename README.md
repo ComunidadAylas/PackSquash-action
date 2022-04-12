@@ -51,6 +51,7 @@ The parameters in this section are used to automatically generate an [options fi
 | [`skip_image_alpha_optimizations`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#skip_alpha_optimizations) | `false` | If `true`, this parameter prevents the color values of completely transparent pixels in image files from being changed in order to achieve better compression. |
 | [`minify_shaders`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_shader) | `true` | When `true`, the source code of shaders will be minified, which removes comments and unnecessary white space, to improve space savings. |
 | [`minify_legacy_language_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_legacy_language) | `true` |  |
+| [`strip_legacy_language_files_bom`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#strip_legacy_language_bom) | `true` |  |
 | [`minify_properties_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_properties) | `true` | When `true`, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings. |
 
 
