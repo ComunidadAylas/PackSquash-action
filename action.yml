@@ -68,6 +68,10 @@ inputs:
     description: ''
     required: false
     default: 'false'
+  automatic_asset_types_mask_detection:
+    description: ''
+    required: false
+    default: 'true'
   allow_optifine_mod:
     description: 'Adds support for .properties files. From version 0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support.'
     required: false
@@ -104,10 +108,6 @@ inputs:
     description: 'This parameter controls whether PackSquash will refuse to store the metadata needed to reuse previously generated ZIP files, and likewise not expect such data if the output ZIP file already exists, thus not reusing its contents to speed up the process in any way, no matter what the zip_spec_conformance_level is.'
     required: false
     default: 'false'
-  automatic_asset_types_mask_detection:
-    description: ''
-    required: false
-    default: 'true'
   transcode_ogg:
     description: 'When true, Ogg files will be reencoded again, to apply resampling, channel mixing, pitch shifting and bitrate reduction, which may degrade their quality, but commonly saves quite a bit of space.'
     required: false

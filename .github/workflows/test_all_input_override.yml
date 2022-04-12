@@ -19,6 +19,7 @@ jobs:
           work_around_java8_zip_parsing_quirk: true # <- false
           work_around_restrictive_banner_layer_texture_format_check_quirk: true # <- false
           work_around_bad_entity_eye_layer_texture_transparency_blending_quirk: true # <- false
+          automatic_asset_types_mask_detection: false # <- true
           allow_optifine_mod: true # <- false
           allow_mtr3_mod: true # <- false
           skip_pack_icon: true # <- false
@@ -28,7 +29,6 @@ jobs:
           size_increasing_zip_obfuscation: true # <- false
           percentage_of_zip_structures_tuned_for_obfuscation_discretion: 100 # <- 0
           never_store_squash_times: true # <- false
-          automatic_asset_types_mask_detection: false # <- true
           transcode_ogg: false # <- true
           audio_sampling_frequency: 44100 # <- 32000
           target_audio_pitch: 1.5 # <- 1.0
