@@ -47,6 +47,9 @@ jobs:
           strip_legacy_language_files_bom: false # <- true
           minify_command_function_files: false # <- true
           minify_properties_files: false # <- true
+          force_include_files: |
+            dummy_file1.txt
+            dummy_file2.txt
           system_id: c5eb0603-093c-41fd-9c21-88c34a429e3b # <- (Automatically generated)
           artifact_name: Test Artifact Name # <- Optimized pack
           log_emoji: false # <- true

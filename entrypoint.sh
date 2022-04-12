@@ -181,6 +181,20 @@ if [ "$INPUT_WORK_AROUND_BAD_ENTITY_EYE_LAYER_TEXTURE_TRANSPARENCY_BLENDING_QUIR
 fi
 WORK_AROUND_MINECRAFT_QUIRKS="$WORK_AROUND_MINECRAFT_QUIRKS ]"
 
+# force_include_files
+FORCE_INCLUDE_FILES_LIST="$(mktemp)"
+echo "$INPUT_FORCE_INCLUDE_FILES" > "$FORCE_INCLUDE_FILES_LIST"
+FORCE_INCLUDE_FILES=''
+while read -r file_name; do
+  if [ -n "$file_name" ]; then
+    FORCE_INCLUDE_FILES="$FORCE_INCLUDE_FILES${force_include_file_added+
+
+}['$file_name']
+force_include = true"
+    force_include_file_added=
+  fi
+done < "$FORCE_INCLUDE_FILES_LIST"
+
 # Uncomment when needed. GitHub doesn't like newlines that env outputs
 #printf '::debug::After processing input options, environment variables are:\n%s\n' "$(env)"
 
@@ -348,6 +362,8 @@ minify_command_function = $INPUT_MINIFY_COMMAND_FUNCTION_FILES
 
 ['**/*.properties']
 minify_properties = $INPUT_MINIFY_PROPERTIES_FILES
+
+$FORCE_INCLUDE_FILES
 OPTIONS_FILE
 else
     cp "$GITHUB_WORKSPACE/$INPUT_OPTIONS_FILE" packsquash-options.toml

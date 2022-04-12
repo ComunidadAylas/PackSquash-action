@@ -180,6 +180,10 @@ inputs:
     description: 'When true, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings.'
     required: false
     default: 'true'
+  force_include_files:
+    description: ''
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
