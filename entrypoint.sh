@@ -297,7 +297,7 @@ case "$INPUT_PACKSQUASH_VERSION" in
         download_packsquash_release_executable "$INPUT_PACKSQUASH_VERSION" "PackSquash.executable.Linux.${machine_infix}.glibc.zip"
     ;;
     *)
-        echo "::error::Not found PackSquash version: $INPUT_PACKSQUASH_VERSION"
+        echo "::error::Unsupported PackSquash version: $INPUT_PACKSQUASH_VERSION"
         exit 1
     ;;
 esac
