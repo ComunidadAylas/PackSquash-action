@@ -17,7 +17,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY \
-git-set-file-times.pl dist/index.mjs \
+git-set-file-times.pl dist/actions_helper.mjs \
 packsquash-problem-matcher.json entrypoint.sh \
 /opt/action/
 
