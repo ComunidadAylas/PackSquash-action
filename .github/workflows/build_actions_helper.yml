@@ -21,6 +21,6 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: -f dist/actions_helper.mjs
-          message: 'Build Actions helper bundle'
+          message: 'chore(dist/actions_helper): build'
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
