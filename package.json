@@ -1,0 +1,25 @@
+{
+  "name": "packsquash-action",
+  "version": "2.0.2",
+  "description": "Official action to run PackSquash in a GitHub Actions workflow.",
+  "scripts": {
+    "build-actions-helper": "ncc build actions_helper.mjs -o dist -m && mv dist/index.mjs dist/actions_helper.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ComunidadAylas/PackSquash-action.git"
+  },
+  "author": "sya-ri, Alejandro \"AlexTMjugador\" González",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ComunidadAylas/PackSquash-action/issues"
+  },
+  "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
+  "dependencies": {
+    "@actions/artifact": "^1.0.0",
+    "@actions/cache": "^2.0.2"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.33.4"
+  }
+}
