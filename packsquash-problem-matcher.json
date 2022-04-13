@@ -5,7 +5,7 @@
             "severity": "error",
             "pattern": [
                 {
-                    "regexp": "^! ((?!Invalid stick parity bit).)+$",
+                    "regexp": "^[!❌] (?!.*Invalid stick parity bit)(.+)$",
                     "message": 1
                 }
             ]
@@ -15,7 +15,7 @@
             "severity": "warning",
             "pattern": [
                 {
-                    "regexp": "^\\* (.+)$",
+                    "regexp": "^[*⚡] (.+)$",
                     "message": 1
                 }
             ]
