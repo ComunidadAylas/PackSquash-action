@@ -139,6 +139,11 @@ mkdir -p "${PACK_ZIP_PATH%/*}"
 # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#file-systems
 mv packsquash-problem-matcher.json "$HOME"
 
+# Sanitize the cache revision input to hexadecimal characters, so it cannot
+# contain characters that may upset GitHub cache libraries, such as commas
+INPUT_ACTION_CACHE_REVISION="$(echo "$INPUT_ACTION_CACHE_REVISION" | od -An -x | tr -d ' ')"
+readonly INPUT_ACTION_CACHE_REVISION
+
 # ----------------------------------------------------------
 # Handle options that need to be converted to another format
 # ----------------------------------------------------------
