@@ -36,8 +36,8 @@ download_latest_artifact() {
 
     echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
     latest_artifacts_endpoint=$(wget${INPUT_TOKEN:+ --header "Authorization: Bearer $INPUT_TOKEN"} -nv -O - \
-        "https://api.github.com/repos/$1/actions/runs?branch=$2&status=completed" \
-        | jq '.workflow_runs | map(select(.workflow_id == '"$3"' and .conclusion == "success"))' \
+        "https://api.github.com/repos/$1/actions/runs?status=completed" \
+        | jq '.workflow_runs | map(select(.head_branch == "'"$2"'" and .workflow_id == '"$3"' and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     if [ "$latest_artifacts_endpoint" = 'null' ]; then
@@ -73,13 +73,63 @@ get_current_workflow_id() {
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows" 2>/run/workflow-id-stderr || true)
 
         if [ -n "$response" ]; then
-            rm -f /run/workflow-id-stderr
             CURRENT_WORKFLOW_ID=$(printf '%s' "$response" | jq -r '.workflows | map(select(.name == "'"$GITHUB_WORKFLOW"'")) | .[0].id')
         else
             echo "::error::Could not get the current workflow ID: $(cat /run/workflow-id-stderr)"
-            return 1
         fi
+
+        rm -f /run/workflow-id-stderr || true
+
+        [ -n "$response" ]
     fi
+}
+
+# Returns the head branch of the git ref this workflow run was triggered for,
+# and stores it at the HEAD_BRANCH variable, if it was not already retrieved.
+# For runs triggered by push events, the head branch is the branch the commit
+# was pushed to. For runs triggered by pull request events, the head branch is
+# the branch where the PR commits are pushed to, that might be in a forked repo
+# and have the same name as a branch in the target repo, or another branch in
+# the same repository. For runs triggered by workflow dispatch events, the
+# triggerer controls the branch they are triggered in. For runs triggered by
+# other events, the head branch should be set to the default branch.
+# This function has no parameters.
+get_head_branch() {
+    if [ -z "${HEAD_BRANCH+x}" ]; then
+        response=$(wget${INPUT_TOKEN:+ --header "Authorization: Bearer $INPUT_TOKEN"} -nv -O - \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" 2>/run/head-branch-stderr || true)
+
+        if [ -n "$response" ]; then
+            HEAD_BRANCH=$(printf '%s' "$response" | jq -r '.head_branch')
+        else
+            echo "::error::Could not get the head branch: $(cat /run/head-branch-stderr)"
+        fi
+
+        rm -f /run/head-branch-stderr || true
+
+        [ -n "$response" ]
+    fi
+}
+
+# Gets the cache key suitable to store the system ID, which is specific to the
+# current workflow job, options file and PackSquash version. The
+# "action_cache_revision" input parameter is also concatenated to the key.
+# This function has no parameters.
+get_cache_key() {
+    get_current_workflow_id
+
+    echo "$INPUT_ACTION_CACHE_REVISION-$INPUT_PACKSQUASH_VERSION-$options_file_hash-$CURRENT_WORKFLOW_ID-$GITHUB_JOB"
+}
+
+# Gets the cache restore key suitable as a fallback to retrieve a system ID
+# when an exact match for the store key (primary key) did not occur. This
+# restore key will accept caches from other workflows and jobs, as long as they
+# share the same cache revision input parameter, options file and PackSquash
+# version. For more details, see:
+# https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+# This function has no parameters.
+get_cache_restore_key() {
+    echo "$INPUT_ACTION_CACHE_REVISION-$INPUT_PACKSQUASH_VERSION-$options_file_hash"
 }
 
 # Runs PackSquash with the options file available at a conventional path. An action log
@@ -141,7 +191,7 @@ mv packsquash-problem-matcher.json "$HOME"
 
 # Sanitize the cache revision input to hexadecimal characters, so it cannot
 # contain characters that may upset GitHub cache libraries, such as commas
-INPUT_ACTION_CACHE_REVISION="$(echo "$INPUT_ACTION_CACHE_REVISION" | od -An -x | tr -d ' ')"
+INPUT_ACTION_CACHE_REVISION="$(printf '%s' "$INPUT_ACTION_CACHE_REVISION" | od -An -t x1 | tr -d ' ')"
 readonly INPUT_ACTION_CACHE_REVISION
 
 # ----------------------------------------------------------
@@ -391,25 +441,73 @@ options_file_hash="${options_file_hash%% *}"
 # needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-    get_current_workflow_id
-    if ! download_latest_artifact "$GITHUB_REPOSITORY" "$(git -C "$GITHUB_WORKSPACE" branch --show-current)" \
-        "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME"; then
-        echo '::warning::Could not fetch the ZIP file generated in the last run. PackSquash will thus not be' \
-             'able to reuse it to speed up processing. This is a normal occurence when running a workflow for' \
-             'the first time, or after a long time since its last execution.'
+
+    node actions-cache.mjs 'system_id' restore "$(get_cache_key)" "$(get_cache_restore_key)"
+
+    # The artifact may outlive the cached system ID. In that case it will
+    # not be reusable, because that cache tends to be the only way we can
+    # remember the system ID we need to read it properly. However, it's
+    # worth trying anyway when users provide a fixed system ID, because in
+    # that case they take the responsibility of rememebering and generating
+    # the ID from us. In no event the correctness of the output of the
+    # PackSquash program should depend on the system ID being valid for this
+    # artifact: two different jobs can be restoring different system IDs for
+    # the same artifact if, e.g., they simultaneously stored their own system ID
+    # in their own specific cache key. The worst case scenario is that
+    # PackSquash complains about not being able to reuse the artifact and moves
+    # on. End users can fix this by tweaking the cache revision input parameter
+    if [ -f '/run/packsquash-cache-hit' ] || [ -n "$PACKSQUASH_SYSTEM_ID" ]; then
+        get_current_workflow_id
+
+        # Using the head branch for filtering artifacts is important for PRs,
+        # because their synchronized event repository checkout is in a detached
+        # head state, where there is no concept of "this branch" (e.g., what git
+        # branch --show-current would return). Other event types have a concept
+        # of "this branch" and the head branch is set to that branch (e.g., push
+        # events).
+        #
+        # We need to filter artifacts by branch to avoid PackSquash incorrectly
+        # reusing files from a totally unrelated development history. Consider
+        # this example of what could go wrong if we did not:
+        #
+        # - Someone pushes a commit for file A with time B to branch C.
+        # - Someone (else) pushes a commit for file A with time D, D <= B, to
+        #   branch D. But this A file is an unrelated file to the previous A.
+        # - The action runs for the first time on the first push on branch C,
+        #   generating artifact E.
+        # - The action then runs for the second push on branch D. If there was
+        #   no branch filter, we would use E, which has a totally unrelated
+        #   version of A.
+        #
+        # A consequence of this design is that PRs are trusted to use a
+        # different branch name if they have an unrelated file history. This is
+        # normally the case, as PRs tend to have different head branch names.
+        # When they do not it usually is because the history is related to
+        # the one in the base branch, which is okay
+        get_head_branch
+
+        if ! download_latest_artifact "$GITHUB_REPOSITORY" \
+            "$HEAD_BRANCH" "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME"; then
+            echo '::warning::Could not fetch the ZIP file generated in the last run. ' \
+                'PackSquash will thus not be able to reuse it to speed up processing. ' \
+                'This is a normal occurence when running a workflow for the first time, ' \
+                'or after a long time since its last execution.'
+        fi
+
+        mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
     fi
-    mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
-    node actions-cache.mjs 'system_id' restore "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+
     echo '::endgroup::'
 fi
 
-# Only override the system ID if the user didn't set it explicitly
+# Only use the cached system ID if the user didn't set one
 PACKSQUASH_SYSTEM_ID="$INPUT_SYSTEM_ID"
 if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
     PACKSQUASH_SYSTEM_ID=$(cat system_id 2>/dev/null || true)
 fi
 
-# If we don't have an UUID, ask the kernel for one. This UUID is generated with a CSPRNG
+# If we still don't have an UUID, ask the kernel for one. This UUID is generated
+# with a CSPRNG
 if [ -z "$PACKSQUASH_SYSTEM_ID" ]; then
     PACKSQUASH_SYSTEM_ID=$(cat /proc/sys/kernel/random/uuid)
 fi
@@ -472,6 +570,6 @@ echo '::endgroup::'
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    node actions-cache.mjs 'system_id' save "$options_file_hash" "$INPUT_ACTION_CACHE_REVISION"
+    node actions-cache.mjs 'system_id' save "$(get_cache_key)"
     echo '::endgroup::'
 fi
