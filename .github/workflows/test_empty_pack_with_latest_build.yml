@@ -1,5 +1,6 @@
 name: Test - Empty resource pack (latest PackSquash build)
 on:
+  workflow_dispatch:
   schedule:
     # Check the action works with the latest PackSquash build every
     # 2 days. Ideally we should check this when a commit is pushed
