@@ -1,0 +1,26 @@
+name: Build - Actions Helper bundle
+on:
+  push:
+    paths:
+      - actions_helper.mjs
+  pull_request:
+    types:
+      - opened
+      - synchronize
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Install NPM development dependencies
+        run: npm install
+      - name: Build Actions Helper bundle
+        run: npm run build-actions-helper
+      - name: Commit and push Actions Helper bundle
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: dist/actions_helper.mjs
+          message: 'Build Actions Helper bundle'
+          author_name: github-actions[bot]
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
