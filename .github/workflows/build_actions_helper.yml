@@ -20,7 +20,7 @@ jobs:
       - name: Commit and push Actions Helper bundle
         uses: EndBug/add-and-commit@v9
         with:
-          add: dist/actions_helper.mjs
+          add: -f dist/actions_helper.mjs
           message: 'Build Actions Helper bundle'
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
