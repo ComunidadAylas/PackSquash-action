@@ -17,7 +17,6 @@ jobs:
         uses: ./ # Uses an action in the root directory
         with:
           path: test/empty_resource_pack
-          packsquash_version: latest
           recompress_compressed_files: true # <- false
           zip_compression_iterations: 10 # <- 20
           automatic_minecraft_quirks_detection: false # <- true
