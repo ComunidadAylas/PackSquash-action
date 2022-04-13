@@ -8,7 +8,7 @@ async function run() {
     if (process.argv[3] === 'save') {
         await saveCache(cached_file_paths, cache_key)
     } else {
-        return await restoreCache(cached_file_paths, cache_key, [cache_key]) !== undefined
+        return await restoreCache(cached_file_paths, cache_key) !== undefined
     }
 }
 
