@@ -442,7 +442,7 @@ options_file_hash="${options_file_hash%% *}"
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
 
-    node actions-cache.mjs 'system_id' restore "$(get_cache_key)" "$(get_cache_restore_key)"
+    node index.mjs restore_cache 'system_id' "$(get_cache_key)" "$(get_cache_restore_key)"
 
     # The artifact may outlive the cached system ID. In that case it will
     # not be reusable, because that cache tends to be the only way we can
@@ -564,12 +564,12 @@ esac
 cd "$ACTION_WORKING_DIR"
 
 echo '::group::Upload generated ZIP file as artifact'
-node actions-artifact-upload.mjs "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$INPUT_ARTIFACT_NAME"
+node index.mjs upload_artifact "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$INPUT_ARTIFACT_NAME"
 echo '::endgroup::'
 
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    node actions-cache.mjs 'system_id' save "$(get_cache_key)"
+    node index.mjs save_cache 'system_id' "$(get_cache_key)"
     echo '::endgroup::'
 fi

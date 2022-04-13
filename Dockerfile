@@ -1,6 +1,6 @@
 FROM node:bullseye
 
-ENV DEBIAN_FRONTEND=noninteractive NODE_ENV=production
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install packages we need in the entrypoint, and PackSquash dependencies. See:
 # https://github.com/ComunidadAylas/PackSquash/wiki/Installation-guide#linux
@@ -14,11 +14,10 @@ RUN apt-get update \
     gstreamer1.0-plugins-good \
     gstreamer1.0-plugins-bad \
  && apt-get -y clean \
- && rm -rf /var/lib/apt/lists/* \
- && npm install --prefix /opt/action @actions/cache @actions/artifact
+ && rm -rf /var/lib/apt/lists/*
 
 COPY \
-git-set-file-times.pl actions-cache.mjs actions-artifact-upload.mjs \
+git-set-file-times.pl dist/index.mjs \
 packsquash-problem-matcher.json entrypoint.sh \
 /opt/action/
 
