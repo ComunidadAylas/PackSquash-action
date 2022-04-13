@@ -435,6 +435,12 @@ echo '::endgroup::'
 options_file_hash=$(md5sum packsquash-options.toml)
 options_file_hash="${options_file_hash%% *}"
 
+# Set PackSquash emoji and color environment variables
+PACKSQUASH_EMOJI="$(if [ "$INPUT_SHOW_EMOJI_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_EMOJI
+PACKSQUASH_COLOR="$(if [ "$INPUT_ENABLE_COLOR_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
+export PACKSQUASH_COLOR
+
 # -------------
 # Restore cache
 # -------------
@@ -485,14 +491,18 @@ if [ -n "${cache_may_be_used+x}" ]; then
         # different branch name if they have an unrelated file history. This is
         # normally the case, as PRs tend to have different head branch names.
         # When they do not it usually is because the history is related to
-        # the one in the base branch, which is okay
+        # the one in the base branch, which is okay.
+        #
+        # We also assume that the workflow indeed tries to optimize an increment
+        # of what was in the branch previously, not a totally unrelated pack
+        # with totally different files in the same paths
         get_head_branch
 
         if ! download_latest_artifact "$GITHUB_REPOSITORY" \
             "$HEAD_BRANCH" "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME"; then
-            echo '::warning::Could not fetch the ZIP file generated in the last run. ' \
-                'PackSquash will thus not be able to reuse it to speed up processing. ' \
-                'This is a normal occurence when running a workflow for the first time, ' \
+            echo '::warning::Could not fetch the ZIP file generated in the last run.' \
+                'PackSquash will thus not be able to reuse it to speed up processing.' \
+                'This is a normal occurence when running a workflow for the first time,' \
                 'or after a long time since its last execution.'
         fi
 
@@ -519,12 +529,6 @@ fi
 echo "::debug::Using system ID: $PACKSQUASH_SYSTEM_ID"
 echo "::add-mask::$PACKSQUASH_SYSTEM_ID"
 export PACKSQUASH_SYSTEM_ID
-
-# Set PackSquash emoji and color options
-PACKSQUASH_EMOJI="$(if [ "$INPUT_SHOW_EMOJI_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
-export PACKSQUASH_EMOJI
-PACKSQUASH_COLOR="$(if [ "$INPUT_ENABLE_COLOR_IN_PACKSQUASH_LOGS" = 'true' ]; then echo 'show'; fi)"
-export PACKSQUASH_COLOR
 
 # -----------------
 # Optimize the pack
