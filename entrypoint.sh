@@ -5,7 +5,7 @@ readonly ACTION_WORKING_DIR='/opt/action'
 readonly PACK_ZIP_PATH='/var/lib/packsquash/pack.zip'
 readonly PROBLEM_MATCHER_FILE_NAME='packsquash-problem-matcher.json'
 
-alias actions=node actions_helper.mjs
+alias actions='node actions_helper.mjs'
 
 # ----------------
 # Useful functions

@@ -1,4 +1,4 @@
-name: Build - Actions Helper bundle
+name: Build - Actions helper bundle
 on:
   push:
     paths:
@@ -15,12 +15,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Install NPM development dependencies
         run: npm install
-      - name: Build Actions Helper bundle
+      - name: Build Actions helper bundle
         run: npm run build-actions-helper
-      - name: Commit and push Actions Helper bundle
+      - name: Commit and push Actions helper bundle
         uses: EndBug/add-and-commit@v9
         with:
           add: -f dist/actions_helper.mjs
-          message: 'Build Actions Helper bundle'
+          message: 'Build Actions helper bundle'
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
