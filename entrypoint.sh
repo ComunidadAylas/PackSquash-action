@@ -514,7 +514,7 @@ echo '::group::Upload generated ZIP file as artifact'
 actions upload_artifact "${PACK_ZIP_PATH%/*}" "$PACK_ZIP_PATH" "$INPUT_ARTIFACT_NAME"
 echo '::endgroup::'
 
-if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
+if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
     actions save_cache 'system_id' "$PACK_ZIP_PATH" "$(get_cache_key)"
