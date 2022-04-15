@@ -464,7 +464,7 @@ if [ -n "${cache_may_be_used+x}" ]; then
     # in their own specific cache key. The worst case scenario is that
     # PackSquash complains about not being able to reuse the artifact and moves
     # on. End users can fix this by tweaking the cache revision input parameter
-    if [ -f '/run/packsquash-cache-hit' ] || [ -n "$PACKSQUASH_SYSTEM_ID" ]; then
+    if [ -f '/run/packsquash-cache-hit' ] || [ -n "$INPUT_SYSTEM_ID" ]; then
         get_current_workflow_id
 
         # Using the head branch for filtering artifacts is important for PRs,
