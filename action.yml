@@ -185,8 +185,8 @@ inputs:
     required: false
     default: ''
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'node16'
+  main: 'dist/index.js'
 branding:
   icon: 'archive'
   color: 'orange'

@@ -3,7 +3,9 @@
   "version": "2.0.2",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
-    "build-actions-helper": "ncc build actions_helper.mjs -o dist -m && mv dist/index.mjs dist/actions_helper.mjs"
+    "build": "ncc build src/index.js -o dist -m",
+    "format": "prettier --write \"src/**/*.js\"",
+    "format-check": "prettier --check \"src/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,13 @@
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "dependencies": {
     "@actions/artifact": "^1.0.0",
-    "@actions/cache": "^2.0.2"
+    "@actions/cache": "^2.0.2",
+    "@actions/core": "^1.6.0",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^5.0.1",
+    "@actions/glob": "^0.2.1",
+    "node-uuid": "^1.4.8",
+    "prettier": "^2.6.2"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.33.4"
