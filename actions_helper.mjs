@@ -14,14 +14,14 @@ async function run() {
         process.exitCode = upload_result.artifactItems.length == 0 ||
             upload_result.failedItems.length > 0
     } else if (process.argv[2] === 'save_cache') {
-        const cached_file_paths = [process.argv[3]]
-        const cache_key = `packsquash-0-${process.argv[4]}`
+        const cached_file_paths = [process.argv[3], process.argv[4]]
+        const cache_key = `packsquash-0-${process.argv[5]}`
 
         await saveCache(cached_file_paths, cache_key)
     } else if (process.argv[2] === 'restore_cache') {
-        const cached_file_paths = [process.argv[3]]
-        const cache_key = `packsquash-0-${process.argv[4]}`
-        const restore_key = `packsquash-0-${process.argv[5]}`
+        const cached_file_paths = [process.argv[3], process.argv[4]]
+        const cache_key = `packsquash-0-${process.argv[5]}`
+        const restore_key = `packsquash-0-${process.argv[6]}`
 
         const restored_cache_key = await restoreCache(cached_file_paths, cache_key, [restore_key])
         if (restored_cache_key) {

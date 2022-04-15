@@ -449,66 +449,7 @@ export PACKSQUASH_COLOR
 # needed, and if this workflow has been run at least once
 if [ -n "${cache_may_be_used+x}" ]; then
     echo '::group::Restoring cached data'
-
-    actions restore_cache 'system_id' "$(get_cache_key)" "$(get_cache_restore_key)"
-
-    # The artifact may outlive the cached system ID. In that case it will
-    # not be reusable, because that cache tends to be the only way we can
-    # remember the system ID we need to read it properly. However, it's
-    # worth trying anyway when users provide a fixed system ID, because in
-    # that case they take the responsibility of rememebering and generating
-    # the ID from us. In no event the correctness of the output of the
-    # PackSquash program should depend on the system ID being valid for this
-    # artifact: two different jobs can be restoring different system IDs for
-    # the same artifact if, e.g., they simultaneously stored their own system ID
-    # in their own specific cache key. The worst case scenario is that
-    # PackSquash complains about not being able to reuse the artifact and moves
-    # on. End users can fix this by tweaking the cache revision input parameter
-    if [ -f '/run/packsquash-cache-hit' ] || [ -n "$PACKSQUASH_SYSTEM_ID" ]; then
-        get_current_workflow_id
-
-        # Using the head branch for filtering artifacts is important for PRs,
-        # because their synchronized event repository checkout is in a detached
-        # head state, where there is no concept of "this branch" (e.g., what git
-        # branch --show-current would return). Other event types have a concept
-        # of "this branch" and the head branch is set to that branch (e.g., push
-        # events).
-        #
-        # We need to filter artifacts by branch to avoid PackSquash incorrectly
-        # reusing files from a totally unrelated development history. Consider
-        # this example of what could go wrong if we did not:
-        #
-        # - Someone pushes a commit for file A with time B to branch C.
-        # - Someone (else) pushes a commit for file A with time D, D <= B, to
-        #   branch D. But this A file is an unrelated file to the previous A.
-        # - The action runs for the first time on the first push on branch C,
-        #   generating artifact E.
-        # - The action then runs for the second push on branch D. If there was
-        #   no branch filter, we would use E, which has a totally unrelated
-        #   version of A.
-        #
-        # A consequence of this design is that PRs are trusted to use a
-        # different branch name if they have an unrelated file history. This is
-        # normally the case, as PRs tend to have different head branch names.
-        # When they do not it usually is because the history is related to
-        # the one in the base branch, which is okay.
-        #
-        # We also assume that the workflow indeed tries to optimize an increment
-        # of what was in the branch previously, not a totally unrelated pack
-        # with totally different files in the same paths
-        get_head_branch
-
-        if ! download_latest_artifact "$GITHUB_REPOSITORY" \
-            "$HEAD_BRANCH" "$CURRENT_WORKFLOW_ID" "$INPUT_ARTIFACT_NAME"; then
-            echo '::warning::Could not fetch the ZIP file generated in the last run.' \
-                'PackSquash will thus not be able to reuse it to speed up processing.' \
-                'This is a normal occurence when running a workflow for the first time,' \
-                'or after a long time since its last execution.'
-        fi
-
-        mv -f "${PACK_ZIP_PATH##*/}" "$PACK_ZIP_PATH" >/dev/null 2>&1 || true
-    fi
-
+    actions restore_cache 'system_id' "$PACK_ZIP_PATH" "$(get_cache_key)" "$(get_cache_restore_key)"
     echo '::endgroup::'
 fi
 
@@ -576,6 +517,6 @@ echo '::endgroup::'
 if [ -n "${cache_may_be_used+x}" ] && ! [ -f '/run/packsquash-cache-hit' ]; then
     echo '::group::Caching data for future runs'
     echo "$PACKSQUASH_SYSTEM_ID" > system_id
-    actions save_cache 'system_id' "$(get_cache_key)"
+    actions save_cache 'system_id' "$PACK_ZIP_PATH" "$(get_cache_key)"
     echo '::endgroup::'
 fi
