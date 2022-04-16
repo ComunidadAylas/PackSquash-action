@@ -2,11 +2,8 @@ import * as path from 'path';
 import { mkdirSync } from 'fs';
 
 class WorkingDirectory {
-    /**
-     * @param {string} path
-     */
-    constructor(path) {
-        this.path = path;
+    constructor() {
+        this.path = path.join(__dirname, '..', '..', 'packsquash');
         mkdirSync(this.path, { recursive: true });
     }
 
