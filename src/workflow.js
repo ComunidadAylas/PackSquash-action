@@ -75,7 +75,7 @@ export async function downloadLatestArtifact(workingDirectory) {
         archive_format: 'zip'
     });
     debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
-    if (await exec('wget', ['-O', workingDirectory.artifact, zip.url], { silent: true })) {
+    if (await exec('curl', ['-sSL', '-o', workingDirectory.artifact, zip.url], { silent: true })) {
         info(`Could not download the latest ${artifactName} artifact`);
         return 3;
     }
