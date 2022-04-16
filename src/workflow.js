@@ -65,7 +65,7 @@ export async function downloadLatestArtifact(workingDirectory) {
     });
     const artifact = artifacts.data.artifacts.filter(j => j.name === artifactName)[0];
     if (!artifact) {
-        info(`Could not get the download URL for the latest ${artifactName} artifact`);
+        info(`Could not get the download URL for the latest ${artifactName} artifact (#${latestRun.run_number})`);
         return 2;
     }
     const zip = await octokit.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
@@ -74,6 +74,7 @@ export async function downloadLatestArtifact(workingDirectory) {
         artifact_id: artifact.id,
         archive_format: 'zip'
     });
+    debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
     if (await exec('wget', ['-O', workingDirectory.artifact, zip.url], { silent: true })) {
         info(`Could not download the latest ${artifactName} artifact`);
         return 3;
@@ -82,5 +83,6 @@ export async function downloadLatestArtifact(workingDirectory) {
         info(`Could not unzip the latest ${artifactName} artifact`);
         return 4;
     }
+    info(`Successfully downloaded the latest ${artifactName} artifact`);
     return 0;
 }
