@@ -38,8 +38,8 @@ download_latest_artifact() {
 
     echo "::debug::Getting API endpoint for latest $4 artifact (repository: $1, branch: $2, workflow ID: $3)"
     latest_artifacts_endpoint=$(wget${INPUT_TOKEN:+ --header "Authorization: Bearer $INPUT_TOKEN"} -nv -O - \
-        "https://api.github.com/repos/$1/actions/runs?status=completed" \
-        | jq '.workflow_runs | map(select(.head_branch == "'"$2"'" and .workflow_id == '"$3"' and .conclusion == "success"))' \
+        "https://api.github.com/repos/$1/actions/runs" \
+        | jq '.workflow_runs | map(select(.head_branch == "'"$2"'" and .workflow_id == '"$3"' and .status == "completed" and .conclusion == "success"))' \
         | jq -r 'sort_by(.updated_at) | reverse | .[0].artifacts_url')
 
     if [ "$latest_artifacts_endpoint" = 'null' ]; then
