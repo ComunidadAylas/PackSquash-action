@@ -74,7 +74,13 @@ export async function downloadLatestArtifact(workingDirectory) {
         artifact_id: artifact.id,
         archive_format: 'zip'
     });
-    await exec('wget', ['-O', workingDirectory.artifact, zip.url], { silent: true });
-    await exec('unzip', ['-o', workingDirectory.artifact, '-d', workingDirectory.path], { silent: true });
+    if (await exec('wget', ['-O', workingDirectory.artifact, zip.url], { silent: true })) {
+        info(`Could not download the latest ${artifactName} artifact`);
+        return 3;
+    }
+    if (await exec('unzip', ['-o', workingDirectory.artifact, '-d', workingDirectory.path], { silent: true })) {
+        info(`Could not unzip the latest ${artifactName} artifact`);
+        return 4;
+    }
     return 0;
 }
