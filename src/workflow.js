@@ -76,4 +76,5 @@ export async function downloadLatestArtifact(workingDirectory) {
     });
     await exec('wget', ['-O', workingDirectory.artifact, zip.url], { silent: true });
     await exec('unzip', ['-o', workingDirectory.artifact, '-d', workingDirectory.path], { silent: true });
+    return 0;
 }
