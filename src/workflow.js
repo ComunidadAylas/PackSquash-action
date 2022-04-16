@@ -3,7 +3,8 @@ import { create } from '@actions/artifact';
 import { context, getOctokit } from '@actions/github';
 import { Options } from './options';
 import { exec } from '@actions/exec';
-import { writeFileSync } from 'fs';
+import { createReadStream } from 'fs';
+import unzipper from 'unzipper';
 
 /**
  * @param {string} owner
@@ -79,10 +80,7 @@ export async function downloadLatestArtifact(workingDirectory) {
         info(`Could not download the latest ${artifactName} artifact`);
         return 3;
     }
-    if (await exec('unzip', ['-o', workingDirectory.artifact, '-d', workingDirectory.path], { silent: true })) {
-        info(`Could not unzip the latest ${artifactName} artifact`);
-        return 4;
-    }
+    createReadStream(workingDirectory.artifact).pipe(unzipper.Extract({ path: workingDirectory.path }));
     info(`Successfully downloaded the latest ${artifactName} artifact`);
     return 0;
 }
