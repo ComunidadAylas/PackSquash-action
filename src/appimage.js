@@ -1,5 +1,5 @@
 import { debug, getInput, info, setFailed } from '@actions/core';
-import { chmodSync, createWriteStream } from 'fs';
+import { chmodSync } from 'fs';
 import { Options } from './options';
 import { getMachineType } from './util';
 import { exec } from '@actions/exec';

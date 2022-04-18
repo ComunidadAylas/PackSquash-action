@@ -1,10 +1,9 @@
-import { endGroup, exportVariable, getInput, getState, saveState, startGroup, warning } from '@actions/core';
+import { endGroup, getInput, startGroup, warning } from '@actions/core';
 import { restoreCache, saveCache } from '@actions/cache';
 import { hashFiles } from '@actions/glob';
 import { context } from '@actions/github';
-import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
+import { downloadLatestArtifact } from './workflow';
 import { Options } from './options';
-import working_directory from './working_directory';
 
 /**
  * @param {WorkingDirectory} workingDirectory

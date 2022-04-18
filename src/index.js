@@ -1,5 +1,5 @@
 import { getInput, setFailed } from '@actions/core';
-import { Options, useCacheOption, printOptionsFileContent, generateOptionsFile } from './options.js';
+import { generateOptionsFile, Options, printOptionsFileContent, useCacheOption } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash, setPackSquashLogsVariables } from './packsquash';
