@@ -25,10 +25,10 @@
     "@actions/github": "^5.0.1",
     "@actions/glob": "^0.2.1",
     "node-uuid": "^1.4.8",
-    "prettier": "^2.6.2",
     "unzipper": "^0.10.11"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.33.4"
+    "@vercel/ncc": "^0.33.4",
+    "prettier": "^2.6.2"
   }
 }
