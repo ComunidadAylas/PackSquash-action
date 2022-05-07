@@ -1,6 +1,6 @@
 import { debug, endGroup, getInput, info, startGroup } from '@actions/core';
 import { create } from '@actions/artifact';
-import { context, getOctokit } from '@actions/github';
+import { getOctokit } from '@actions/github';
 import { Options } from './options';
 import { exec } from '@actions/exec';
 import { createReadStream } from 'fs';
@@ -36,16 +36,16 @@ export async function uploadArtifact(workingDirectory) {
 
 /**
  * @param {WorkingDirectory} workingDirectory
+ * @param {string} owner
+ * @param {string} repo
+ * @param {string} branch
+ * @param {number} workflowId
+ * @param {string} artifactName
  * @returns {Promise<number>}
  */
-export async function downloadLatestArtifact(workingDirectory) {
-    const artifactName = getInput(Options.ArtifactName);
+export async function downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, artifactName) {
     info(`Downloading latest ${artifactName} artifact`);
     const octokit = getOctokit(getInput(Options.Token));
-    const owner = context.repo.owner;
-    const repo = context.repo.repo;
-    const branch = context.ref.split('/')[2];
-    const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
     debug(`Getting API endpoint for latest ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/runs', {
         owner: owner,

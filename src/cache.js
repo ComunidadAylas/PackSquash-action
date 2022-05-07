@@ -2,7 +2,7 @@ import { endGroup, getInput, startGroup, warning } from '@actions/core';
 import { restoreCache, saveCache } from '@actions/cache';
 import { hashFiles } from '@actions/glob';
 import { context } from '@actions/github';
-import { downloadLatestArtifact } from './workflow';
+import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
 import { Options } from './options';
 
 /**
@@ -28,7 +28,11 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
     const restoredCacheKey = await restoreCache([workingDirectory.systemId], key, restore_keys);
     if (restoredCacheKey || getInput(Options.SystemId)) {
         try {
-            const isError = await downloadLatestArtifact(workingDirectory);
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const branch = context.ref.split('/')[2];
+            const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
+            const isError = await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName));
             if (isError) {
                 warning(
                     'Could not fetch the ZIP file generated in the last run. PackSquash will thus not be able to reuse it to speed up processing. This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution.'
