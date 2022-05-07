@@ -3,7 +3,7 @@ import { create } from '@actions/artifact';
 import { getOctokit } from '@actions/github';
 import { Options } from './options';
 import { exec } from '@actions/exec';
-import { createReadStream } from 'fs';
+import { createWriteStream, rmSync } from 'fs';
 import unzipper from 'unzipper';
 
 /**
@@ -41,9 +41,10 @@ export async function uploadArtifact(workingDirectory) {
  * @param {string} branch
  * @param {number} workflowId
  * @param {string} artifactName
+ * @param {string} destinationPath
  * @returns {Promise<number>}
  */
-export async function downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, artifactName) {
+export async function downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, artifactName, destinationPath) {
     info(`Downloading latest ${artifactName} artifact`);
     const octokit = getOctokit(getInput(Options.Token));
     debug(`Getting API endpoint for latest ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
@@ -80,7 +81,20 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         info(`Could not download the latest ${artifactName} artifact`);
         return 3;
     }
-    createReadStream(workingDirectory.artifact).pipe(unzipper.Extract({ path: workingDirectory.path }));
+    await extractFile(workingDirectory.artifact, destinationPath);
+    rmSync(workingDirectory.artifact);
     info(`Successfully downloaded the latest ${artifactName} artifact`);
     return 0;
+}
+
+/**
+ * @param {string} zip
+ * @param {string} path
+ * @returns {Promise<void>}
+ */
+async function extractFile(zip, path) {
+    const directory = await unzipper.Open.file(zip);
+    return new Promise((resolve, reject) => {
+        directory.files[0].stream().pipe(createWriteStream(path)).on('error', reject).on('finish', resolve);
+    });
 }

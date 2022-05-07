@@ -68,7 +68,7 @@ export async function downloadAppImage(workingDirectory) {
  * @returns {Promise<void>}
  */
 async function downloadLatestAppImage(workingDirectory, machine_infix) {
-    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${machine_infix})`);
+    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${machine_infix})`, workingDirectory.packsquash);
 }
 
 /**
