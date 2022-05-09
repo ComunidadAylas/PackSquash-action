@@ -10,10 +10,10 @@ import { Options } from './options';
  * @returns {Promise<string[]>}
  */
 export async function computeCacheKey(workingDirectory) {
-    const hash = await hashFiles(workingDirectory.optionsFile);
-    const key0 = `packsquash-0-${getInput(Options.ActionCacheRevision)}-${getInput(Options.PackSquashVersion)}-${hash}`;
-    const key1 = `${key0}-${context.runId}-${context.job}`;
-    return [key1, key0];
+    const optionsHash = await hashFiles(workingDirectory.optionsFile);
+    const restoreKey = `packsquash-0-${getInput(Options.ActionCacheRevision)}-${getInput(Options.PackSquashVersion)}-${optionsHash}`;
+    const primaryKey = `${restoreKey}-${context.runId}-${context.job}`;
+    return [primaryKey, restoreKey];
 }
 
 /**
