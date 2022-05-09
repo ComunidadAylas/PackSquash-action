@@ -1,6 +1,6 @@
 import { endGroup, exportVariable, getBooleanInput, startGroup, warning } from '@actions/core';
 import { exec } from '@actions/exec';
-import { rmSync } from 'fs';
+import { rm } from 'fs/promises';
 import { addProblemMatcher, removeProblemMatcher } from './problem-matcher';
 import { Options } from './options';
 
@@ -20,7 +20,7 @@ export async function printPackSquashVersion(workingDirectory) {
  */
 export async function runPackSquash(workingDirectory) {
     async function run(description) {
-        addProblemMatcher(workingDirectory.problemMatcherFile);
+        await addProblemMatcher(workingDirectory.problemMatcherFile);
         if (description) {
             startGroup(`PackSquash output (${description})`);
         } else {
@@ -38,7 +38,7 @@ export async function runPackSquash(workingDirectory) {
             break;
         case 129:
             warning('PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.');
-            rmSync(workingDirectory.outputFile);
+            await rm(workingDirectory.outputFile);
             exitCode = await run('discarded previous ZIP file');
             if (exitCode !== 0) {
                 process.exit(exitCode);

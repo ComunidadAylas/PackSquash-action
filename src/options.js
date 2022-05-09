@@ -1,5 +1,5 @@
 import { debug, endGroup, getBooleanInput, getInput, getMultilineInput, info, startGroup } from '@actions/core';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 
 export class Options {
     static Path = 'path';
@@ -174,20 +174,20 @@ ${getForceIncludeFiles()}`.trim();
 
 /**
  * @param {WorkingDirectory} workingDirectory
- * @returns {string}
+ * @returns {Promise<string>}
  */
-export function generateOptionsFile(workingDirectory) {
-    writeFileSync(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), { encoding: 'utf8' });
+export async function generateOptionsFile(workingDirectory) {
+    await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), { encoding: 'utf8' });
     return workingDirectory.optionsFile;
 }
 
 export async function printOptionsFileContent(path) {
     startGroup('PackSquash options');
-    readFileSync(path, { encoding: 'utf8' })
-        .split('\n')
-        .forEach((line, index) => {
+    readFile(path, { encoding: 'utf8' }).then(content => {
+        content.split('\n').forEach((line, index) => {
             info(`${index.toString().padEnd(6, ' ')} ${line}`);
         });
+    });
     endGroup();
 }
 

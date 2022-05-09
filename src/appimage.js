@@ -1,5 +1,5 @@
 import { debug, getInput, info, setFailed } from '@actions/core';
-import { chmodSync } from 'fs';
+import { chmod } from 'fs/promises';
 import { Options } from './options';
 import { getArchitecture } from './util';
 import { exec } from '@actions/exec';
@@ -59,7 +59,7 @@ export async function downloadAppImage(workingDirectory) {
         default:
             setFailed(`Unsupported PackSquash version: ${version}`);
     }
-    chmodSync(workingDirectory.packsquashBinary, '755');
+    await chmod(workingDirectory.packsquashBinary, '755');
 }
 
 /**

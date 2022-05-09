@@ -1,5 +1,5 @@
 import { getExecOutput } from '@actions/exec';
-import { existsSync, utimesSync } from 'fs';
+import { utimes } from 'fs/promises';
 
 /**
  * @returns {Promise<void>}
@@ -30,32 +30,29 @@ async function changeTime(files) {
     return new Promise(async resolve => {
         const output = await getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true });
         let time = new Date();
-        output.stdout.split('\n').forEach(line => {
+        for (const line of output.stdout.split('\n')) {
             const m = line.match(/^committer .*? (\d+) (?:[\-\+]\d+)$/);
             if (m) {
                 time = new Date(parseInt(m[1]) * 1000);
-                return;
+                continue;
             }
             const m1 = line.match(/(.+)\0\0commit [a-f0-9]{40}( \(from [a-f0-9]{40}\))?$/);
             const m2 = line.match(/(.+)\0$/);
             const list = (m1 ? m1[1] : m2 ? m2[1] : '').split(/\0/);
             if (list.length <= 0) {
-                return;
+                continue;
             }
-            list.forEach(file => {
+            for (const file of list) {
                 if (!file) {
-                    return;
+                    continue;
                 }
                 const index = files.indexOf(file);
                 if (index < 0) {
-                    return;
+                    continue;
                 }
-                if (existsSync(file)) {
-                    utimesSync(file, time, time);
-                    files.splice(index, 1);
-                }
-            });
-        });
+                await utimes(file, time, time).then(() => files.splice(index, 1));
+            }
+        }
         resolve();
     });
 }

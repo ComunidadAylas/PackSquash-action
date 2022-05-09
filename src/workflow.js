@@ -3,7 +3,8 @@ import { create } from '@actions/artifact';
 import { getOctokit } from '@actions/github';
 import { Options } from './options';
 import { exec } from '@actions/exec';
-import { createWriteStream, rmSync } from 'fs';
+import { createWriteStream } from 'fs';
+import { rm } from 'fs/promises';
 import unzipper from 'unzipper';
 
 /**
@@ -82,7 +83,7 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         return 3;
     }
     await extractFile(workingDirectory.artifactFile, destinationPath);
-    rmSync(workingDirectory.artifactFile);
+    await rm(workingDirectory.artifactFile);
     info(`Successfully downloaded the latest ${artifactName} artifact`);
     return 0;
 }

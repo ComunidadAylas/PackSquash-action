@@ -1,13 +1,13 @@
 import { debug, exportVariable, getInput, setSecret } from '@actions/core';
 import { Options } from './options';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 import * as uuid from 'uuid';
 
 /**
  * @param {WorkingDirectory} workingDirectory
  */
-export function setSystemIdVariable(workingDirectory) {
-    const systemId = getSystemId(workingDirectory);
+export async function setSystemIdVariable(workingDirectory) {
+    const systemId = await getSystemId(workingDirectory);
     debug(`Using system ID: ${systemId}`);
     setSecret(systemId);
     exportVariable('PACKSQUASH_SYSTEM_ID', systemId);
@@ -15,20 +15,21 @@ export function setSystemIdVariable(workingDirectory) {
 
 /**
  * @param {WorkingDirectory} workingDirectory
- * @returns {string}
+ * @returns {Promise<string>}
  */
 function getSystemId(workingDirectory) {
     const inputSystemId = getInput(Options.SystemId);
     if (inputSystemId) {
-        return inputSystemId;
+        return new Promise(resolve => {
+            resolve(inputSystemId);
+        });
     }
-    if (existsSync(workingDirectory.systemIdFile)) {
-        const cachedSystemId = readFileSync(workingDirectory.systemIdFile, { encoding: 'utf8' });
+    return readFile(workingDirectory.systemIdFile, { encoding: 'utf8' }).then(async cachedSystemId => {
         if (cachedSystemId) {
             return cachedSystemId;
         }
-    }
-    const systemId = uuid.v4();
-    writeFileSync(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
-    return systemId;
+        const systemId = uuid.v4();
+        await writeFile(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
+        return systemId;
+    });
 }

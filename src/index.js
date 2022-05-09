@@ -7,11 +7,12 @@ import { uploadArtifact } from './workflow';
 import { setSystemIdVariable } from './system_id';
 import gitSetFileTimes from './git-set-file-times';
 import { checkRepositoryIsNotShallow } from './util';
-import { copyFileSync } from 'fs';
+import { copyFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
 
 async function run() {
     const workingDirectory = new WorkingDirectory();
+    await workingDirectory.mkdir();
     let optionsFile = getInput(Options.OptionsFile);
     const useCache = optionsFile || shouldUseCache();
     if (useCache) {
@@ -20,9 +21,9 @@ async function run() {
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
     if (optionsFile) {
-        copyFileSync(optionsFile, workingDirectory.optionsFile);
+        await copyFile(optionsFile, workingDirectory.optionsFile);
     } else {
-        optionsFile = generateOptionsFile(workingDirectory);
+        optionsFile = await generateOptionsFile(workingDirectory);
     }
     await printOptionsFileContent(optionsFile);
     setPackSquashLogsVariables();
@@ -31,7 +32,7 @@ async function run() {
     if (useCache) {
         restoreCache = await restorePackSquashCache(workingDirectory, key, restoreKeys);
     }
-    setSystemIdVariable(workingDirectory);
+    await setSystemIdVariable(workingDirectory);
     if (useCache) {
         await gitSetFileTimes();
     }

@@ -1,5 +1,5 @@
 import { info } from '@actions/core';
-import { writeFileSync } from 'fs';
+import { writeFile } from 'fs/promises';
 
 const json = {
     problemMatcher: [
@@ -29,8 +29,8 @@ const json = {
 /**
  * @param {string} path
  */
-export function addProblemMatcher(path) {
-    writeFileSync(path, JSON.stringify(json));
+export async function addProblemMatcher(path) {
+    await writeFile(path, JSON.stringify(json));
     info(`##[add-matcher]${path}`);
 }
 

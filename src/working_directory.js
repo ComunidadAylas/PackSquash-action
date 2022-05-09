@@ -1,10 +1,13 @@
 import * as path from 'path';
-import { mkdirSync } from 'fs';
+import { mkdir } from 'fs/promises';
 
 class WorkingDirectory {
     constructor() {
         this.path = path.join(__dirname, '..', '..', 'packsquash');
-        mkdirSync(this.path, { recursive: true });
+    }
+
+    async mkdir() {
+        await mkdir(this.path, { recursive: true });
     }
 
     /**
