@@ -18,7 +18,7 @@ export async function getCurrentWorkflowId(owner, repo, workflow) {
         owner: owner,
         repo: repo
     });
-    return workflows.data.workflows.filter(j => j.name === workflow)[0].id;
+    return workflows.data.workflows.find(w => w.name === workflow).id;
 }
 
 /**
@@ -65,7 +65,7 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         repo: repo,
         run_id: latestRun.id
     });
-    const artifact = artifacts.data.artifacts.filter(j => j.name === artifactName)[0];
+    const artifact = artifacts.data.artifacts.find(a => a.name === artifactName);
     if (!artifact) {
         info(`Could not get the download URL for the latest ${artifactName} artifact (#${latestRun.run_number})`);
         return 2;
