@@ -4,6 +4,7 @@ import { hashFiles } from '@actions/glob';
 import { context } from '@actions/github';
 import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
 import { Options } from './options';
+import { getBranchName } from './util';
 
 /**
  * @param {WorkingDirectory} workingDirectory
@@ -30,7 +31,7 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
         try {
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const branch = context.ref.split('/')[2];
+            const branch = getBranchName();
             const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
             await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
         } catch (err) {

@@ -24,6 +24,17 @@ export function getArchitecture() {
 }
 
 /**
+ * @return {string}
+ */
+export function getBranchName() {
+    const name = process.env['GITHUB_HEAD_REF'];
+    if (name) {
+        return name;
+    }
+    return process.env['GITHUB_REF_NAME'];
+}
+
+/**
  * Returns the value of the specified environment variable. If it was not
  * defined an exception will be thrown.
  * @param {string} variable The environment variable to get the value of.
