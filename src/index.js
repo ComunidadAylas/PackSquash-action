@@ -5,7 +5,7 @@ import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash, setPackSquashLogsVariables } from './packsquash';
 import { uploadArtifact } from './workflow';
 import { setSystemIdVariable } from './system_id';
-import gitSetFileTimes from './git-set-file-times';
+import git_set_file_times from './git_set_file_times';
 import { checkRepositoryIsNotShallow } from './util';
 import { copyFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
@@ -34,7 +34,7 @@ async function run() {
     }
     await setSystemIdVariable(workingDirectory);
     if (useCache) {
-        await gitSetFileTimes();
+        await git_set_file_times();
     }
     await runPackSquash(workingDirectory);
     await uploadArtifact(workingDirectory);

@@ -1,7 +1,7 @@
 import { endGroup, exportVariable, getBooleanInput, startGroup, warning } from '@actions/core';
 import { exec } from '@actions/exec';
 import { rm } from 'fs/promises';
-import { addProblemMatcher, removeProblemMatcher } from './problem-matcher';
+import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
 import { Options } from './options';
 
 /**

@@ -4,7 +4,7 @@ import { utimes } from 'fs/promises';
 /**
  * @returns {Promise<void>}
  */
-async function gitSetFileTimes() {
+async function git_set_file_times() {
     return await ls().then(list => changeTime(list));
 }
 
@@ -57,4 +57,4 @@ async function changeTime(files) {
     });
 }
 
-export default gitSetFileTimes;
+export default git_set_file_times;
