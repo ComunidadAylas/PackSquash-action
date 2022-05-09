@@ -91,12 +91,16 @@ export function getSystemId(workingDirectory) {
             resolve(inputSystemId);
         });
     }
-    return readFile(workingDirectory.systemIdFile, { encoding: 'utf8' }).then(async cachedSystemId => {
-        if (cachedSystemId) {
-            return cachedSystemId;
-        }
-        const systemId = uuid.v4();
-        await writeFile(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
-        return systemId;
-    });
+    return readFile(workingDirectory.systemIdFile, { encoding: 'utf8' })
+        .then(async cachedSystemId => {
+            if (cachedSystemId) {
+                return cachedSystemId;
+            }
+            throw Error();
+        })
+        .catch(async () => {
+            const systemId = uuid.v4();
+            await writeFile(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
+            return systemId;
+        });
 }
