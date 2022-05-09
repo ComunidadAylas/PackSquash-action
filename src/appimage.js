@@ -1,7 +1,7 @@
 import { debug, getInput, info, setFailed } from '@actions/core';
 import { chmodSync } from 'fs';
 import { Options } from './options';
-import { getMachineType } from './util';
+import { getArchitecture } from './util';
 import { exec } from '@actions/exec';
 import { downloadLatestArtifact } from './workflow';
 
@@ -12,10 +12,10 @@ import { downloadLatestArtifact } from './workflow';
 export async function downloadAppImage(workingDirectory) {
     const version = getInput(Options.PackSquashVersion);
     debug(`PackSquash version input variable value: ${version}`);
-    const machine = await getMachineType();
-    debug(`Container machine type: ${machine}`);
+    const arch = await getArchitecture();
+    debug(`Runner architecture: ${arch}`);
 
-    let machine_infix;
+    let arch_infix;
     switch (version) {
         case 'v0.1.0':
         case 'v0.1.1':
@@ -27,48 +27,48 @@ export async function downloadAppImage(workingDirectory) {
             setFailed(`Unsupported PackSquash version: ${version}. Please use PackSquash-action@v2 instead.`);
             break;
         case 'latest':
-            switch (machine) {
+            switch (arch) {
                 case 'x86_64':
-                    machine_infix = 'x64';
+                    arch_infix = 'x64';
                     break;
                 case 'arm64':
                 case 'aarch64':
-                    machine_infix = 'arm64';
+                    arch_infix = 'arm64';
                     break;
                 default:
-                    setFailed(`The latest PackSquash build does not support ${machine}. Please use a runner with a supported architecture, or request support for it.`);
+                    setFailed(`The latest PackSquash build does not support ${arch}. Please use a runner with a supported architecture, or request support for it.`);
             }
-            await downloadLatestAppImage(workingDirectory, machine_infix);
+            await downloadLatestAppImage(workingDirectory, arch_infix);
             break;
         case 'v0.3.1':
-            switch (machine) {
+            switch (arch) {
                 case 'x86_64':
-                    machine_infix = 'x86_64';
+                    arch_infix = 'x86_64';
                     break;
                 case 'arm64':
                 case 'aarch64':
-                    machine_infix = 'aarch64';
+                    arch_infix = 'aarch64';
                     break;
                 default:
                     setFailed(
-                        `PackSquash ${version} does not support ${machine}. Please use a runner with a supported architecture, or request support for it. A newer version might add support for this architecture.`
+                        `PackSquash ${version} does not support ${arch}. Please use a runner with a supported architecture, or request support for it. A newer version might add support for this architecture.`
                     );
             }
-            await downloadReleaseAppImage(workingDirectory, version, `PackSquash-${version}-${machine_infix}.AppImage`);
+            await downloadReleaseAppImage(workingDirectory, version, `PackSquash-${version}-${arch_infix}.AppImage`);
             break;
         default:
             setFailed(`Unsupported PackSquash version: ${version}`);
     }
-    chmodSync(workingDirectory.packsquash, '755');
+    chmodSync(workingDirectory.packsquashBinary, '755');
 }
 
 /**
  * @param {WorkingDirectory} workingDirectory
- * @param {string} machine_infix
+ * @param {string} arch_infix
  * @returns {Promise<void>}
  */
-async function downloadLatestAppImage(workingDirectory, machine_infix) {
-    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${machine_infix})`, workingDirectory.packsquash);
+async function downloadLatestAppImage(workingDirectory, arch_infix) {
+    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${arch_infix})`, workingDirectory.packsquashBinary);
 }
 
 /**
@@ -79,5 +79,5 @@ async function downloadLatestAppImage(workingDirectory, machine_infix) {
  */
 async function downloadReleaseAppImage(workingDirectory, version, asset_name) {
     info(`Downloading PackSquash AppImage for release ${version} (asset ${asset_name})`);
-    await exec('curl', ['-sSL', '-o', workingDirectory.packsquash, `https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`]);
+    await exec('curl', ['-sSL', '-o', workingDirectory.packsquashBinary, `https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`]);
 }

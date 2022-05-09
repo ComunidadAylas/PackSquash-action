@@ -20,7 +20,7 @@ export async function checkRepositoryIsNotShallow() {
 /**
  * @returns {Promise<string>}
  */
-export async function getMachineType() {
+export async function getArchitecture() {
     const output = await getExecOutput('uname', ['-m'], { silent: true });
     return output.stdout.split('\n')[0];
 }

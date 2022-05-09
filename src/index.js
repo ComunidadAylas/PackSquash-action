@@ -1,5 +1,5 @@
 import { getInput, setFailed } from '@actions/core';
-import { generateOptionsFile, Options, printOptionsFileContent, useCacheOption } from './options.js';
+import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash, setPackSquashLogsVariables } from './packsquash';
@@ -13,7 +13,7 @@ import WorkingDirectory from './working_directory';
 async function run() {
     const workingDirectory = new WorkingDirectory();
     let optionsFile = getInput(Options.OptionsFile);
-    const useCache = optionsFile || useCacheOption();
+    const useCache = optionsFile || shouldUseCache();
     if (useCache) {
         await checkRepositoryIsNotShallow();
     }

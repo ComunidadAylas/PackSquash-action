@@ -10,7 +10,7 @@ import { Options } from './options';
  */
 export async function printPackSquashVersion(workingDirectory) {
     startGroup('PackSquash version');
-    await exec(workingDirectory.packsquash, ['--version']);
+    await exec(workingDirectory.packsquashBinary, ['--version']);
     endGroup();
 }
 
@@ -26,7 +26,7 @@ export async function runPackSquash(workingDirectory) {
         } else {
             startGroup('PackSquash output');
         }
-        const exitCode = await exec(workingDirectory.packsquash, [workingDirectory.options]);
+        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.options]);
         endGroup();
         removeProblemMatcher(workingDirectory.problemMatcher);
         return exitCode;

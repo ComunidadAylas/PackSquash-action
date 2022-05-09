@@ -10,7 +10,7 @@ class WorkingDirectory {
     /**
      * @returns {string}
      */
-    get packsquash() {
+    get packsquashBinary() {
         return path.join(this.path, 'packsquash');
     }
 

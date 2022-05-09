@@ -111,7 +111,7 @@ function getForceIncludeFiles() {
 /**
  * @returns {boolean}
  */
-export function useCacheOption() {
+export function shouldUseCache() {
     return !getBooleanInput(Options.NeverStoreSquashTimes) && getInput(Options.ZipSpecConformanceLevel) !== 'pedantic';
 }
 
