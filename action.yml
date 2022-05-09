@@ -186,7 +186,9 @@ inputs:
     default: ''
 runs:
   using: 'node16'
-  main: 'dist/index.js'
+  pre: 'dist/unsupported_os_error/index.js'
+  pre-if: '!runner.os == "Linux"'
+  main: 'dist/main/index.js'
 branding:
   icon: 'archive'
   color: 'orange'
