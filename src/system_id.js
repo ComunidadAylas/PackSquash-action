@@ -1,7 +1,7 @@
 import { debug, exportVariable, getInput, setSecret } from '@actions/core';
 import { Options } from './options';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
-import * as uuid from 'node-uuid';
+import * as uuid from 'uuid';
 
 /**
  * @param {WorkingDirectory} workingDirectory
