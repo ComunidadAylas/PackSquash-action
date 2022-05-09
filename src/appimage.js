@@ -28,11 +28,12 @@ export async function downloadAppImage(workingDirectory) {
             break;
         case 'latest':
             switch (arch) {
-                case 'x86_64':
+                case 'X86':
+                case 'X64':
                     arch_infix = 'x64';
                     break;
-                case 'arm64':
-                case 'aarch64':
+                case 'ARM':
+                case 'ARM64':
                     arch_infix = 'arm64';
                     break;
                 default:
@@ -42,11 +43,12 @@ export async function downloadAppImage(workingDirectory) {
             break;
         case 'v0.3.1':
             switch (arch) {
-                case 'x86_64':
+                case 'X86':
+                case 'X64':
                     arch_infix = 'x86_64';
                     break;
-                case 'arm64':
-                case 'aarch64':
+                case 'ARM':
+                case 'ARM64':
                     arch_infix = 'aarch64';
                     break;
                 default:
