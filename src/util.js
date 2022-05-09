@@ -19,7 +19,7 @@ export async function checkRepositoryIsNotShallow() {
 /**
  * @returns {string}
  */
-export async function getArchitecture() {
+export function getArchitecture() {
     return getEnvOrThrow('RUNNER_ARCH');
 }
 
