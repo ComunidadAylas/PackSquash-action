@@ -183,7 +183,7 @@ export async function generateOptionsFile(workingDirectory) {
 
 export async function printOptionsFileContent(path) {
     startGroup('PackSquash options');
-    readFile(path, { encoding: 'utf8' }).then(content => {
+    await readFile(path, { encoding: 'utf8' }).then(content => {
         content.split('\n').forEach((line, index) => {
             info(`${index.toString().padEnd(6, ' ')} ${line}`);
         });
