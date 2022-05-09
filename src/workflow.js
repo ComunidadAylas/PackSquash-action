@@ -2,10 +2,10 @@ import { debug, endGroup, getInput, info, startGroup } from '@actions/core';
 import { create } from '@actions/artifact';
 import { getOctokit } from '@actions/github';
 import { Options } from './options';
-import { exec } from '@actions/exec';
 import { createWriteStream } from 'fs';
 import { rm } from 'fs/promises';
 import unzipper from 'unzipper';
+import { downloadFile } from './util';
 
 /**
  * @param {string} owner
@@ -76,9 +76,9 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         archive_format: 'zip'
     });
     debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
-    if (await exec('curl', ['-sSL', '-o', workingDirectory.artifactFile, zip.url], { silent: true })) {
+    await downloadFile(zip.url, workingDirectory.artifactFile).catch(() => {
         throw new Error(`Could not download the latest ${artifactName} artifact`);
-    }
+    });
     await extractFile(workingDirectory.artifactFile, destinationPath);
     await rm(workingDirectory.artifactFile);
     info(`Successfully downloaded the latest ${artifactName} artifact`);

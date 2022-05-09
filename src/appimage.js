@@ -1,8 +1,7 @@
 import { debug, getInput, info, setFailed } from '@actions/core';
 import { chmod } from 'fs/promises';
 import { Options } from './options';
-import { getArchitecture } from './util';
-import { exec } from '@actions/exec';
+import { downloadFile, getArchitecture } from './util';
 import { downloadLatestArtifact } from './workflow';
 
 /**
@@ -81,5 +80,5 @@ async function downloadLatestAppImage(workingDirectory, arch_infix) {
  */
 async function downloadReleaseAppImage(workingDirectory, version, asset_name) {
     info(`Downloading PackSquash AppImage for release ${version} (asset ${asset_name})`);
-    await exec('curl', ['-sSL', '-o', workingDirectory.packsquashBinary, `https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`]);
+    await downloadFile(`https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`, workingDirectory.packsquashBinary);
 }

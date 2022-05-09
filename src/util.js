@@ -1,5 +1,9 @@
 import { getExecOutput } from '@actions/exec';
 import { debug, setFailed } from '@actions/core';
+import { HttpClient } from '@actions/http-client';
+import { createWriteStream } from 'fs';
+import { promisify } from 'util';
+import * as stream from 'stream';
 
 /**
  * If caching may be used (more precisely, the git-set-file-times.pl script would be executed), check that the repo is not a shallow one, because if it is we will be missing time data
@@ -32,6 +36,19 @@ export function getBranchName() {
         return name;
     }
     return process.env['GITHUB_REF_NAME'];
+}
+
+/**
+ * @param {string} url
+ * @param {string} path
+ * @return {Promise<void>}
+ */
+export async function downloadFile(url, path) {
+    const client = new HttpClient();
+    const writeStream = createWriteStream(path);
+    const response = await client.get(url);
+    const pipeline = promisify(stream.pipeline);
+    await pipeline(response.message, writeStream);
 }
 
 /**
