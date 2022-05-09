@@ -1,8 +1,9 @@
-import { endGroup, exportVariable, getBooleanInput, startGroup, warning } from '@actions/core';
+import { debug, endGroup, getBooleanInput, getInput, setSecret, startGroup, warning } from '@actions/core';
 import { exec } from '@actions/exec';
-import { rm } from 'fs/promises';
+import { readFile, rm, writeFile } from 'fs/promises';
 import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
 import { Options } from './options';
+import * as uuid from 'uuid';
 
 /**
  * @param {WorkingDirectory} workingDirectory
@@ -10,7 +11,12 @@ import { Options } from './options';
  */
 export async function printPackSquashVersion(workingDirectory) {
     startGroup('PackSquash version');
-    await exec(workingDirectory.packsquashBinary, ['--version']);
+    await exec(workingDirectory.packsquashBinary, ['--version'], {
+        env: {
+            PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
+            PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+        }
+    });
     endGroup();
 }
 
@@ -19,6 +25,10 @@ export async function printPackSquashVersion(workingDirectory) {
  * @returns {Promise<void>}
  */
 export async function runPackSquash(workingDirectory) {
+    const systemId = await getSystemId(workingDirectory);
+    debug(`Using system ID: ${systemId}`);
+    setSecret(systemId);
+
     async function run(description) {
         await addProblemMatcher(workingDirectory.problemMatcherFile);
         if (description) {
@@ -26,7 +36,13 @@ export async function runPackSquash(workingDirectory) {
         } else {
             startGroup('PackSquash output');
         }
-        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile]);
+        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile], {
+            env: {
+                PACKSQUASH_SYSTEM_ID: systemId,
+                PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
+                PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+            }
+        });
         endGroup();
         removeProblemMatcher(workingDirectory.problemMatcherFile);
         return exitCode;
@@ -51,9 +67,36 @@ export async function runPackSquash(workingDirectory) {
 }
 
 /**
- * Set PackSquash emoji and color environment variables
+ * @returns {string|null}
  */
-export function setPackSquashLogsVariables() {
-    exportVariable('PACKSQUASH_EMOJI', getBooleanInput(Options.ShowEmojiInPacksquashLogs) ? 'show' : null);
-    exportVariable('PACKSQUASH_COLOR', getBooleanInput(Options.EnableColorInPacksquashLogs) ? 'show' : null);
+function showEmojiInPacksquashLogs() {
+    return getBooleanInput(Options.ShowEmojiInPacksquashLogs) ? 'show' : null;
+}
+
+/**
+ * @returns {string|null}
+ */
+function enableColorInPacksquashLogs() {
+    return getBooleanInput(Options.EnableColorInPacksquashLogs) ? 'show' : null;
+}
+
+/**
+ * @param {WorkingDirectory} workingDirectory
+ * @returns {Promise<string>}
+ */
+export function getSystemId(workingDirectory) {
+    const inputSystemId = getInput(Options.SystemId);
+    if (inputSystemId) {
+        return new Promise(resolve => {
+            resolve(inputSystemId);
+        });
+    }
+    return readFile(workingDirectory.systemIdFile, { encoding: 'utf8' }).then(async cachedSystemId => {
+        if (cachedSystemId) {
+            return cachedSystemId;
+        }
+        const systemId = uuid.v4();
+        await writeFile(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
+        return systemId;
+    });
 }

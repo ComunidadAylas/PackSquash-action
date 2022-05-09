@@ -2,9 +2,8 @@ import { getInput, setFailed } from '@actions/core';
 import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
-import { printPackSquashVersion, runPackSquash, setPackSquashLogsVariables } from './packsquash';
+import { printPackSquashVersion, runPackSquash } from './packsquash';
 import { uploadArtifact } from './workflow';
-import { setSystemIdVariable } from './system_id';
 import git_set_file_times from './git_set_file_times';
 import { checkRepositoryIsNotShallow } from './util';
 import { copyFile } from 'fs/promises';
@@ -26,13 +25,11 @@ async function run() {
         optionsFile = await generateOptionsFile(workingDirectory);
     }
     await printOptionsFileContent(optionsFile);
-    setPackSquashLogsVariables();
     const [key, ...restoreKeys] = await computeCacheKey(workingDirectory);
     let restoreCache;
     if (useCache) {
         restoreCache = await restorePackSquashCache(workingDirectory, key, restoreKeys);
     }
-    await setSystemIdVariable(workingDirectory);
     if (useCache) {
         await git_set_file_times();
     }
