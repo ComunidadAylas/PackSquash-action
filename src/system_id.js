@@ -22,13 +22,13 @@ function getSystemId(workingDirectory) {
     if (inputSystemId) {
         return inputSystemId;
     }
-    if (existsSync(workingDirectory.systemId)) {
-        const cachedSystemId = readFileSync(workingDirectory.systemId, { encoding: 'utf8' });
+    if (existsSync(workingDirectory.systemIdFile)) {
+        const cachedSystemId = readFileSync(workingDirectory.systemIdFile, { encoding: 'utf8' });
         if (cachedSystemId) {
             return cachedSystemId;
         }
     }
     const systemId = uuid.v4();
-    writeFileSync(workingDirectory.systemId, systemId, { encoding: 'utf8' });
+    writeFileSync(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
     return systemId;
 }

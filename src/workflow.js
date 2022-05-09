@@ -27,7 +27,7 @@ export async function getCurrentWorkflowId(owner, repo, workflow) {
  */
 export async function uploadArtifact(workingDirectory) {
     startGroup('Upload generated ZIP file as artifact');
-    const response = await create().uploadArtifact(getInput(Options.ArtifactName), [workingDirectory.zip], workingDirectory.path);
+    const response = await create().uploadArtifact(getInput(Options.ArtifactName), [workingDirectory.outputFile], workingDirectory.path);
     endGroup();
     if (response.artifactItems.length === 0 || response.failedItems.length > 0) {
         process.exit(1);
@@ -77,12 +77,12 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         archive_format: 'zip'
     });
     debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
-    if (await exec('curl', ['-sSL', '-o', workingDirectory.artifact, zip.url], { silent: true })) {
+    if (await exec('curl', ['-sSL', '-o', workingDirectory.artifactFile, zip.url], { silent: true })) {
         info(`Could not download the latest ${artifactName} artifact`);
         return 3;
     }
-    await extractFile(workingDirectory.artifact, destinationPath);
-    rmSync(workingDirectory.artifact);
+    await extractFile(workingDirectory.artifactFile, destinationPath);
+    rmSync(workingDirectory.artifactFile);
     info(`Successfully downloaded the latest ${artifactName} artifact`);
     return 0;
 }

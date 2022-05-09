@@ -20,15 +20,15 @@ export async function printPackSquashVersion(workingDirectory) {
  */
 export async function runPackSquash(workingDirectory) {
     async function run(description) {
-        addProblemMatcher(workingDirectory.problemMatcher);
+        addProblemMatcher(workingDirectory.problemMatcherFile);
         if (description) {
             startGroup(`PackSquash output (${description})`);
         } else {
             startGroup('PackSquash output');
         }
-        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.options]);
+        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile]);
         endGroup();
-        removeProblemMatcher(workingDirectory.problemMatcher);
+        removeProblemMatcher(workingDirectory.problemMatcherFile);
         return exitCode;
     }
 
@@ -38,7 +38,7 @@ export async function runPackSquash(workingDirectory) {
             break;
         case 129:
             warning('PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.');
-            rmSync(workingDirectory.zip);
+            rmSync(workingDirectory.outputFile);
             exitCode = await run('discarded previous ZIP file');
             if (exitCode !== 0) {
                 process.exit(exitCode);

@@ -20,7 +20,7 @@ async function run() {
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
     if (optionsFile) {
-        copyFileSync(optionsFile, workingDirectory.options);
+        copyFileSync(optionsFile, workingDirectory.optionsFile);
     } else {
         optionsFile = generateOptionsFile(workingDirectory);
     }

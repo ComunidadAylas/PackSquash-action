@@ -17,35 +17,35 @@ class WorkingDirectory {
     /**
      * @returns {string}
      */
-    get options() {
+    get optionsFile() {
         return path.join(this.path, 'packsquash-options.toml');
     }
 
     /**
      * @returns {string}
      */
-    get systemId() {
+    get systemIdFile() {
         return path.join(this.path, 'system_id');
     }
 
     /**
      * @returns {string}
      */
-    get zip() {
+    get outputFile() {
         return path.join(this.path, 'pack.zip');
     }
 
     /**
      * @returns {string}
      */
-    get artifact() {
+    get artifactFile() {
         return path.join(this.path, 'artifact.zip');
     }
 
     /**
      * @returns {string}
      */
-    get problemMatcher() {
+    get problemMatcherFile() {
         return path.join(this.path, 'problem-matcher.json');
     }
 }

@@ -135,7 +135,7 @@ zip_spec_conformance_level = '${getInput(Options.ZipSpecConformanceLevel)}'
 size_increasing_zip_obfuscation = ${getBooleanInput(Options.SizeIncreasingZipObfuscation)}
 percentage_of_zip_structures_tuned_for_obfuscation_discretion = ${getInput(Options.PercentageOfZipStructuresTunedForObfuscationDiscretion)}
 never_store_squash_times = ${getBooleanInput(Options.NeverStoreSquashTimes)}
-output_file_path = '${workingDirectory.zip}'
+output_file_path = '${workingDirectory.outputFile}'
 
 ['**/*.{og[ga],mp3,wav,flac}']
 transcode_ogg = ${getBooleanInput(Options.TranscodeOgg)}
@@ -177,8 +177,8 @@ ${getForceIncludeFiles()}`.trim();
  * @returns {string}
  */
 export function generateOptionsFile(workingDirectory) {
-    writeFileSync(workingDirectory.options, getOptionsFileContent(workingDirectory), { encoding: 'utf8' });
-    return workingDirectory.options;
+    writeFileSync(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), { encoding: 'utf8' });
+    return workingDirectory.optionsFile;
 }
 
 export async function printOptionsFileContent(path) {
