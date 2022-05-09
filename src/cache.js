@@ -32,14 +32,11 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
             const repo = context.repo.repo;
             const branch = context.ref.split('/')[2];
             const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
-            const isError = await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
-            if (isError) {
-                warning(
-                    'Could not fetch the ZIP file generated in the last run. PackSquash will thus not be able to reuse it to speed up processing. This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution.'
-                );
-            }
+            await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
         } catch (err) {
-            warning(`Could not fetch the ZIP file generated in the last run. (${err})`);
+            warning(
+                `Could not fetch the ZIP file generated in the last run. PackSquash will thus not be able to reuse it to speed up processing. This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution. (${err})`
+            );
         }
     }
     endGroup();

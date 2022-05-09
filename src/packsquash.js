@@ -57,12 +57,12 @@ export async function runPackSquash(workingDirectory) {
             await rm(workingDirectory.outputFile);
             exitCode = await run('discarded previous ZIP file');
             if (exitCode !== 0) {
-                process.exit(exitCode);
+                throw new Error(`PackSquash finished with an error code: ${exitCode}`);
             }
             break;
         default:
             // Any other PackSquash error
-            process.exit(exitCode);
+            throw new Error(`PackSquash finished with an error code: ${exitCode}`);
     }
 }
 
