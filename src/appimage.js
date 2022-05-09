@@ -12,7 +12,7 @@ import { downloadLatestArtifact } from './workflow';
 export async function downloadAppImage(workingDirectory) {
     const version = getInput(Options.PackSquashVersion);
     debug(`PackSquash version input variable value: ${version}`);
-    const arch = await getArchitecture();
+    const arch = getArchitecture();
     debug(`Runner architecture: ${arch}`);
 
     let arch_infix;

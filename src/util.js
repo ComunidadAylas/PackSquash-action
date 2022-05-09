@@ -1,5 +1,4 @@
 import { getExecOutput } from '@actions/exec';
-import { getWorkSpaceDirectory } from '@actions/artifact/lib/internal/config-variables';
 import { debug, setFailed } from '@actions/core';
 
 /**
@@ -7,7 +6,7 @@ import { debug, setFailed } from '@actions/core';
  * @returns {Promise<void>}
  */
 export async function checkRepositoryIsNotShallow() {
-    const workspace = getWorkSpaceDirectory();
+    const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
     debug(`Checking that the repository checkout at ${workspace} is not shallow`);
     const output = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
         silent: true
@@ -18,9 +17,22 @@ export async function checkRepositoryIsNotShallow() {
 }
 
 /**
- * @returns {Promise<string>}
+ * @returns {string}
  */
 export async function getArchitecture() {
-    const output = await getExecOutput('uname', ['-m'], { silent: true });
-    return output.stdout.split('\n')[0];
+    return getEnvOrThrow('RUNNER_ARCH');
+}
+
+/**
+ * Returns the value of the specified environment variable. If it was not
+ * defined an exception will be thrown.
+ * @param {string} variable The environment variable to get the value of.
+ * @returns {string} The value of the environment variable.
+ */
+function getEnvOrThrow(variable) {
+    if (variable in process.env) {
+        return process.env[variable];
+    } else {
+        throw new Error(`Internal error: the ${variable} environment variable is missing`);
+    }
 }
