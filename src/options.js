@@ -122,52 +122,52 @@ export function useCacheOption() {
 function getOptionsFileContent(workingDirectory) {
     return `
 pack_directory = '${getInput(Options.Path)}'
-skip_pack_icon = ${getInput(Options.SkipPackIcon)}
-validate_pack_metadata_file = ${getInput(Options.ValidatePackMetadataFile)}
-recompress_compressed_files = ${getInput(Options.RecompressCompressedFiles)}
+skip_pack_icon = ${getBooleanInput(Options.SkipPackIcon)}
+validate_pack_metadata_file = ${getBooleanInput(Options.ValidatePackMetadataFile)}
+recompress_compressed_files = ${getBooleanInput(Options.RecompressCompressedFiles)}
 zip_compression_iterations = ${getInput(Options.ZipCompressionIterations)}
-automatic_minecraft_quirks_detection = ${getInput(Options.AutomaticMinecraftQuirksDetection)}
+automatic_minecraft_quirks_detection = ${getBooleanInput(Options.AutomaticMinecraftQuirksDetection)}
 work_around_minecraft_quirks = ${getWorkAroundMinecraftQuirks()}
-automatic_asset_types_mask_detection = ${getInput(Options.AutomaticAssetTypesMaskDetection)}
-ignore_system_and_hidden_files = ${getInput(Options.IgnoreSystemAndHiddenFiles)}
+automatic_asset_types_mask_detection = ${getBooleanInput(Options.AutomaticAssetTypesMaskDetection)}
+ignore_system_and_hidden_files = ${getBooleanInput(Options.IgnoreSystemAndHiddenFiles)}
 allow_mods = ${getAllowMods()}
 zip_spec_conformance_level = '${getInput(Options.ZipSpecConformanceLevel)}'
-size_increasing_zip_obfuscation = ${getInput(Options.SizeIncreasingZipObfuscation)}
+size_increasing_zip_obfuscation = ${getBooleanInput(Options.SizeIncreasingZipObfuscation)}
 percentage_of_zip_structures_tuned_for_obfuscation_discretion = ${getInput(Options.PercentageOfZipStructuresTunedForObfuscationDiscretion)}
-never_store_squash_times = ${getInput(Options.NeverStoreSquashTimes)}
+never_store_squash_times = ${getBooleanInput(Options.NeverStoreSquashTimes)}
 output_file_path = '${workingDirectory.zip}'
 
 ['**/*.{og[ga],mp3,wav,flac}']
-transcode_ogg = ${getInput(Options.TranscodeOgg)}
+transcode_ogg = ${getBooleanInput(Options.TranscodeOgg)}
 sampling_frequency = ${getInput(Options.AudioSamplingFrequency)}
 minimum_bitrate = ${getInput(Options.MinimumAudioBitrate)}
 maximum_bitrate = ${getInput(Options.MaximumAudioBitrate)}
 target_pitch = ${getInput(Options.TargetAudioPitch)}
 
 ['**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}']
-minify_json = ${getInput(Options.MinifyJsonFiles)}
-delete_bloat_keys = ${getInput(Options.DeleteBloatJsonKeys)}
-always_allow_json_comments = ${getInput(Options.AlwaysAllowJsonComments)}
+minify_json = ${getBooleanInput(Options.MinifyJsonFiles)}
+delete_bloat_keys = ${getBooleanInput(Options.DeleteBloatJsonKeys)}
+always_allow_json_comments = ${getBooleanInput(Options.AlwaysAllowJsonComments)}
 
 ['**/*.png']
 image_data_compression_iterations = ${getInput(Options.ImageDataCompressionIterations)}
 color_quantization_target = '${getInput(Options.ImageColorQuantizationTarget)}'
 color_quantization_dithering_level = ${getInput(Options.ImageColorQuantizationDitheringLevel)}
 maximum_width_and_height = ${getInput(Options.MaximumImageWidthAndHeight)}
-skip_alpha_optimizations = ${getInput(Options.SkipImageAlphaOptimizations)}
+skip_alpha_optimizations = ${getBooleanInput(Options.SkipImageAlphaOptimizations)}
 
 ['**/*.{fsh,vsh}']
-minify_shader = ${getInput(Options.MinifyShaders)}
+minify_shader = ${getBooleanInput(Options.MinifyShaders)}
 
 ['**/*.lang']
-minify_legacy_language = ${getInput(Options.MinifyLegacyLanguageFiles)}
-strip_legacy_language_bom = ${getInput(Options.StripLegacyLanguageFilesBom)}
+minify_legacy_language = ${getBooleanInput(Options.MinifyLegacyLanguageFiles)}
+strip_legacy_language_bom = ${getBooleanInput(Options.StripLegacyLanguageFilesBom)}
 
 ['**/*.mcfunction']
-minify_command_function = ${getInput(Options.MinifyCommandFunctionFiles)}
+minify_command_function = ${getBooleanInput(Options.MinifyCommandFunctionFiles)}
 
 ['**/*.properties']
-minify_properties = ${getInput(Options.MinifyPropertiesFiles)}
+minify_properties = ${getBooleanInput(Options.MinifyPropertiesFiles)}
 
 ${getForceIncludeFiles()}`.trim();
 }
