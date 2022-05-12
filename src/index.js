@@ -11,6 +11,7 @@ import WorkingDirectory from './working_directory';
 
 async function run() {
     const workingDirectory = new WorkingDirectory();
+    await workingDirectory.rm();
     await workingDirectory.mkdir();
     let optionsFile = getInput(Options.OptionsFile);
     const useCache = optionsFile || shouldUseCache();

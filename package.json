@@ -3,7 +3,7 @@
   "version": "2.0.2",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
-    "build": "ncc build src/index.js -o dist/main -m && ncc build src/unsupported_os_error.js -o dist/unsupported_os_error -m",
+    "build": "ncc build src/index.js -o dist/main -m && ncc build src/unsupported_os_error.js -o dist/unsupported_os_error -m && ncc build src/cleanup_working_directory.js -o dist/cleanup_working_directory -m",
     "format": "prettier --write \"src/**/*.js\"",
     "format-check": "prettier --check \"src/**/*.js\""
   },

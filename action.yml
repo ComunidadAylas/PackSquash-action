@@ -189,6 +189,7 @@ runs:
   pre: 'dist/unsupported_os_error/index.js'
   pre-if: runner.os != 'Linux'
   main: 'dist/main/index.js'
+  post: 'dist/cleanup_working_directory/index.js'
 branding:
   icon: 'archive'
   color: 'orange'

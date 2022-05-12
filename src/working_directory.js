@@ -7,8 +7,11 @@ class WorkingDirectory {
         this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), 'packsquash');
     }
 
-    async mkdir() {
+    async rm() {
         await rm(this.path, { recursive: true, force: true });
+    }
+
+    async mkdir() {
         await mkdir(this.path, { recursive: true });
     }
 
