@@ -57,7 +57,7 @@ export async function downloadFile(url, path) {
  * @param {string} variable The environment variable to get the value of.
  * @returns {string} The value of the environment variable.
  */
-function getEnvOrThrow(variable) {
+export function getEnvOrThrow(variable) {
     if (variable in process.env) {
         return process.env[variable];
     } else {

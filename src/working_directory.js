@@ -1,9 +1,11 @@
 import * as path from 'path';
 import { mkdir } from 'fs/promises';
+import { getEnvOrThrow } from './util';
+import * as uuid from 'uuid';
 
 class WorkingDirectory {
     constructor() {
-        this.path = path.join(__dirname, '..', '..', 'packsquash');
+        this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), uuid.v4());
     }
 
     async mkdir() {
