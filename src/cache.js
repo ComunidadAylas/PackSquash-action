@@ -12,7 +12,8 @@ import { getBranchName } from './util';
  */
 export async function computeCacheKey(workingDirectory) {
     const optionsHash = await hashFiles(workingDirectory.optionsFile);
-    const restoreKey = `packsquash-0-${getInput(Options.ActionCacheRevision)}-${getInput(Options.PackSquashVersion)}-${optionsHash}`;
+    const cacheRevision = Buffer.from(getInput(Options.ActionCacheRevision)).toString('base64');
+    const restoreKey = `packsquash-0-${cacheRevision}-${getInput(Options.PackSquashVersion)}-${optionsHash}`;
     const primaryKey = `${restoreKey}-${context.runId}-${context.job}`;
     return [primaryKey, restoreKey];
 }
