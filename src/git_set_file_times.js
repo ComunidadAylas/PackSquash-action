@@ -50,7 +50,9 @@ async function changeTime(files) {
                 if (index < 0) {
                     continue;
                 }
-                await utimes(file, time, time).then(() => files.splice(index, 1));
+                await utimes(file, time, time)
+                    .then(() => files.splice(index, 1))
+                    .catch(() => {});
             }
         }
         resolve();
