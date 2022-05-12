@@ -1,8 +1,8 @@
-name: Build - Actions helper bundle
+name: Build - Actions bundle
 on:
   push:
     paths:
-      - actions_helper.mjs
+      - src/**
   pull_request:
     types:
       - opened
@@ -13,14 +13,19 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
+      - name: Setup Node.JS 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: npm
       - name: Install NPM development dependencies
         run: npm install
-      - name: Build Actions helper bundle
-        run: npm run build-actions-helper
-      - name: Commit and push Actions helper bundle
+      - name: Build Actions
+        run: npm run build
+      - name: Commit and push Actions bundle
         uses: EndBug/add-and-commit@v9
         with:
-          add: -f dist/actions_helper.mjs
-          message: 'chore(dist/actions_helper): build'
+          add: -f dist/main/index.js dist/unsupported_os_error/index.js dist/cleanup_working_directory/index.js
+          message: 'chore(dist): build'
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com

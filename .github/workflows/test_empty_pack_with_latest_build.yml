@@ -1,5 +1,10 @@
 name: Test - Empty resource pack (latest PackSquash build)
 on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
   workflow_dispatch:
   schedule:
     # Check the action works with the latest PackSquash build every
