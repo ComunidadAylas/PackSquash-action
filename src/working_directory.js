@@ -1,14 +1,14 @@
 import * as path from 'path';
-import { mkdir } from 'fs/promises';
+import { mkdir, rm } from 'fs/promises';
 import { getEnvOrThrow } from './util';
-import * as uuid from 'uuid';
 
 class WorkingDirectory {
     constructor() {
-        this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), uuid.v4());
+        this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), 'packsquash');
     }
 
     async mkdir() {
+        await rm(this.path, { recursive: true, force: true });
         await mkdir(this.path, { recursive: true });
     }
 
