@@ -26,11 +26,9 @@ export async function downloadAppImage(workingDirectory) {
             throw Error(`Unsupported PackSquash version: ${version}. Please use PackSquash-action@v2 instead.`);
         case 'latest':
             switch (arch) {
-                case 'X86':
                 case 'X64':
                     arch_infix = 'x64';
                     break;
-                case 'ARM':
                 case 'ARM64':
                     arch_infix = 'arm64';
                     break;
@@ -41,11 +39,9 @@ export async function downloadAppImage(workingDirectory) {
             break;
         case 'v0.3.1':
             switch (arch) {
-                case 'X86':
                 case 'X64':
                     arch_infix = 'x86_64';
                     break;
-                case 'ARM':
                 case 'ARM64':
                     arch_infix = 'aarch64';
                     break;
