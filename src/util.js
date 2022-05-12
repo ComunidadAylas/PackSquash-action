@@ -28,14 +28,28 @@ export function getArchitecture() {
 }
 
 /**
- * @return {string}
+ * - **GITHUB_REF_TYPE**
+ *   The type of ref that triggered the workflow run. Valid values are branch or tag.
+ * - **GITHUB_HEAD_REF**:
+ *   The head ref or source branch of the pull request in a workflow run.
+ *   This property is only set when the event that triggers a workflow run is either pull_request or pull_request_target.
+ *   For example, feature-branch-1.
+ * - **GITHUB_REF_NAME**:
+ *   The branch or tag name that triggered the workflow run. For example, feature-branch-1.
+ *
+ * @see https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+ * @return {string|null}
  */
 export function getBranchName() {
-    const name = process.env['GITHUB_HEAD_REF'];
-    if (name) {
-        return name;
+    if (process.env.GITHUB_REF_TYPE === 'branch') {
+        const head_ref = process.env.GITHUB_HEAD_REF;
+        if (head_ref) {
+            return head_ref;
+        }
+        return process.env.GITHUB_REF_NAME;
+    } else {
+        return null;
     }
-    return process.env['GITHUB_REF_NAME'];
 }
 
 /**

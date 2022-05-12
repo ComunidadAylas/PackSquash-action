@@ -30,11 +30,15 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
     const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restore_keys);
     if (restoredCacheKey || getInput(Options.SystemId)) {
         try {
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
             const branch = getBranchName();
-            const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
-            await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
+            if (branch) {
+                const owner = context.repo.owner;
+                const repo = context.repo.repo;
+                const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
+                await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
+            } else {
+                warning('Could not use cache if the trigger is a tag');
+            }
         } catch (err) {
             warning(
                 `Could not fetch the ZIP file generated in the last run. PackSquash will thus not be able to reuse it to speed up processing. This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution. (${err})`
