@@ -1,5 +1,5 @@
 import { getExecOutput } from '@actions/exec';
-import { debug, setFailed } from '@actions/core';
+import { debug } from '@actions/core';
 import { HttpClient } from '@actions/http-client';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
@@ -16,7 +16,7 @@ export async function checkRepositoryIsNotShallow() {
         silent: true
     });
     if (output.stdout === 'true\n') {
-        setFailed('The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
+        throw Error('The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
     }
 }
 

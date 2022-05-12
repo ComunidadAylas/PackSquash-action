@@ -1,7 +1,7 @@
 import { setFailed } from '@actions/core';
 
-function run() {
-    setFailed('Only Linux runner is supported.');
+async function run() {
+    throw Error('Only Linux runner is supported.');
 }
 
-run();
+run().catch(err => setFailed(err));

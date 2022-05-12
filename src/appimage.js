@@ -1,4 +1,4 @@
-import { debug, getInput, info, setFailed } from '@actions/core';
+import { debug, getInput, info } from '@actions/core';
 import { chmod } from 'fs/promises';
 import { Options } from './options';
 import { downloadFile, getArchitecture } from './util';
@@ -23,8 +23,7 @@ export async function downloadAppImage(workingDirectory) {
         case 'v0.2.1':
         case 'v0.3.0-rc.1':
         case 'v0.3.0':
-            setFailed(`Unsupported PackSquash version: ${version}. Please use PackSquash-action@v2 instead.`);
-            break;
+            throw Error(`Unsupported PackSquash version: ${version}. Please use PackSquash-action@v2 instead.`);
         case 'latest':
             switch (arch) {
                 case 'X86':
@@ -36,7 +35,7 @@ export async function downloadAppImage(workingDirectory) {
                     arch_infix = 'arm64';
                     break;
                 default:
-                    setFailed(`The latest PackSquash build does not support ${arch}. Please use a runner with a supported architecture, or request support for it.`);
+                    throw Error(`The latest PackSquash build does not support ${arch}. Please use a runner with a supported architecture, or request support for it.`);
             }
             await downloadLatestAppImage(workingDirectory, arch_infix);
             break;
@@ -51,14 +50,14 @@ export async function downloadAppImage(workingDirectory) {
                     arch_infix = 'aarch64';
                     break;
                 default:
-                    setFailed(
+                    throw Error(
                         `PackSquash ${version} does not support ${arch}. Please use a runner with a supported architecture, or request support for it. A newer version might add support for this architecture.`
                     );
             }
             await downloadReleaseAppImage(workingDirectory, version, `PackSquash-${version}-${arch_infix}.AppImage`);
             break;
         default:
-            setFailed(`Unsupported PackSquash version: ${version}`);
+            throw Error(`Unsupported PackSquash version: ${version}`);
     }
     await chmod(workingDirectory.packsquashBinary, '755');
 }
