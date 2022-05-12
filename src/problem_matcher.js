@@ -31,12 +31,12 @@ const json = {
  */
 export async function addProblemMatcher(path) {
     await writeFile(path, JSON.stringify(json));
-    info(`##[add-matcher]${path}`);
+    info(`::add-matcher::${path}`);
 }
 
 /**
  * @param {string} path
  */
 export function removeProblemMatcher(path) {
-    info(`##[remove-matcher]${path}`);
+    info(`::remove-matcher::${path}`);
 }
