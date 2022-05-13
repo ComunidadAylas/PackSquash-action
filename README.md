@@ -72,10 +72,64 @@ The action also supports additional parameters that might come in handy for more
 
 ## ⚙️ Example
 
-This GitHub Actions workflow file uses this action to optimize the resource pack contained in the `pack` directory of the repository (if your pack is at the root of the repository, you may change that path to `.`). It runs for every push to the repository, so a ZIP file with the optimized resource pack will be generated for any change. `token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories. The generated optimized resource pack file is uploaded as an artifact that can be downloaded later.
+`token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories.
 
-##### `.github/workflows/packsquash.yml`
+### Use default options
+
+It runs for every push to the repository, so a ZIP file with the optimized pack will be generated for any change.
+The generated optimized pack file is uploaded as an artifact that can be downloaded later.
+
+#### File tree
+
+```
+.github/
+    workflows/
+        packsquash.yml
+minecraft/
+    ...
+pack.mcmeta
+```
+
+#### Workflow file
+
 ```yaml
+# .github/workflows/packsquash.yml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+```
+
+### Change the pack directory
+
+You can specify a directory other than the root(`.`) as a pack directory by changing the `path` option.
+You can manage multiple resource packs in the repository or prevent unintended file inclusion to a ZIP file. The pack cannot load without symlinks, but we recommended it.
+
+#### File tree
+
+```
+.github/
+    workflows/
+        packsquash.yml
+pack/
+    minecraft/
+        ...
+    pack.mcmeta
+```
+
+#### Workflow file
+
+```yaml
+# .github/workflows/packsquash.yml
 name: Optimize resource pack
 on: [push]
 jobs:
@@ -91,6 +145,121 @@ jobs:
         uses: ComunidadAylas/PackSquash-action@v2
         with:
           path: pack
+```
+
+### Publish pack via release.
+
+If you want to download the pack from a release, you need to download it from the artifact and create a release.
+
+#### Workflow file (every push)
+
+Create a release named `action-v{number}` every pushed.
+
+```yaml
+# .github/workflows/packsquash.yml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download Optimize Pack
+        uses: actions/download-artifact@v2
+        with:
+          name: Optimized pack
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: action-v${{ github.run_number }}
+          files: |
+            pack.zip
+```
+
+#### Workflow file (only push tag)
+
+Run PackSquash every pushed, but create a release only when pushed a tag.
+
+```yaml
+# .github/workflows/packsquash.yml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download Optimize Pack
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/download-artifact@v2
+        with:
+          name: Optimized pack
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            pack.zip
+```
+
+### (Additional) Deploy via SCP
+
+You are developing in a private repository, and you may not be able to use the release as a server resource pack.
+You can deploy it by uploading it to a http server.
+Considering how server resource packs are handled, if using the same url, it may not update correctly.
+
+#### Secrets 
+
+You need to set the following Secrets from the repository settings.
+
+| Name | Description |
+|---|---|
+| `SSH_HOST` | Hostname for ssh |
+| `SSH_USERNAME` | Username for ssh |
+| `SSH_PRIVATE_KEY` | Private key for ssh |
+| `SSH_PORT` | Port for ssh |
+| `DEPLOY_DIRECTORY` | Http server directory like `/var/www/`
+
+#### Workflow file
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy via SCP
+on: [workflow_dispatch]
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pack.zip
+        uses: dsaltares/fetch-gh-release-asset@master
+        with:
+          file: pack.zip
+          target: pack.zip
+      - name: Rename file
+        run: |
+          mv pack.zip pack-${{ github.run_number }}.zip
+      - name: Upload pack.zip
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: pack-${{ github.run_number }}.zip
+          target: ${{ secrets.DEPLOY_DIRECTORY }}
 ```
 
 ## 🔒 Security
