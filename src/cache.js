@@ -13,17 +13,22 @@ import { getBranchName } from './util';
 export async function computeCacheKey(workingDirectory) {
     const optionsHash = await hashFiles(workingDirectory.optionsFile);
     const cacheRevision = Buffer.from(getInput(Options.ActionCacheRevision)).toString('base64');
+    // Using different primary and restore keys is necessary to handle jobs
+    // executing concurrently: if a job tries to write to a cache key that is
+    // already being written to by another job, it will error out
     const restoreKey = `packsquash-0-${cacheRevision}-${getInput(Options.PackSquashVersion)}-${optionsHash}`;
     const primaryKey = `${restoreKey}-${context.runId}-${context.job}`;
     return [primaryKey, restoreKey];
 }
 
 /**
- * Restore the pack ZIP from the previous artifact and ./system_id from the cache if needed, and if this workflow has been run at least once
+ * Restore the system ID file from the cache and the pack ZIP from the previous
+ * artifact if needed, and if this workflow has been run at least once
  * @param {WorkingDirectory} workingDirectory
  * @param {string} key
  * @param {string[]} restore_keys
- * @returns {Promise<string>}
+ * @returns {Promise<string>} The restored cache key, or undefined if no cache
+ * was restored
  */
 export async function restorePackSquashCache(workingDirectory, key, restore_keys) {
     startGroup('Restoring cached data');
@@ -37,7 +42,7 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
                 const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
                 await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
             } else {
-                warning('Could not use cache if the trigger is a tag');
+                info('Caching is disabled for workflows triggered by tag events');
             }
         } catch (err) {
             warning(

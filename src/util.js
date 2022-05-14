@@ -6,8 +6,11 @@ import { promisify } from 'util';
 import * as stream from 'stream';
 
 /**
- * If caching may be used (more precisely, the git-set-file-times.pl script would be executed), check that the repo is not a shallow one, because if it is we will be missing time data
- * @returns {Promise<void>}
+ * If caching may be used, and setGitFileModificationTimes should be executed,
+ * we need to check that the repo is not shallow, because if it is we will be
+ * missing the time data needed for proper caching operation.
+ *
+ * @returns {Promise<void>} A rejected promise if the check fails.
  */
 export async function checkRepositoryIsNotShallow() {
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
@@ -46,7 +49,8 @@ export function getArchitecture() {
  *   The branch or tag name that triggered the workflow run. For example, feature-branch-1.
  *
  * @see https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
- * @return {string|null}
+ * @see https://github.com/ComunidadAylas/PackSquash-action/pull/17#discussion_r868154905
+ * @return {string|null} The branch name, or `null` if the triggering ref is a tag.
  */
 export function getBranchName() {
     if (process.env.GITHUB_REF_TYPE === 'branch') {

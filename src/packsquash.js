@@ -51,8 +51,10 @@ export async function runPackSquash(workingDirectory) {
     let exitCode = await run();
     switch (exitCode) {
         case 0:
+            // Success
             break;
         case 129:
+            // Actionable error code returned by v0.3.0 only
             warning('PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.');
             await rm(workingDirectory.outputFile);
             exitCode = await run('discarded previous ZIP file');
@@ -84,23 +86,26 @@ function enableColorInPacksquashLogs() {
  * @param {WorkingDirectory} workingDirectory
  * @returns {Promise<string>}
  */
-export function getSystemId(workingDirectory) {
+export async function getSystemId(workingDirectory) {
     const inputSystemId = getInput(Options.SystemId);
     if (inputSystemId) {
-        return new Promise(resolve => {
-            resolve(inputSystemId);
-        });
+        return inputSystemId;
     }
-    return readFile(workingDirectory.systemIdFile, { encoding: 'utf8' })
-        .then(async cachedSystemId => {
-            if (cachedSystemId) {
-                return cachedSystemId;
-            }
-            throw Error();
-        })
-        .catch(async () => {
-            const systemId = uuid.v4();
-            await writeFile(workingDirectory.systemIdFile, systemId, { encoding: 'utf8' });
-            return systemId;
-        });
+
+    let cachedOrGeneratedSystemId;
+    try {
+        // Try with any cached system ID we may have first, to reuse results
+        // from previous runs
+        cachedOrGeneratedSystemId = await readFile(workingDirectory.systemIdFile, { encoding: 'utf8' });
+        if (!cachedOrGeneratedSystemId) {
+            throw Error('Invalid cached system ID');
+        }
+    } catch (error) {
+        // We don't have a cached system ID, it is invalid or an I/O error
+        // happened. Generate a new random one
+        cachedOrGeneratedSystemId = uuid.v4();
+        await writeFile(workingDirectory.systemIdFile, cachedOrGeneratedSystemId, { encoding: 'utf8' });
+    }
+
+    return cachedOrGeneratedSystemId;
 }

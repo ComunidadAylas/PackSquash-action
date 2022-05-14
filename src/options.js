@@ -67,7 +67,7 @@ function getAllowMods() {
         mods.push('Minecraft Transit Railway 3');
     }
 
-    return joinStrings(mods);
+    return stringArrayToTomlArray(mods);
 }
 
 /**
@@ -96,7 +96,7 @@ function getWorkAroundMinecraftQuirks() {
         quirks.push('bad_entity_eye_layer_texture_transparency_blending');
     }
 
-    return joinStrings(quirks);
+    return stringArrayToTomlArray(quirks);
 }
 
 /**
@@ -185,7 +185,7 @@ export async function printOptionsFileContent(path) {
     startGroup('PackSquash options');
     await readFile(path, { encoding: 'utf8' }).then(content => {
         content.split('\n').forEach((line, index) => {
-            info(`${index.toString().padEnd(6, ' ')} ${line}`);
+            info(`${(index + 1).toString().padEnd(6, ' ')} ${line}`);
         });
     });
     endGroup();
@@ -195,6 +195,6 @@ export async function printOptionsFileContent(path) {
  * @param {string[]} list
  * @returns {string}
  */
-function joinStrings(list) {
+function stringArrayToTomlArray(list) {
     return `[ ${list.map(s => `'${s}'`).join(', ')} ]`;
 }

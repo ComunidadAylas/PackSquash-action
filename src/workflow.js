@@ -54,8 +54,8 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
         repo: repo
     });
     const latestRun = workflows.data.workflow_runs
-        .filter(j => j.head_branch === branch && j.workflow_id === workflowId && j.status === 'completed' && j.conclusion === 'success')
-        .sort(j => j.run_number)[0];
+        .filter(r => r.head_branch === branch && r.workflow_id === workflowId && r.status === 'completed' && r.conclusion === 'success')
+        .sort((r, s) => s.run_number - r.run_number)[0];
     if (!latestRun) {
         throw new Error(`Could not get the latest run information for the ${artifactName} artifact`);
     }
