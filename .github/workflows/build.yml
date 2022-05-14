@@ -1,4 +1,4 @@
-name: Build - Actions bundle
+name: Build - Action bundle
 on:
   push:
     paths:
@@ -13,16 +13,16 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
-      - name: Setup Node.JS 16
+      - name: Setup Node.js 16
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: npm
-      - name: Install NPM development dependencies
+      - name: Install npm development dependencies
         run: npm install
-      - name: Build Actions
+      - name: Build action
         run: npm run build
-      - name: Commit and push Actions bundle
+      - name: Commit and push action bundle
         uses: EndBug/add-and-commit@v9
         with:
           add: -f dist/main/index.js dist/cleanup_working_directory/index.js

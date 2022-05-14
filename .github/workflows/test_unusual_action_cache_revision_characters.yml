@@ -1,4 +1,4 @@
-name: Test - Action cache revision
+name: Test - Unusual action cache revision characters
 on:
   push:
   pull_request:
