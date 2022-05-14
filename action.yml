@@ -32,7 +32,7 @@ inputs:
     required: false
     default: 'Optimized pack'
   show_emoji_in_packsquash_logs:
-    description: 'If true, the action will instruct PackSquash to use emojis in the logs it generates, which looks prettier. Otherwise, plain ASCII decoration characters will be used instead.'
+    description: 'If true, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead.'
     required: false
     default: 'true'
   enable_color_in_packsquash_logs:
@@ -41,7 +41,7 @@ inputs:
     default: 'true'
   # Inputs that set PackSquash options
   recompress_compressed_files:
-    description: 'If true, this parameter makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied.'
+    description: 'If true, this parameter makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file after all the file type-specific optimizations have been applied.'
     required: false
     default: 'false'
   zip_compression_iterations:
@@ -85,7 +85,7 @@ inputs:
     required: false
     default: 'false'
   validate_pack_metadata_file:
-    description: 'If true, the pack metadata file, pack.mcmeta, will be parsed and validated for errors. Otherwise, it will not be validated, unless other options imply doing so. Validating the pack metadata is usually a good thing, because Minecraft requires it to load a pack.'
+    description: 'If true, the pack metadata file, pack.mcmeta, will be parsed and validated for errors. Otherwise, it will not be validated, unless other options imply doing so. Validating the pack metadata is usually a good thing because Minecraft requires it to load a pack.'
     required: false
     default: 'true'
   ignore_system_and_hidden_files:

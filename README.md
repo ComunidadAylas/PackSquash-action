@@ -11,7 +11,7 @@ These parameters are specific to the action, and the only ones you may need to s
 | Parameter | Default value | Description |
 |---|---|---|
 | `path` | `.` (repository root) | Relative path from the repository root to the pack directory. |
-| `token` | `${{ github.token }}` | The GitHub API authentication token that will be used for operations that may require authentication. Documentation about the default token is available [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow). |
+| `token` | `${{ github.token }}` | The GitHub API authentication token that will be used for operations that may require authentication. Documentation about the default token is available [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow). By default, the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) is used, which is suitable for use in most scenarios, including private repositories. |
 
 ### Action parameters that set PackSquash options
 
@@ -19,7 +19,7 @@ The parameters in this section are used to automatically generate an [options fi
 
 | Parameter | Default value | Description |
 |---|---|---|
-| [`recompress_compressed_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#recompress_compressed_files) | `false` | If `true`, this parameter makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file, after all the file type specific optimizations have been applied. |
+| [`recompress_compressed_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#recompress_compressed_files) | `false` | If `true`, this parameter makes PackSquash try to compress files whose contents are already compressed just before adding them to the generated ZIP file after all the file type-specific optimizations have been applied. |
 | [`zip_compression_iterations`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_compression_iterations) | `20` | The number of Zopfli compression iterations that PackSquash will do when compressing a file of magnitude 1 MiB just before it is added to the generated ZIP file. This affects files whose contents are not already compressed, or all files if recompress_compressed_files is enabled. |
 | [`automatic_minecraft_quirks_detection`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#automatic_minecraft_quirks_detection) | `true` | Sets whether PackSquash will try to automatically deduce an appropriate set of Minecraft quirks that affect how pack files can be optimized, by looking at the pack files, or not. If this option is enabled (set to `true`), any other parameter for adding quirks will be ignored. Enabling this feature implies validating the pack metadata file, even if `validate_pack_metadata_file` is set to `false`. |
 | [`work_around_grayscale_images_gamma_miscorrection_quirk`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks) | `false` | This parameter sets the whether a quirk with grayscale images will be worked around. You should only change the default value if needed. Please read [the relevant PackSquash documentation](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#work_around_minecraft_quirks) for more details. |
@@ -30,7 +30,7 @@ The parameters in this section are used to automatically generate an [options fi
 | [`allow_optifine_mod`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#allow_mods) | `false` | Adds support for .properties files. From PackSquash v0.3.0 onwards, it also adds .jpm and .jem for proper Custom Entity Models support. From PackSquash v0.3.1 onwards, the extensions .jpmc and .jemc are accepted to indicate the usage of comments. |
 | [`allow_mtr3_mod`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#allow_mods) | `false` | Adds support for Blockbench modded entity model projects for custom train models in the mtr asset namespace, stored as .bbmodel or .bbmodelc files. |
 | [`skip_pack_icon`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#skip_pack_icon) | `false` | If `true`, the pack.png file that contains the resource pack icon will not be included in the result ZIP file. As of Minecraft 1.16.3, the icon of server resource packs is not displayed, so this optimization does not have any drawbacks in this case. |
-| [`validate_pack_metadata_file`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#validate_pack_metadata_file) | `true` | If `true`, the pack metadata file, `pack.mcmeta`, will be parsed and validated for errors. Otherwise, it will not be validated, unless other options imply doing so. Validating the pack metadata is usually a good thing, because Minecraft requires it to load a pack. |
+| [`validate_pack_metadata_file`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#validate_pack_metadata_file) | `true` | If `true`, the pack metadata file, `pack.mcmeta`, will be parsed and validated for errors. Otherwise, it will not be validated, unless other options imply doing so. Validating the pack metadata is usually a good thing because Minecraft requires it to load a pack. |
 | [`ignore_system_and_hidden_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#ignore_system_and_hidden_files) | `true` | If `true`, PackSquash will skip and not print progress messages for system (i.e. clearly not for use with Minecraft) and hidden (i.e. whose name starts with a dot) files and folders. |
 | [`zip_spec_conformance_level`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_spec_conformance_level) | `high` | This parameter lets you choose the ZIP specification conformance level that is most suitable to your pack and situation. Please read [the relevant PackSquash documentation](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#zip_spec_conformance_level) for more details. |
 | [`size_increasing_zip_obfuscation`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#size_increasing_zip_obfuscation) | `false` | If `zip_spec_conformance_level` is set to `disregard`, enabling this parameter will add more protections against inspecting, extracting or tampering with the generated ZIP file that will slightly increase its size. |
@@ -54,7 +54,7 @@ The parameters in this section are used to automatically generate an [options fi
 | [`strip_legacy_language_files_bom`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#strip_legacy_language_bom) | `true` | If `true`, the BOM in the first line of legacy language files will be stripped. This usually saves space and avoids user confusion. When `false`, this behavior is disabled, which may be necessary if the pack relies on the BOM character to be present in any of these files. |
 | [`minify_command_function_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_command_function) | `true` | If `true`, the command function files will be minified: empty lines and comments will be removed. This saves space and improves parsing performance. If `false`, the files will still be validated for errors but left as they are. |
 | [`minify_properties_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#minify_properties) | `true` | When `true`, and if the appropriate mod support is enabled, properties files will be minified, which removes comments and unnecessary white space, to improve space savings. |
-| [`force_include_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#force_include) | `﻿` (empty string) | A list of file path glob patterns to always include in the generated ZIP file, even if PackSquash does not recognize such files as assets. These files are copied as-is, but not optimized in any specific way, so this option does not substitute proper PackSquash support for assets used by the game. Please read [the custom files feature documentation](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#custom-files) for more details about this option. |
+| [`force_include_files`](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#force_include) | `�` (empty string) | A list of file path glob patterns to always include in the generated ZIP file, even if PackSquash does not recognize such files as assets. These files are copied as-is, but not optimized in any specific way, so this option does not substitute proper PackSquash support for assets used by the game. Please read [the custom files feature documentation](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files#custom-files) for more details about this option. |
 
 ### Advanced action parameters
 
@@ -64,17 +64,97 @@ The action also supports additional parameters that might come in handy for more
 |---|---|---|
 | `packsquash_version` | `v0.3.1` | The PackSquash version the action will use. `latest` is a special keyword that refers to the latest unstable build, automatically generated by CI from the source code at the `master` branch in the PackSquash repository. Please note that too old or too new versions may be incompatible or not properly supported by the action. |
 | `system_id` | Automatically generated | The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what you are doing, it is recommended to leave this parameter unset, as doing so will let the action generate and use a suitable system identifier automatically. |
-| `options_file` | Generated from the action parameters | Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at `/var/lib/packsquash/pack.zip`, and it will use the options file you provide verbatim, overriding any other PackSquash option parameter you set. |
-| `action_cache_revision` | `﻿` (empty string) | The revision of the cache the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage `system_id` yourself. |
+| `options_file` | Generated from the action parameters | Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at `/var/lib/packsquash/pack.zip`, and it will use the options file you provide verbatim, overriding any other PackSquash option parameter you set. |
+| `action_cache_revision` | `�` (empty string) | The revision of the cache the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage `system_id` yourself. |
 | `artifact_name` | `Optimized pack` | The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times. |
-| `show_emoji_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to use emojis in the logs it generates, which looks prettier. Otherwise, plain ASCII decoration characters will be used instead. |
+| `show_emoji_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead. |
 | `enable_color_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored. |
 
-## ⚙️ Example
+## ⚙️ Examples
 
-This GitHub Actions workflow file uses this action to optimize the resource pack contained in the `pack` directory of the repository (if your pack is at the root of the repository, you may change that path to `.`). It runs for every push to the repository, so a ZIP file with the optimized resource pack will be generated for any change. `token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories. The generated optimized resource pack file is uploaded as an artifact that can be downloaded later.
+This section contains some example GitHub Actions workflow files to achieve common continuous integration tasks with this action.
 
-##### `.github/workflows/packsquash.yml`
+### Optimize each commit to an artifact
+
+This workflow will execute PackSquash for every push to the repository, generating an [artifact](https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts) with the optimized pack for any change. The workflow expects the pack to be at the repository root. The generated artifact can be downloaded by users with read access to the repository [via the GitHub web UI or CLI](https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts). It can also be downloaded in other steps or workflows via the [`actions/download-artifact`](https://github.com/marketplace/actions/download-a-build-artifact) or [`dawidd6/action-download-artifact`](https://github.com/marketplace/actions/download-workflow-artifact) actions.
+
+#### File tree
+
+```
+Repository root
+├── .github
+│   └── workflows
+│       └── packsquash.yml
+├── assets
+│   └── ...
+└── pack.mcmeta
+```
+
+#### Workflow file: `.github/workflows/packsquash.yml`
+
+```yaml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+```
+
+### Optimize each commit to an artifact, but changing the pack directory
+
+In some cases, the directory where the pack is does not match the repository root. You can specify a directory other than the repository root by changing the `path` input parameter.
+
+This is useful for repositories that contain several packs (monorepos) and isolating the pack from the rest of the repository, preventing miscellaneous repository files from being considered as pack files by PackSquash.
+
+#### File tree
+
+```
+Repository root
+├── .github
+│   └── workflows
+│       └── packsquash.yml
+└── pack
+    ├── assets
+    │   └── ...
+    └── pack.mcmeta
+```
+
+#### Workflow file: `.github/workflows/packsquash.yml`
+
+```yaml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+        with:
+          path: pack
+```
+
+### Optimize to an artifact and create a release
+
+The previous examples can easily be expanded to create releases automatically by downloading the generated artifact and uploading it again as a release.
+
+#### Workflow file (every push): `.github/workflows/packsquash.yml`
+
+This workflow creates a new tag and release named `action-v{number}` for every push event, which is triggered by commits and other tags.
+
 ```yaml
 name: Optimize resource pack
 on: [push]
@@ -89,8 +169,96 @@ jobs:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download optimized pack
+        uses: actions/download-artifact@v2
         with:
-          path: pack
+          name: Optimized pack
+      - name: Tag and create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: action-v${{ github.run_number }}
+          files: pack.zip
+```
+
+#### Workflow file (every tag push): `.github/workflows/packsquash.yml`
+
+This workflow creates a new release whenever a tag is pushed. The release will have the same name as the tag.
+
+```yaml
+name: Optimize resource pack
+on:
+  push:
+    tags:
+      - '**'
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download optimized pack
+        uses: actions/download-artifact@v2
+        with:
+          name: Optimized pack
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: pack.zip
+```
+
+### Advanced: automatic release deployment via SSH
+
+When developing in private repositories it is not possible for vanilla Minecraft clients to download resource packs directly from release artifacts, as they lack the required authentication credentials. A common solution is to upload releases to an external web server directly from a GitHub Actions workflow via SSH.
+
+⚠️ **Keep in mind that just uploading files to the web server might not be enough to make players download the new version the next time they connect**. The Minecraft server should be configured with the appropriate resource pack ZIP file URL and hash each time the pack is updated. Otherwise, clients will receive stale information and may decide to use the copy they have downloaded already. This example omits that part on purpose because the precise way of doing it (running plugin commands via RCON, modifying the `server.properties` file and restarting the server, etc.) is environment-specific.
+
+#### Secrets 
+
+This example workflow uses the following [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets), which can be set in the repository settings.
+
+| Name | Description |
+|---|---|
+| `SSH_HOST` | Web (and/or SSH) server host name or address |
+| `SSH_USERNAME` | Username for SSH authentication |
+| `SSH_PRIVATE_KEY` | Private key for SSH authentication |
+| `SSH_PORT` | SSH server listen port |
+| `DEPLOY_DIRECTORY` | Directory where the pack will be deployed to. Usually `/var/www/` for the web server root |
+
+#### Workflow file: `.github/workflows/deploy.yml`
+
+```yaml
+name: Deploy via SSH
+on: [workflow_dispatch]
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download latest released pack
+        uses: dsaltares/fetch-gh-release-asset@v1.0.0
+        with:
+          file: pack.zip
+          target: pack.zip
+      - name: Rename pack file
+        # An unique name guarantees an unique URL. Different URLs
+        # compel Minecraft clients to download packs again, but
+        # make sure to read and understand the warning above before
+        # doing this in production!
+        run: mv pack.zip pack-${{ github.run_number }}.zip
+      - name: Deploy pack file
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: pack-${{ github.run_number }}.zip
+          target: ${{ secrets.DEPLOY_DIRECTORY }}
 ```
 
 ## 🔒 Security
