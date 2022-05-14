@@ -10,8 +10,8 @@ import { copyFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
 
 async function run() {
-    const runnerOs = getEnvOrThrow("RUNNER_OS");
-    if (runnerOs !== "Linux") {
+    const runnerOs = getEnvOrThrow('RUNNER_OS');
+    if (runnerOs !== 'Linux') {
         throw Error(`Unsupported runner OS: only Linux is supported at the moment, but the job is running on ${runnerOs}. Please switch to a Linux-based runner.`);
     }
 
