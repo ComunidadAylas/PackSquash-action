@@ -4,7 +4,7 @@ import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
 import { uploadArtifact } from './workflow';
-import git_set_file_times from './git_set_file_times';
+import setGitFileModificationTimes from './git_set_file_times';
 import { checkRepositoryIsNotShallow } from './util';
 import { copyFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
@@ -32,7 +32,7 @@ async function run() {
         restoreCache = await restorePackSquashCache(workingDirectory, key, restoreKeys);
     }
     if (useCache) {
-        await git_set_file_times();
+        await setGitFileModificationTimes();
     }
     await runPackSquash(workingDirectory);
     await uploadArtifact(workingDirectory);
