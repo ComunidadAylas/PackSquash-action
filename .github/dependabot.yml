@@ -8,3 +8,11 @@ updates:
       - ComunidadAylas/packsquash-github-action-developers
     labels:
       - dependencies
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    reviewers:
+      - ComunidadAylas/packsquash-github-action-developers
+    labels:
+      - dependencies
