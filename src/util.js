@@ -11,10 +11,18 @@ import * as stream from 'stream';
  */
 export async function checkRepositoryIsNotShallow() {
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
+
     debug(`Checking that the repository checkout at ${workspace} is not shallow`);
-    const output = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
-        silent: true
-    });
+
+    let output;
+    try {
+        output = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
+            silent: true
+        });
+    } catch (error) {
+        throw Error(`Could not check whether the repository is shallow: ${error}. Has the repository been checked out?`);
+    }
+
     if (output.stdout === 'true\n') {
         throw Error('The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
     }
