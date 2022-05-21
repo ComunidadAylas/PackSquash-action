@@ -4,12 +4,9 @@ import { readFile, rm, writeFile } from 'fs/promises';
 import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
 import { Options } from './options';
 import * as uuid from 'uuid';
+import WorkingDirectory from './working_directory';
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<void>}
- */
-export async function printPackSquashVersion(workingDirectory) {
+export async function printPackSquashVersion(workingDirectory: WorkingDirectory) {
     startGroup('PackSquash version');
     await exec(workingDirectory.packsquashBinary, ['--version'], {
         env: {
@@ -20,16 +17,12 @@ export async function printPackSquashVersion(workingDirectory) {
     endGroup();
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<void>}
- */
-export async function runPackSquash(workingDirectory) {
+export async function runPackSquash(workingDirectory: WorkingDirectory) {
     const systemId = await getSystemId(workingDirectory);
     debug(`Using system ID: ${systemId}`);
     setSecret(systemId);
 
-    async function run(description) {
+    async function run(description: string | null) {
         await addProblemMatcher(workingDirectory.problemMatcherFile);
         if (description) {
             startGroup(`PackSquash output (${description})`);
@@ -48,7 +41,7 @@ export async function runPackSquash(workingDirectory) {
         return exitCode;
     }
 
-    let exitCode = await run();
+    let exitCode = await run(null);
     switch (exitCode) {
         case 0:
             // Success
@@ -68,25 +61,15 @@ export async function runPackSquash(workingDirectory) {
     }
 }
 
-/**
- * @returns {string|null}
- */
 function showEmojiInPacksquashLogs() {
-    return getBooleanInput(Options.ShowEmojiInPacksquashLogs) ? 'show' : null;
+    return getBooleanInput(Options.ShowEmojiInPacksquashLogs) ? 'show' : '';
 }
 
-/**
- * @returns {string|null}
- */
 function enableColorInPacksquashLogs() {
-    return getBooleanInput(Options.EnableColorInPacksquashLogs) ? 'show' : null;
+    return getBooleanInput(Options.EnableColorInPacksquashLogs) ? 'show' : '';
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<string>}
- */
-export async function getSystemId(workingDirectory) {
+export async function getSystemId(workingDirectory: WorkingDirectory) {
     const inputSystemId = getInput(Options.SystemId);
     if (inputSystemId) {
         return inputSystemId;
@@ -96,7 +79,7 @@ export async function getSystemId(workingDirectory) {
     try {
         // Try with any cached system ID we may have first, to reuse results
         // from previous runs
-        cachedOrGeneratedSystemId = await readFile(workingDirectory.systemIdFile, { encoding: 'utf8' });
+        cachedOrGeneratedSystemId = await readFile(workingDirectory.systemIdFile, 'utf8');
         if (!cachedOrGeneratedSystemId) {
             throw Error('Invalid cached system ID');
         }
@@ -104,7 +87,7 @@ export async function getSystemId(workingDirectory) {
         // We don't have a cached system ID, it is invalid or an I/O error
         // happened. Generate a new random one
         cachedOrGeneratedSystemId = uuid.v4();
-        await writeFile(workingDirectory.systemIdFile, cachedOrGeneratedSystemId, { encoding: 'utf8' });
+        await writeFile(workingDirectory.systemIdFile, cachedOrGeneratedSystemId, 'utf8');
     }
 
     return cachedOrGeneratedSystemId;

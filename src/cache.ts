@@ -1,16 +1,13 @@
-import { endGroup, getInput, startGroup, warning } from '@actions/core';
+import { endGroup, getInput, info, startGroup, warning } from '@actions/core';
 import { restoreCache, saveCache } from '@actions/cache';
 import { hashFiles } from '@actions/glob';
 import { context } from '@actions/github';
 import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
 import { Options } from './options';
 import { getBranchName } from './util';
+import WorkingDirectory from './working_directory';
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<string[]>}
- */
-export async function computeCacheKey(workingDirectory) {
+export async function computeCacheKey(workingDirectory: WorkingDirectory) {
     const optionsHash = await hashFiles(workingDirectory.optionsFile);
     const cacheRevision = Buffer.from(getInput(Options.ActionCacheRevision)).toString('base64');
     // Using different primary and restore keys is necessary to handle jobs
@@ -24,13 +21,9 @@ export async function computeCacheKey(workingDirectory) {
 /**
  * Restore the system ID file from the cache and the pack ZIP from the previous
  * artifact if needed, and if this workflow has been run at least once
- * @param {WorkingDirectory} workingDirectory
- * @param {string} key
- * @param {string[]} restore_keys
- * @returns {Promise<string>} The restored cache key, or undefined if no cache
- * was restored
+ * @returns The restored cache key, or undefined if no cache was restored
  */
-export async function restorePackSquashCache(workingDirectory, key, restore_keys) {
+export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restore_keys: string[]) {
     startGroup('Restoring cached data');
     const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restore_keys);
     if (restoredCacheKey || getInput(Options.SystemId)) {
@@ -54,12 +47,7 @@ export async function restorePackSquashCache(workingDirectory, key, restore_keys
     return restoredCacheKey;
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @param {string} key
- * @returns {Promise<void>}
- */
-export async function savePackSquashCache(workingDirectory, key) {
+export async function savePackSquashCache(workingDirectory: WorkingDirectory, key: string) {
     startGroup('Caching data for future runs');
     await saveCache([workingDirectory.systemIdFile], key);
     endGroup();

@@ -3,12 +3,9 @@ import { chmod } from 'fs/promises';
 import { Options } from './options';
 import { downloadFile, getArchitecture } from './util';
 import { downloadLatestArtifact } from './workflow';
+import WorkingDirectory from './working_directory';
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<void>}
- */
-export async function downloadAppImage(workingDirectory) {
+export async function downloadAppImage(workingDirectory: WorkingDirectory) {
     const version = getInput(Options.PackSquashVersion);
     debug(`PackSquash version input variable value: ${version}`);
     const arch = getArchitecture();
@@ -58,22 +55,11 @@ export async function downloadAppImage(workingDirectory) {
     await chmod(workingDirectory.packsquashBinary, '755');
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @param {string} arch_infix
- * @returns {Promise<void>}
- */
-async function downloadLatestAppImage(workingDirectory, arch_infix) {
+async function downloadLatestAppImage(workingDirectory: WorkingDirectory, arch_infix: string) {
     await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${arch_infix})`, workingDirectory.packsquashBinary);
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @param {string} version
- * @param {string} asset_name
- * @returns {Promise<void>}
- */
-async function downloadReleaseAppImage(workingDirectory, version, asset_name) {
+async function downloadReleaseAppImage(workingDirectory: WorkingDirectory, version: string, asset_name: string) {
     info(`Downloading PackSquash AppImage for release ${version} (asset ${asset_name})`);
     await downloadFile(`https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`, workingDirectory.packsquashBinary);
 }

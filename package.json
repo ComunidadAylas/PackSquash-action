@@ -3,9 +3,9 @@
   "version": "2.0.2",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
-    "build": "ncc build src/index.js -o dist/main -m && ncc build src/cleanup_working_directory.js -o dist/cleanup_working_directory -m",
-    "format": "prettier --write \"src/**/*.js\"",
-    "format-check": "prettier --check \"src/**/*.js\""
+    "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format-check": "prettier --check \"src/**/*.ts\""
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,10 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/unzipper": "^0.10.5",
+    "@types/uuid": "^8.3.4",
     "@vercel/ncc": "^0.33.4",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4"
   }
 }
