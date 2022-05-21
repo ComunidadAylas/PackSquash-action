@@ -6,27 +6,18 @@ import { createWriteStream } from 'fs';
 import { rm } from 'fs/promises';
 import unzipper from 'unzipper';
 import { downloadFile } from './util';
+import WorkingDirectory from './working_directory';
 
-/**
- * @param {string} owner
- * @param {string} repo
- * @param {string} workflow
- * @returns {Promise<number>}
- */
-export async function getCurrentWorkflowId(owner, repo, workflow) {
+export async function getCurrentWorkflowId(owner: string, repo: string, workflow: string) {
     const octokit = getOctokit(getInput(Options.Token));
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows', {
         owner: owner,
         repo: repo
     });
-    return workflows.data.workflows.find(w => w.name === workflow).id;
+    return workflows.data.workflows.find(w => w.name === workflow)!.id;
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<void>}
- */
-export async function uploadArtifact(workingDirectory) {
+export async function uploadArtifact(workingDirectory: WorkingDirectory) {
     startGroup('Upload generated ZIP file as artifact');
     const response = await create().uploadArtifact(getInput(Options.ArtifactName), [workingDirectory.outputFile], workingDirectory.path);
     endGroup();
@@ -35,17 +26,7 @@ export async function uploadArtifact(workingDirectory) {
     }
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @param {string} owner
- * @param {string} repo
- * @param {string} branch
- * @param {number} workflowId
- * @param {string} artifactName
- * @param {string} destinationPath
- * @returns {Promise<void>}
- */
-export async function downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, artifactName, destinationPath) {
+export async function downloadLatestArtifact(workingDirectory: WorkingDirectory, owner: string, repo: string, branch: string, workflowId: number, artifactName: string, destinationPath: string) {
     info(`Downloading latest ${artifactName} artifact`);
     const octokit = getOctokit(getInput(Options.Token));
     debug(`Getting latest run information for ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
@@ -84,12 +65,7 @@ export async function downloadLatestArtifact(workingDirectory, owner, repo, bran
     info(`Successfully downloaded the latest ${artifactName} artifact`);
 }
 
-/**
- * @param {string} zip
- * @param {string} path
- * @returns {Promise<void>}
- */
-async function extractFile(zip, path) {
+async function extractFile(zip: string, path: string) {
     const directory = await unzipper.Open.file(zip);
     return new Promise((resolve, reject) => {
         directory.files[0].stream().pipe(createWriteStream(path)).on('error', reject).on('finish', resolve);

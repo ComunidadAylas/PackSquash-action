@@ -26,17 +26,11 @@ const json = {
     ]
 };
 
-/**
- * @param {string} path
- */
-export async function addProblemMatcher(path) {
+export async function addProblemMatcher(path: string) {
     await writeFile(path, JSON.stringify(json));
     info(`::add-matcher::${path}`);
 }
 
-/**
- * @param {string} path
- */
-export function removeProblemMatcher(path) {
+export function removeProblemMatcher(path: string) {
     info(`::remove-matcher::${path}`);
 }

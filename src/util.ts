@@ -10,7 +10,7 @@ import * as stream from 'stream';
  * we need to check that the repo is not shallow, because if it is we will be
  * missing the time data needed for proper caching operation.
  *
- * @returns {Promise<void>} A rejected promise if the check fails.
+ * @returns A rejected promise if the check fails.
  */
 export async function checkRepositoryIsNotShallow() {
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
@@ -33,9 +33,6 @@ export async function checkRepositoryIsNotShallow() {
     }
 }
 
-/**
- * @returns {string}
- */
 export function getArchitecture() {
     return getEnvOrThrow('RUNNER_ARCH');
 }
@@ -52,7 +49,7 @@ export function getArchitecture() {
  *
  * @see https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
  * @see https://github.com/ComunidadAylas/PackSquash-action/pull/17#discussion_r868154905
- * @return {string|null} The branch name, or `null` if the triggering ref is a tag.
+ * @return The branch name, or `null` if the triggering ref is a tag.
  */
 export function getBranchName() {
     if (process.env.GITHUB_REF_TYPE === 'branch') {
@@ -60,18 +57,13 @@ export function getBranchName() {
         if (head_ref) {
             return head_ref;
         }
-        return process.env.GITHUB_REF_NAME;
+        return process.env.GITHUB_REF_NAME as string;
     } else {
         return null;
     }
 }
 
-/**
- * @param {string} url
- * @param {string} path
- * @return {Promise<void>}
- */
-export async function downloadFile(url, path) {
+export async function downloadFile(url: string, path: string) {
     const client = new HttpClient();
     const writeStream = createWriteStream(path);
     const response = await client.get(url);
@@ -82,12 +74,12 @@ export async function downloadFile(url, path) {
 /**
  * Returns the value of the specified environment variable. If it was not
  * defined an exception will be thrown.
- * @param {string} variable The environment variable to get the value of.
- * @returns {string} The value of the environment variable.
+ * @param variable The environment variable to get the value of.
+ * @returns The value of the environment variable.
  */
-export function getEnvOrThrow(variable) {
+export function getEnvOrThrow(variable: string) {
     if (variable in process.env) {
-        return process.env[variable];
+        return process.env[variable] as string;
     } else {
         throw new Error(`Internal error: the ${variable} environment variable is missing`);
     }

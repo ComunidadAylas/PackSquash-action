@@ -1,5 +1,6 @@
 import { debug, endGroup, getBooleanInput, getInput, getMultilineInput, info, startGroup } from '@actions/core';
 import { readFile, writeFile } from 'fs/promises';
+import WorkingDirectory from './working_directory';
 
 export class Options {
     static Path = 'path';
@@ -49,14 +50,8 @@ export class Options {
     static ForceIncludeFiles = 'force_include_files';
 }
 
-/**
- * @returns {string}
- */
 function getAllowMods() {
-    /**
-     * @type {string[]}
-     */
-    const mods = [];
+    const mods: string[] = [];
 
     if (getBooleanInput(Options.AllowOptifineMod)) {
         debug('Allowing OptiFine mod');
@@ -70,14 +65,8 @@ function getAllowMods() {
     return stringArrayToTomlArray(mods);
 }
 
-/**
- * @returns {string}
- */
 function getWorkAroundMinecraftQuirks() {
-    /**
-     * @type {string[]}
-     */
-    const quirks = [];
+    const quirks: string[] = [];
 
     if (getBooleanInput(Options.WorkAroundGrayscaleImagesGammaMiscorrectionQuirk)) {
         debug('Adding grayscale_images_gamma_miscorrection quirk');
@@ -99,27 +88,17 @@ function getWorkAroundMinecraftQuirks() {
     return stringArrayToTomlArray(quirks);
 }
 
-/**
- * @returns {string}
- */
 function getForceIncludeFiles() {
     return getMultilineInput(Options.ForceIncludeFiles)
         .map(s => `['${s}']\nforce_include = true`)
         .join('\n\n');
 }
 
-/**
- * @returns {boolean}
- */
 export function shouldUseCache() {
     return !getBooleanInput(Options.NeverStoreSquashTimes) && getInput(Options.ZipSpecConformanceLevel) !== 'pedantic';
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {string}
- */
-function getOptionsFileContent(workingDirectory) {
+function getOptionsFileContent(workingDirectory: WorkingDirectory) {
     return `
 pack_directory = '${getInput(Options.Path)}'
 skip_pack_icon = ${getBooleanInput(Options.SkipPackIcon)}
@@ -172,18 +151,14 @@ minify_properties = ${getBooleanInput(Options.MinifyPropertiesFiles)}
 ${getForceIncludeFiles()}`.trim();
 }
 
-/**
- * @param {WorkingDirectory} workingDirectory
- * @returns {Promise<string>}
- */
-export async function generateOptionsFile(workingDirectory) {
-    await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), { encoding: 'utf8' });
+export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
+    await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), 'utf8');
     return workingDirectory.optionsFile;
 }
 
-export async function printOptionsFileContent(path) {
+export async function printOptionsFileContent(path: string) {
     startGroup('PackSquash options');
-    await readFile(path, { encoding: 'utf8' }).then(content => {
+    await readFile(path, 'utf8').then(content => {
         content.split('\n').forEach((line, index) => {
             info(`${(index + 1).toString().padEnd(6, ' ')} ${line}`);
         });
@@ -191,10 +166,6 @@ export async function printOptionsFileContent(path) {
     endGroup();
 }
 
-/**
- * @param {string[]} list
- * @returns {string}
- */
-function stringArrayToTomlArray(list) {
-    return `[ ${list.map(s => `'${s}'`).join(', ')} ]`;
+function stringArrayToTomlArray(list: string[]) {
+    return `[ ${list.map((s: any) => `'${s}'`).join(', ')} ]`;
 }

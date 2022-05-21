@@ -1,19 +1,13 @@
 import { getExecOutput } from '@actions/exec';
 import { utimes } from 'fs/promises';
 
-/**
- * @returns {Promise<void>}
- */
 async function setGitFileModificationTimes() {
     return await ls().then(list => changeTime(list));
 }
 
-/**
- * @returns {Promise<string[]>}
- */
 async function ls() {
-    return new Promise(async resolve => {
-        const ls = [];
+    return new Promise<string[]>(async resolve => {
+        const ls: string[] = [];
         const output = await getExecOutput('git', ['ls-files', '-z'], { silent: true });
         output.stdout.split('\n').forEach(line => {
             ls.push(...line.split('\0').filter(f => !!f));
@@ -22,12 +16,8 @@ async function ls() {
     });
 }
 
-/**
- * @param {string[]} files
- * @returns {Promise<void>}
- */
-async function changeTime(files) {
-    return new Promise(async resolve => {
+async function changeTime(files: string[]) {
+    return new Promise<void>(async resolve => {
         const output = await getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true });
         let time = new Date();
         for (const line of output.stdout.split('\n')) {
