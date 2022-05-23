@@ -164,13 +164,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v2
       - name: Download optimized pack
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Optimized pack
       - name: Tag and create release
@@ -202,7 +202,7 @@ jobs:
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v2
       - name: Download optimized pack
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Optimized pack
       - name: Create release
