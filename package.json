@@ -1,6 +1,6 @@
 {
   "name": "packsquash-action",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
     "build-actions-helper": "ncc build actions_helper.mjs -o dist -m && mv dist/index.mjs dist/actions_helper.mjs"
