@@ -261,6 +261,13 @@ jobs:
           target: ${{ secrets.DEPLOY_DIRECTORY }}
 ```
 
+## 📄 Template repositories
+
+Some users are creating [template repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) with this action, making it very easy to get up and running with the development of your very own pack. We have curated a list of handy repository templates below, but feel free to send pull requests to add new reusable templates here!
+
+- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate) (in Japanese): a template repository for Minecraft resource packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact, and a release is made when a new tag is pushed.
+- [`osfanbuff63/minecraft-datapack`](https://github.com/osfanbuff63/minecraft-datapack): a template repository for vanilla Minecraft data packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact. No releases or deployments are made.
+
 ## 🔒 Security
 
 This action may store in a cache the encryption key needed to read file modification times from the ZIP files PackSquash generates. Therefore, such encryption key can be exposed to anyone that has access to the repository. However, this is not a concern in practical scenarios, because the file modification times are generated from the commit history, so having access to the repository already provides this information. If for some reason you do not want this behavior, you can set `never_store_squash_times` to `true`, although that will likely slow down PackSquash. For more information about the implications of caching potentially-sensitive data, please read the [GitHub documentation](https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows#about-caching-workflow-dependencies).
