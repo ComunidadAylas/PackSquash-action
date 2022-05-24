@@ -203,7 +203,7 @@ export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
 }
 
 export async function tweakAndCopyUserOptionsFile(path: string, workingDirectory: WorkingDirectory) {
-    let options = await TOML.parse.stream((await open(path, 'r')).createReadStream());
+    const options = await TOML.parse.stream((await open(path, 'r')).createReadStream());
 
     // This path is an implementation detail of the action. We should always set
     // it, overriding any user preferences

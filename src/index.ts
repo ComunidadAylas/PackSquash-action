@@ -17,7 +17,7 @@ async function run() {
     const workingDirectory = new WorkingDirectory();
     await workingDirectory.rm();
     await workingDirectory.mkdir();
-    let optionsFile = getInput(Options.OptionsFile);
+    const optionsFile = getInput(Options.OptionsFile);
     const cacheMayBeUsed = optionsFile || shouldUseCache();
     if (cacheMayBeUsed) {
         await checkRepositoryIsNotShallow();
