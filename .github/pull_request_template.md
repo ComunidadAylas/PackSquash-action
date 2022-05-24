@@ -13,26 +13,26 @@ After your pull request is submitted, fellow developers will try to review it an
 
 -->
 
-# Background
+## Background
 
 Please describe any context, problem, or potential for improvement related to your changes.
 
-# Motivation and purpose
+## Motivation and purpose
 
 Please elaborate on why you made these changes and what the project stakeholders (fellow developers, end-users, etc.) can expect from them. If your changes address an open issue, you should mention it here.
 
-# Description
+## Description
 
 Please write an overview of how your changes are implemented and how they heed their purpose and motivation. You can also evaluate or demonstrate their outcome in this section.
 
-# Testing techniques and resources
+## Testing techniques and resources
 
 Please state how your changes were tested, including both manual and automated tests. If you used some files or resources for testing that are not part of the submitted changes, attach them here.
 
-# Usage
+## Usage
 
 Please state how the project stakeholders exploit your changes, if applicable. Take into account that changes may lead to updates to the end-user documentation.
 
-# Notes
+## Notes
 
 Any other information that may be relevant for repository maintainers to review or merge your pull request.
