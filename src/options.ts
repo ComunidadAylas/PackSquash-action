@@ -200,11 +200,10 @@ function getOptionsFileContent(workingDirectory: WorkingDirectory) {
 
 export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
     await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), 'utf8');
-    return workingDirectory.optionsFile;
 }
 
-export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
-    let options = await TOML.parse.stream((await open(workingDirectory.optionsFile, 'r')).createReadStream());
+export async function tweakAndCopyUserOptionsFile(path: string, workingDirectory: WorkingDirectory) {
+    let options = await TOML.parse.stream((await open(path, 'r')).createReadStream());
 
     // This path is an implementation detail of the action. We should always set
     // it, overriding any user preferences
@@ -216,9 +215,9 @@ export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
     await writeFile(workingDirectory.optionsFile, TOML.stringify(options), 'utf-8');
 }
 
-export async function printOptionsFileContent(path: string) {
+export async function printOptionsFileContent(workingDirectory: WorkingDirectory) {
     startGroup('PackSquash options');
-    await readFile(path, 'utf8').then(content => {
+    await readFile(workingDirectory.optionsFile, 'utf8').then(content => {
         content
             .trimEnd()
             .split('\n')

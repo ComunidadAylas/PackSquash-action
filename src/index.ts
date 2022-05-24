@@ -1,12 +1,11 @@
 import { getInput, info, setFailed } from '@actions/core';
-import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache, tweakUserOptionsFile } from './options.js';
+import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache, tweakAndCopyUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
 import { uploadArtifact } from './workflow';
 import setGitFileModificationTimes from './git_set_file_times';
 import { checkRepositoryIsNotShallow, getEnvOrThrow } from './util';
-import { copyFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
 
 async function run() {
@@ -26,13 +25,12 @@ async function run() {
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
     if (optionsFile) {
-        info(`Validating and using custom options file: the ${Options.OptionsFile} action parameter is set`);
-        await copyFile(optionsFile, workingDirectory.optionsFile);
-        await tweakUserOptionsFile(workingDirectory);
+        info(`Using custom options file: the ${Options.OptionsFile} action parameter is set`);
+        await tweakAndCopyUserOptionsFile(optionsFile, workingDirectory);
     } else {
-        optionsFile = await generateOptionsFile(workingDirectory);
+        await generateOptionsFile(workingDirectory);
     }
-    await printOptionsFileContent(optionsFile);
+    await printOptionsFileContent(workingDirectory);
     const [key, ...restoreKeys] = await computeCacheKey(workingDirectory);
     let restoredCacheKey;
     if (cacheMayBeUsed) {
