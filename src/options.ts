@@ -204,8 +204,7 @@ export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
 }
 
 export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
-    const optionsFile = await open(workingDirectory.optionsFile, 'r+');
-    let options = await TOML.parse.stream(optionsFile.createReadStream());
+    let options = await TOML.parse.stream((await open(workingDirectory.optionsFile, 'r')).createReadStream());
 
     // This path is an implementation detail of the action. We should always set
     // it, overriding any user preferences
@@ -214,8 +213,7 @@ export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
     }
     options.output_file_path = workingDirectory.outputFile;
 
-    const writtenBytes = (await optionsFile.write(TOML.stringify(options), 0, 'utf-8')).bytesWritten;
-    await optionsFile.truncate(writtenBytes);
+    await writeFile(workingDirectory.optionsFile, TOML.stringify(options), 'utf-8');
 }
 
 export async function printOptionsFileContent(path: string) {
