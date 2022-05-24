@@ -1,7 +1,3 @@
----
-name: Pull request
-about: The default pull request template for this repository.
----
 <!--
 
 Many thanks for taking the time to improve the project from its source!
