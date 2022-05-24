@@ -1,7 +1,7 @@
 name: Test - Double checkout
 on: [workflow_dispatch]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository

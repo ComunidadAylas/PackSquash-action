@@ -6,7 +6,7 @@ on:
       - opened
       - synchronize
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository

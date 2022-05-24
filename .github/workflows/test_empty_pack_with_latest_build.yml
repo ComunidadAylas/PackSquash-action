@@ -14,7 +14,7 @@ on:
     # and we do not want to mess with that
     - cron: '0 12 * * 1,3,5,0'
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
