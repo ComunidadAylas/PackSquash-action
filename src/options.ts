@@ -1,6 +1,7 @@
-import { debug, endGroup, getBooleanInput, getInput, getMultilineInput, info, startGroup } from '@actions/core';
-import { readFile, writeFile } from 'fs/promises';
+import { debug, endGroup, getBooleanInput, getInput, getMultilineInput, info, InputOptions, startGroup, warning } from '@actions/core';
+import { open, readFile, writeFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
+import TOML from '@iarna/toml';
 
 export class Options {
     static Path = 'path';
@@ -51,7 +52,7 @@ export class Options {
 }
 
 function getAllowMods() {
-    const mods: string[] = [];
+    const mods = [];
 
     if (getBooleanInput(Options.AllowOptifineMod)) {
         debug('Allowing OptiFine mod');
@@ -62,11 +63,11 @@ function getAllowMods() {
         mods.push('Minecraft Transit Railway 3');
     }
 
-    return stringArrayToTomlArray(mods);
+    return mods;
 }
 
 function getWorkAroundMinecraftQuirks() {
-    const quirks: string[] = [];
+    const quirks = [];
 
     if (getBooleanInput(Options.WorkAroundGrayscaleImagesGammaMiscorrectionQuirk)) {
         debug('Adding grayscale_images_gamma_miscorrection quirk');
@@ -85,75 +86,136 @@ function getWorkAroundMinecraftQuirks() {
         quirks.push('bad_entity_eye_layer_texture_transparency_blending');
     }
 
-    return stringArrayToTomlArray(quirks);
+    return quirks;
 }
 
 function getForceIncludeFiles() {
-    return getMultilineInput(Options.ForceIncludeFiles)
-        .map(s => `['${s}']\nforce_include = true`)
-        .join('\n\n');
+    const forceIncludeFiles = [];
+
+    for (const forceIncludeFile of getMultilineInput(Options.ForceIncludeFiles)) {
+        forceIncludeFiles.push({ [forceIncludeFile]: { force_include: true } });
+    }
+
+    return forceIncludeFiles;
 }
 
 export function shouldUseCache() {
     return !getBooleanInput(Options.NeverStoreSquashTimes) && getInput(Options.ZipSpecConformanceLevel) !== 'pedantic';
 }
 
+/**
+ * Like {@link getInput}, but parses the input value as an integer. If the
+ * conversion to an integer is not successful, an error is thrown.
+ * @param name The name of the input to get.
+ * @param options Optional input options to pass to {@link getInput}.
+ * @returns The parsed integer value for the specified option.
+ */
+function getIntegerInput(name: string, options?: InputOptions): number {
+    const rawInputValue = getInput(name, options);
+    const inputValue = parseInt(rawInputValue, 10);
+
+    if (isNaN(inputValue)) {
+        throw new Error(`Invalid value for integer action parameter ${name}: ${rawInputValue}`);
+    }
+
+    return inputValue;
+}
+
+/**
+ * Like {@link getInput}, but parses the input value as a floating point number.
+ * If the conversion to a decimal number is not successful, an error is thrown.
+ * @param name The name of the input to get.
+ * @param options Optional input options to pass to {@link getInput}.
+ * @returns The parsed floating point value for the specified option.
+ */
+function getDecimalInput(name: string, options?: InputOptions): number {
+    const rawInputValue = getInput(name, options);
+    const inputValue = Number(rawInputValue);
+
+    if (isNaN(inputValue)) {
+        throw new Error(`Invalid value for decimal action parameter ${name}: ${rawInputValue}`);
+    }
+
+    return inputValue;
+}
+
 function getOptionsFileContent(workingDirectory: WorkingDirectory) {
-    return `
-pack_directory = '${getInput(Options.Path)}'
-skip_pack_icon = ${getBooleanInput(Options.SkipPackIcon)}
-validate_pack_metadata_file = ${getBooleanInput(Options.ValidatePackMetadataFile)}
-recompress_compressed_files = ${getBooleanInput(Options.RecompressCompressedFiles)}
-zip_compression_iterations = ${getInput(Options.ZipCompressionIterations)}
-automatic_minecraft_quirks_detection = ${getBooleanInput(Options.AutomaticMinecraftQuirksDetection)}
-work_around_minecraft_quirks = ${getWorkAroundMinecraftQuirks()}
-automatic_asset_types_mask_detection = ${getBooleanInput(Options.AutomaticAssetTypesMaskDetection)}
-ignore_system_and_hidden_files = ${getBooleanInput(Options.IgnoreSystemAndHiddenFiles)}
-allow_mods = ${getAllowMods()}
-zip_spec_conformance_level = '${getInput(Options.ZipSpecConformanceLevel)}'
-size_increasing_zip_obfuscation = ${getBooleanInput(Options.SizeIncreasingZipObfuscation)}
-percentage_of_zip_structures_tuned_for_obfuscation_discretion = ${getInput(Options.PercentageOfZipStructuresTunedForObfuscationDiscretion)}
-never_store_squash_times = ${getBooleanInput(Options.NeverStoreSquashTimes)}
-output_file_path = '${workingDirectory.outputFile}'
-
-['**/*.{og[ga],mp3,wav,flac}']
-transcode_ogg = ${getBooleanInput(Options.TranscodeOgg)}
-sampling_frequency = ${getInput(Options.AudioSamplingFrequency)}
-minimum_bitrate = ${getInput(Options.MinimumAudioBitrate)}
-maximum_bitrate = ${getInput(Options.MaximumAudioBitrate)}
-target_pitch = ${getInput(Options.TargetAudioPitch)}
-
-['**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}']
-minify_json = ${getBooleanInput(Options.MinifyJsonFiles)}
-delete_bloat_keys = ${getBooleanInput(Options.DeleteBloatJsonKeys)}
-always_allow_json_comments = ${getBooleanInput(Options.AlwaysAllowJsonComments)}
-
-['**/*.png']
-image_data_compression_iterations = ${getInput(Options.ImageDataCompressionIterations)}
-color_quantization_target = '${getInput(Options.ImageColorQuantizationTarget)}'
-color_quantization_dithering_level = ${getInput(Options.ImageColorQuantizationDitheringLevel)}
-maximum_width_and_height = ${getInput(Options.MaximumImageWidthAndHeight)}
-skip_alpha_optimizations = ${getBooleanInput(Options.SkipImageAlphaOptimizations)}
-
-['**/*.{fsh,vsh}']
-minify_shader = ${getBooleanInput(Options.MinifyShaders)}
-
-['**/*.lang']
-minify_legacy_language = ${getBooleanInput(Options.MinifyLegacyLanguageFiles)}
-strip_legacy_language_bom = ${getBooleanInput(Options.StripLegacyLanguageFilesBom)}
-
-['**/*.mcfunction']
-minify_command_function = ${getBooleanInput(Options.MinifyCommandFunctionFiles)}
-
-['**/*.properties']
-minify_properties = ${getBooleanInput(Options.MinifyPropertiesFiles)}
-
-${getForceIncludeFiles()}`.trim();
+    return TOML.stringify(
+        Object.assign(
+            {
+                // Global options
+                pack_directory: getInput(Options.Path),
+                skip_pack_icon: getBooleanInput(Options.SkipPackIcon),
+                validate_pack_metadata_file: getBooleanInput(Options.ValidatePackMetadataFile),
+                recompress_compressed_files: getBooleanInput(Options.RecompressCompressedFiles),
+                zip_compression_iterations: getIntegerInput(Options.ZipCompressionIterations),
+                automatic_minecraft_quirks_detection: getBooleanInput(Options.AutomaticMinecraftQuirksDetection),
+                work_around_minecraft_quirks: getWorkAroundMinecraftQuirks(),
+                automatic_asset_types_mask_detection: getBooleanInput(Options.AutomaticAssetTypesMaskDetection),
+                ignore_system_and_hidden_files: getBooleanInput(Options.IgnoreSystemAndHiddenFiles),
+                allow_mods: getAllowMods(),
+                zip_spec_conformance_level: getInput(Options.ZipSpecConformanceLevel),
+                size_increasing_zip_obfuscation: getBooleanInput(Options.SizeIncreasingZipObfuscation),
+                percentage_of_zip_structures_tuned_for_obfuscation_discretion: getIntegerInput(Options.PercentageOfZipStructuresTunedForObfuscationDiscretion),
+                never_store_squash_times: getBooleanInput(Options.NeverStoreSquashTimes),
+                output_file_path: workingDirectory.outputFile,
+                // File-specific options
+                '**/*.{og[ga],mp3,wav,flac}': {
+                    transcode_ogg: getBooleanInput(Options.TranscodeOgg),
+                    sampling_frequency: getIntegerInput(Options.AudioSamplingFrequency),
+                    minimum_bitrate: getIntegerInput(Options.MinimumAudioBitrate),
+                    maximum_bitrate: getIntegerInput(Options.MaximumAudioBitrate),
+                    target_pitch: getDecimalInput(Options.TargetAudioPitch)
+                },
+                '**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}': {
+                    minify_json: getBooleanInput(Options.MinifyJsonFiles),
+                    delete_bloat_keys: getBooleanInput(Options.DeleteBloatJsonKeys),
+                    always_allow_json_comments: getBooleanInput(Options.AlwaysAllowJsonComments)
+                },
+                '**/*.png': {
+                    image_data_compression_iterations: getIntegerInput(Options.ImageDataCompressionIterations),
+                    color_quantization_target: getInput(Options.ImageColorQuantizationTarget),
+                    color_quantization_dithering_level: getDecimalInput(Options.ImageColorQuantizationDitheringLevel),
+                    maximum_width_and_height: getIntegerInput(Options.MaximumImageWidthAndHeight),
+                    skip_alpha_optimizations: getBooleanInput(Options.SkipImageAlphaOptimizations)
+                },
+                '**/*.{fsh,vsh}': {
+                    minify_shader: getBooleanInput(Options.MinifyShaders)
+                },
+                '**/*.lang': {
+                    minify_legacy_language: getBooleanInput(Options.MinifyLegacyLanguageFiles),
+                    strip_legacy_language_bom: getBooleanInput(Options.StripLegacyLanguageFilesBom)
+                },
+                '**/*.mcfunction': {
+                    minify_command_function: getBooleanInput(Options.MinifyCommandFunctionFiles)
+                },
+                '**/*.properties': {
+                    minify_properties: getBooleanInput(Options.MinifyPropertiesFiles)
+                }
+            },
+            ...getForceIncludeFiles()
+        )
+    );
 }
 
 export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
     await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), 'utf8');
     return workingDirectory.optionsFile;
+}
+
+export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
+    const optionsFile = await open(workingDirectory.optionsFile, 'w');
+    let options = await TOML.parse.stream(optionsFile.createReadStream());
+
+    // This path is an implementation detail of the action. We should always set
+    // it, overriding any user preferences
+    if ('output_file_path' in options) {
+        warning('The custom options file sets the output_file_path option, but the action will ignore its value. Please remove it from the options file');
+    }
+    options.output_file_path = workingDirectory.outputFile;
+
+    const writtenBytes = (await optionsFile.write(TOML.stringify(options), 0, 'utf-8')).bytesWritten;
+    await optionsFile.truncate(writtenBytes);
 }
 
 export async function printOptionsFileContent(path: string) {
@@ -164,8 +226,4 @@ export async function printOptionsFileContent(path: string) {
         });
     });
     endGroup();
-}
-
-function stringArrayToTomlArray(list: string[]) {
-    return `[ ${list.map((s: any) => `'${s}'`).join(', ')} ]`;
 }

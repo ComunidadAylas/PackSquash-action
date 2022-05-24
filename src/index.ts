@@ -1,5 +1,5 @@
 import { getInput, setFailed } from '@actions/core';
-import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache } from './options.js';
+import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache, tweakUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
@@ -27,6 +27,7 @@ async function run() {
     await printPackSquashVersion(workingDirectory);
     if (optionsFile) {
         await copyFile(optionsFile, workingDirectory.optionsFile);
+        await tweakUserOptionsFile(workingDirectory);
     } else {
         optionsFile = await generateOptionsFile(workingDirectory);
     }

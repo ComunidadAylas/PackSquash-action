@@ -16,7 +16,7 @@ inputs:
     required: false
     default: 'v0.3.1'
   options_file:
-    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at /var/lib/packsquash/pack.zip.'
+    description: 'Use the specified options file instead of generating one with this action. Use this if you already have an options file you want to use with this action, or the options this action offers are not enough for your needs. Please note that the action relies on PackSquash generating an output file at a fixed location, so it will ignore the value of the output_file_path option and it should be removed from the options file.'
     required: false
     default: ''
   token:
