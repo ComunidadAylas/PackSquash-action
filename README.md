@@ -70,11 +70,28 @@ The action also supports additional parameters that might come in handy for more
 | `show_emoji_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to use emojis in the logs it generates, which looks prettier. Otherwise, plain ASCII decoration characters will be used instead. |
 | `enable_color_in_packsquash_logs` | `true` | If `true`, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored. |
 
-## ⚙️ Example
+## ⚙️ Examples
 
-This GitHub Actions workflow file uses this action to optimize the resource pack contained in the `pack` directory of the repository (if your pack is at the root of the repository, you may change that path to `.`). It runs for every push to the repository, so a ZIP file with the optimized resource pack will be generated for any change. `token` is set to the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret), which is suitable to use in most scenarios, including with private repositories. The generated optimized resource pack file is uploaded as an artifact that can be downloaded later.
+This section contains some example GitHub Actions workflow files to achieve common continuous integration tasks with this action.
 
-##### `.github/workflows/packsquash.yml`
+### Optimize each commit to an artifact
+
+This workflow will execute PackSquash for every push to the repository, generating an [artifact](https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts) with the optimized pack for any change. The workflow expects the pack to be at the repository root. The generated artifact can be downloaded by users with read access to the repository [via the GitHub web UI or CLI](https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts). It can also be downloaded in other steps or workflows via the [`actions/download-artifact`](https://github.com/marketplace/actions/download-a-build-artifact) or [`dawidd6/action-download-artifact`](https://github.com/marketplace/actions/download-workflow-artifact) actions.
+
+#### File tree
+
+```
+Repository root
+├── .github
+│   └── workflows
+│       └── packsquash.yml
+├── assets
+│   └── ...
+└── pack.mcmeta
+```
+
+#### Workflow file: `.github/workflows/packsquash.yml`
+
 ```yaml
 name: Optimize resource pack
 on: [push]
@@ -84,7 +101,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+```
+
+### Optimize each commit to an artifact, but changing the pack directory
+
+In some cases, the directory where the pack is does not match the repository root. You can specify a directory other than the repository root by changing the `path` input parameter.
+
+This is useful for repositories that contain several packs (monorepos) and isolating the pack from the rest of the repository, preventing miscellaneous repository files from being considered as pack files by PackSquash.
+
+#### File tree
+
+```
+Repository root
+├── .github
+│   └── workflows
+│       └── packsquash.yml
+└── pack
+    ├── assets
+    │   └── ...
+    └── pack.mcmeta
+```
+
+#### Workflow file: `.github/workflows/packsquash.yml`
+
+```yaml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
@@ -92,6 +146,127 @@ jobs:
         with:
           path: pack
 ```
+
+### Optimize to an artifact and create a release
+
+The previous examples can easily be expanded to create releases automatically by downloading the generated artifact and uploading it again as a release.
+
+#### Workflow file (every push): `.github/workflows/packsquash.yml`
+
+This workflow creates a new tag and release named `action-v{number}` for every push event, which is triggered by commits and other tags.
+
+```yaml
+name: Optimize resource pack
+on: [push]
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download optimized pack
+        uses: actions/download-artifact@v3
+        with:
+          name: Optimized pack
+      - name: Tag and create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: action-v${{ github.run_number }}
+          files: pack.zip
+```
+
+#### Workflow file (every tag push): `.github/workflows/packsquash.yml`
+
+This workflow creates a new release whenever a tag is pushed. The release will have the same name as the tag.
+
+```yaml
+name: Optimize resource pack
+on:
+  push:
+    tags:
+      - '**'
+jobs:
+  packsquash:
+    name: Optimize resource pack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # A non-shallow repository clone is required
+      - name: Run PackSquash
+        uses: ComunidadAylas/PackSquash-action@v2
+      - name: Download optimized pack
+        uses: actions/download-artifact@v3
+        with:
+          name: Optimized pack
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: pack.zip
+```
+
+### Advanced: automatic release deployment via SSH
+
+When developing in private repositories it is not possible for vanilla Minecraft clients to download resource packs from release artifacts, as they lack the required authentication credentials. A common solution is to upload releases to an external web server directly from a GitHub Actions workflow via SSH.
+
+⚠️ **Keep in mind that just uploading files to the web server might not be enough to make players download the new version the next time they connect**. The Minecraft server should be configured with the appropriate resource pack ZIP file URL and hash each time the pack is updated. Otherwise, clients will receive stale information and may decide to use the copy they have downloaded already. This example omits that part on purpose because the precise way of doing it (running plugin commands via RCON, modifying the `server.properties` file and restarting the server, etc.) is environment-specific.
+
+#### Secrets
+
+This example workflow uses the following [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets), which can be set in the repository settings.
+
+| Name | Description |
+|---|---|
+| `SSH_HOST` | Web (and/or SSH) server host name or address |
+| `SSH_USERNAME` | Username for SSH authentication |
+| `SSH_PRIVATE_KEY` | Private key for SSH authentication |
+| `SSH_PORT` | SSH server listen port |
+| `DEPLOY_DIRECTORY` | Directory where the pack will be deployed to. Usually `/var/www/` for the web server root |
+
+#### Workflow file: `.github/workflows/deploy.yml`
+
+```yaml
+name: Deploy via SSH
+on: [workflow_dispatch]
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download latest released pack
+        uses: dsaltares/fetch-gh-release-asset@v1.0.0
+        with:
+          file: pack.zip
+          target: pack.zip
+      - name: Rename pack file
+        # An unique name guarantees an unique URL. Different URLs
+        # compel Minecraft clients to download packs again, but
+        # make sure to read and understand the warning above before
+        # doing this in production!
+        run: mv pack.zip pack-${{ github.run_number }}.zip
+      - name: Deploy pack file
+        uses: appleboy/scp-action@v0.1.2
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: pack-${{ github.run_number }}.zip
+          target: ${{ secrets.DEPLOY_DIRECTORY }}
+```
+
+## 📄 Template repositories
+
+Some users are creating [template repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) with this action, making it very easy to get up and running with the development of your very own pack. We have curated a list of handy repository templates below, but feel free to send pull requests to add new reusable templates here!
+
+- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate) (in Japanese): a template repository for Minecraft resource packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact, and a release is made when a new tag is pushed.
+- [`osfanbuff63/minecraft-datapack`](https://github.com/osfanbuff63/minecraft-datapack): a template repository for vanilla Minecraft data packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact. No releases or deployments are made.
 
 ## 🔒 Security
 

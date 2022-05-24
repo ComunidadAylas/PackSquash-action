@@ -1,0 +1,63 @@
+name: Bug report
+description: Create a report to help us improve
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thanks for taking the time to fill out this bug report!
+
+        Before submitting, please make sure that:
+          - The problem is in the action itself, not in PackSquash. If it is a problem with PackSquash, please [report the bug in the main repository](https://github.com/ComunidadAylas/PackSquash/issues/new?template=bug_report.yml).
+          - The problem is not related to usage mistakes, deployment failures or other kind of specific environment conditions the action cannot act upon.
+          - The report follows the guidelines for issues described in the [Contributing Guidelines](https://github.com/ComunidadAylas/PackSquash-action/blob/master/CONTRIBUTING.md).
+
+        After your report is submitted, a repository maintainer will try to resolve it or get back to you as soon as possible.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Reproduction steps
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Run step '...' with parameters '...'
+        2. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: workflow-logs
+    attributes:
+      label: Workflow logs
+      description: If applicable, a link to the logs outputted by a workflow run that exhibits
+        the problem. Setting the `ACTIONS_STEP_DEBUG` secret to `true` is recommended, as it
+        enables more verbose logging, which may be useful for pinpointing the issue. For more
+        information, check out the [GitHub documentation](https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging#enabling-step-debug-logging).
+
+  - type: textarea
+    id: attached-data
+    attributes:
+      label: Attached files or repository
+      description: If applicable, add pack files that help reproduce your problem, or a link to the repository that experiences the problem.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other information that might be relevant to resolving the problem here.
