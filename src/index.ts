@@ -1,4 +1,4 @@
-import { getInput, setFailed } from '@actions/core';
+import { getInput, info, setFailed } from '@actions/core';
 import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache, tweakUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
@@ -26,6 +26,7 @@ async function run() {
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
     if (optionsFile) {
+        info(`Validating and using custom options file: the ${Options.OptionsFile} action parameter is set`);
         await copyFile(optionsFile, workingDirectory.optionsFile);
         await tweakUserOptionsFile(workingDirectory);
     } else {

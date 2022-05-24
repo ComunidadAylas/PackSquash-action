@@ -219,9 +219,12 @@ export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
 export async function printOptionsFileContent(path: string) {
     startGroup('PackSquash options');
     await readFile(path, 'utf8').then(content => {
-        content.split('\n').forEach((line, index) => {
-            info(`${(index + 1).toString().padEnd(6, ' ')} ${line}`);
-        });
+        content
+            .trimEnd()
+            .split('\n')
+            .forEach((line, index) => {
+                info(`${(index + 1).toString().padEnd(6, ' ')} ${line}`);
+            });
     });
     endGroup();
 }
