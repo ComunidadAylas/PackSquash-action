@@ -105,7 +105,7 @@ jobs:
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@v2
+        uses: ComunidadAylas/PackSquash-action@v3
 ```
 
 ### Optimize each commit to an artifact, but changing the pack directory
@@ -142,7 +142,7 @@ jobs:
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@v2
+        uses: ComunidadAylas/PackSquash-action@v3
         with:
           path: pack
 ```
@@ -168,7 +168,7 @@ jobs:
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@v2
+        uses: ComunidadAylas/PackSquash-action@v3
       - name: Download optimized pack
         uses: actions/download-artifact@v3
         with:
@@ -200,7 +200,7 @@ jobs:
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@v2
+        uses: ComunidadAylas/PackSquash-action@v3
       - name: Download optimized pack
         uses: actions/download-artifact@v3
         with:
