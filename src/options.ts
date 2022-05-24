@@ -204,7 +204,7 @@ export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
 }
 
 export async function tweakUserOptionsFile(workingDirectory: WorkingDirectory) {
-    const optionsFile = await open(workingDirectory.optionsFile, 'rw');
+    const optionsFile = await open(workingDirectory.optionsFile, 'r+');
     let options = await TOML.parse.stream(optionsFile.createReadStream());
 
     // This path is an implementation detail of the action. We should always set
