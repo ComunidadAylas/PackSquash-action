@@ -90,13 +90,7 @@ function getWorkAroundMinecraftQuirks() {
 }
 
 function getForceIncludeFiles() {
-    const forceIncludeFiles = [];
-
-    for (const forceIncludeFile of getMultilineInput(Options.ForceIncludeFiles)) {
-        forceIncludeFiles.push({ [forceIncludeFile]: { force_include: true } });
-    }
-
-    return forceIncludeFiles;
+    return getMultilineInput(Options.ForceIncludeFiles).map(file => ({ [file]: { force_include: true } }));
 }
 
 export function shouldUseCache() {
