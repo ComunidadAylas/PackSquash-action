@@ -14,6 +14,7 @@ export async function getCurrentWorkflowId(owner: string, repo: string, workflow
         owner: owner,
         repo: repo
     });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return workflows.data.workflows.find(w => w.name === workflow)!.id;
 }
 

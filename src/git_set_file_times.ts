@@ -6,22 +6,21 @@ async function setGitFileModificationTimes() {
 }
 
 async function ls() {
-    return new Promise<string[]>(async resolve => {
+    return getExecOutput('git', ['ls-files', '-z'], { silent: true }).then(output => {
         const ls: string[] = [];
-        const output = await getExecOutput('git', ['ls-files', '-z'], { silent: true });
         output.stdout.split('\n').forEach(line => {
             ls.push(...line.split('\0').filter(f => !!f));
         });
-        resolve(ls);
+        return ls;
     });
 }
 
 async function changeTime(files: string[]) {
-    return new Promise<void>(async resolve => {
+    return Promise.resolve(async () => {
         const output = await getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true });
         let time = new Date();
         for (const line of output.stdout.split('\n')) {
-            const m = line.match(/^committer .*? (\d+) (?:[\-\+]\d+)$/);
+            const m = line.match(/^committer .*? (\d+) [-+]\d+$/);
             if (m) {
                 time = new Date(parseInt(m[1]) * 1000);
                 continue;
@@ -42,10 +41,9 @@ async function changeTime(files: string[]) {
                 }
                 await utimes(file, time, time)
                     .then(() => files.splice(index, 1))
-                    .catch(() => {});
+                    .catch(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
             }
         }
-        resolve();
     });
 }
 
