@@ -16,8 +16,7 @@ async function ls() {
 }
 
 async function changeTime(files: string[]) {
-    return Promise.resolve(async () => {
-        const output = await getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true });
+    return getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true }).then(async output => {
         let time = new Date();
         for (const line of output.stdout.split('\n')) {
             const m = line.match(/^committer .*? (\d+) [-+]\d+$/);
