@@ -1,4 +1,4 @@
-name: Static analysis - Check format
+name: Test
 on:
   push:
     paths:
@@ -22,3 +22,5 @@ jobs:
         run: npm install
       - name: Check format
         run: npm run format-check
+      - name: Lint
+        run: npm run lint
