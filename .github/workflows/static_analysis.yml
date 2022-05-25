@@ -1,4 +1,4 @@
-name: Test
+name: Static analysis - Check format and run linter
 on:
   push:
     paths:
@@ -22,5 +22,5 @@ jobs:
         run: npm install
       - name: Check format
         run: npm run format-check
-      - name: Lint
+      - name: Run ESLint
         run: npm run lint
