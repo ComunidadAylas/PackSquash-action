@@ -40,7 +40,9 @@ async function changeTime(files: string[]) {
                 }
                 await utimes(file, time, time)
                     .then(() => files.splice(index, 1))
-                    .catch(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+                    .catch(() => {
+                        // Ignore
+                    });
             }
         }
     });
