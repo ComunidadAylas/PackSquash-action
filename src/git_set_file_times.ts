@@ -1,22 +1,28 @@
 import { getExecOutput } from '@actions/exec';
 import { utimes } from 'fs/promises';
+import * as path from 'path';
 
-async function setGitFileModificationTimes() {
-    return await ls().then(list => changeTime(list));
+async function setGitFileModificationTimes(workspace: string) {
+    return await ls(workspace).then(list => changeTime(workspace, list));
 }
 
-async function ls() {
-    return getExecOutput('git', ['ls-files', '-z'], { silent: true }).then(output => {
+async function ls(workspace: string) {
+    return getExecOutput('git', ['-C', workspace, 'ls-files', '-z'], { silent: true }).then(output => {
         const ls: string[] = [];
         output.stdout.split('\n').forEach(line => {
-            ls.push(...line.split('\0').filter(f => !!f));
+            ls.push(
+                ...line
+                    .split('\0')
+                    .filter(f => !!f)
+                    .map(f => path.join(workspace, f))
+            );
         });
         return ls;
     });
 }
 
-async function changeTime(files: string[]) {
-    return getExecOutput('git', ['log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true }).then(async output => {
+async function changeTime(workspace: string, files: string[]) {
+    return getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], { silent: true }).then(async output => {
         let time = new Date();
         for (const line of output.stdout.split('\n')) {
             const m = line.match(/^committer .*? (\d+) [-+]\d+$/);

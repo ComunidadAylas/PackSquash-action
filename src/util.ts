@@ -12,9 +12,7 @@ import * as stream from 'stream';
  *
  * @returns A rejected promise if the check fails.
  */
-export async function checkRepositoryIsNotShallow() {
-    const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
-
+export async function checkRepositoryIsNotShallow(workspace: string) {
     debug(`Checking that the repository checkout at ${workspace} is not shallow`);
 
     let output;
