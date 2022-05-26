@@ -4,6 +4,7 @@ import { HttpClient } from '@actions/http-client';
 import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import * as stream from 'stream';
+import * as path from 'path';
 
 /**
  * If caching may be used, and setGitFileModificationTimes should be executed,
@@ -29,6 +30,23 @@ export async function checkRepositoryIsNotShallow(workspace: string) {
     if (output.stdout === 'true\n') {
         throw Error('The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
     }
+}
+
+export async function getSubmodulePaths(workspace: string) {
+    let output;
+    try {
+        output = await getExecOutput('git', ['-C', workspace, 'config', '-z', '--file', '.gitmodules', '--get-regexp', 'path'], {
+            silent: true
+        });
+    } catch (error) {
+        // If there are no submodules, it will throw an error.
+        return [];
+    }
+
+    return output.stdout
+        .split('\0')
+        .filter(l => !!l)
+        .map(l => path.join(workspace, l.split('\n')[1]));
 }
 
 export function getArchitecture() {
