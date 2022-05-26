@@ -31,6 +31,10 @@ inputs:
     description: 'The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times.'
     required: false
     default: 'Optimized pack'
+  fetch_log_timeout:
+    description: ''
+    required: false
+    default: '60000'
   show_emoji_in_packsquash_logs:
     description: 'If true, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead.'
     required: false

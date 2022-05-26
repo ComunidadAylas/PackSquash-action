@@ -11,6 +11,7 @@ export class Options {
     static Token = 'token';
     static ActionCacheRevision = 'action_cache_revision';
     static ArtifactName = 'artifact_name';
+    static FetchLogTimeout = 'fetch_log_timeout';
     static ShowEmojiInPacksquashLogs = 'show_emoji_in_packsquash_logs';
     static EnableColorInPacksquashLogs = 'enable_color_in_packsquash_logs';
     static RecompressCompressedFiles = 'recompress_compressed_files';
@@ -104,7 +105,7 @@ export function shouldUseCache() {
  * @param options Optional input options to pass to {@link getInput}.
  * @returns The parsed integer value for the specified option.
  */
-function getIntegerInput(name: string, options?: InputOptions): number {
+export function getIntegerInput(name: string, options?: InputOptions): number {
     const rawInputValue = getInput(name, options);
     const inputValue = parseInt(rawInputValue, 10);
 
