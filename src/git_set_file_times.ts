@@ -39,12 +39,12 @@ async function ls(root_workspace: string, workspaces: string[]): Promise<Reposit
 
 async function changeTime(repositories: Repository[]) {
     await Promise.all(
-        repositories.map(({ name, workspace, files }) =>
-            Promise.race([
+        repositories.map(({ name, workspace, files }) => {
+            let time = new Date();
+            return Promise.race([
                 getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], {
                     silent: true
                 }).then(async output => {
-                    let time = new Date();
                     for (const line of output.stdout.split('\n')) {
                         const m = line.match(/^committer .*? (\d+) [-+]\d+$/);
                         if (m) {
@@ -78,14 +78,22 @@ async function changeTime(repositories: Repository[]) {
                 }),
                 new Promise<void>(resolve => {
                     setTimeout(() => {
-                        if (files.length !== 0) {
-                            warning(`Time out log fetch for ${name}/. Remaining files: ${files.length}`);
-                        }
                         resolve();
                     }, getIntegerInput(Options.FetchLogTimeout));
                 })
-            ])
-        )
+            ]).then(() => {
+                if (files.length !== 0) {
+                    warning(`Time out log fetch for ${name}/. Remaining files: ${files.length}`);
+                    Promise.all(
+                        files.map(file =>
+                            utimes(file, time, time).catch(() => {
+                                // Ignore
+                            })
+                        )
+                    );
+                }
+            });
+        })
     );
 }
 
