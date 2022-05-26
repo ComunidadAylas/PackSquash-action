@@ -3,33 +3,39 @@ import { utimes } from 'fs/promises';
 import * as path from 'path';
 import { getSubmodulePaths } from './util';
 
+interface Repository {
+    workspace: string;
+    files: string[];
+}
+
 async function setGitFileModificationTimes(workspace: string) {
     return getSubmodulePaths(workspace).then(submodules => {
         const workspaces = [workspace, ...submodules];
-        return ls(workspaces).then(files => changeTime(workspaces, files));
+        return ls(workspaces).then(repositories => changeTime(repositories));
     });
 }
 
-async function ls(workspaces: string[]) {
+async function ls(workspaces: string[]): Promise<Repository[]> {
     return Promise.all(
         workspaces.map(workspace =>
             getExecOutput('git', ['-C', workspace, 'ls-files', '-z'], {
                 silent: true
-            }).then(output =>
-                output.stdout.split('\n').flatMap(line =>
+            }).then(output => ({
+                workspace: workspace,
+                files: output.stdout.split('\n').flatMap(line =>
                     line
                         .split('\0')
                         .filter(f => !!f)
                         .map(f => path.join(workspace, f))
                 )
-            )
+            }))
         )
-    ).then(results => results.flat());
+    );
 }
 
-async function changeTime(workspaces: string[], files: string[]) {
+async function changeTime(repositories: Repository[]) {
     await Promise.all(
-        workspaces.map(workspace =>
+        repositories.map(({ workspace, files }) =>
             getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], {
                 silent: true
             }).then(async output => {
