@@ -32,7 +32,7 @@ export async function checkRepositoryIsNotShallow(workspace: string) {
     }
 }
 
-export async function getSubmodulePaths(workspace: string) {
+export async function getSubmodulePaths(workspace: string): Promise<string[]> {
     let output;
     try {
         output = await getExecOutput('git', ['-C', workspace, 'config', '-z', '--file', '.gitmodules', '--get-regexp', 'path'], {
@@ -43,10 +43,12 @@ export async function getSubmodulePaths(workspace: string) {
         return [];
     }
 
-    return output.stdout
+    const paths = output.stdout
         .split('\0')
         .filter(l => !!l)
         .map(l => path.join(workspace, l.split('\n')[1]));
+
+    return Promise.all(paths.flatMap(async path => [path, ...(await getSubmodulePaths(path))])).then(results => results.flat());
 }
 
 export function getArchitecture() {
