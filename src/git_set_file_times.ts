@@ -24,7 +24,7 @@ async function ls(root_workspace: string, workspaces: string[]): Promise<Reposit
             getExecOutput('git', ['-C', workspace, 'ls-files', '-z'], {
                 silent: true
             }).then(output => ({
-                name: workspace.slice(root_workspace.length),
+                name: path.relative(root_workspace, workspace),
                 workspace: workspace,
                 files: output.stdout.split('\n').flatMap(line =>
                     line
