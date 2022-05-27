@@ -11,7 +11,6 @@ export class Options {
     static Token = 'token';
     static ActionCacheRevision = 'action_cache_revision';
     static ArtifactName = 'artifact_name';
-    static FetchLogTimeout = 'fetch_log_timeout';
     static ShowEmojiInPacksquashLogs = 'show_emoji_in_packsquash_logs';
     static EnableColorInPacksquashLogs = 'enable_color_in_packsquash_logs';
     static RecompressCompressedFiles = 'recompress_compressed_files';
