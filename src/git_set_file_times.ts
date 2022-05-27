@@ -49,14 +49,13 @@ async function ls(root_workspace: string, workspaces: string[], pack_directory: 
 async function changeTime(repositories: Repository[]) {
     await Promise.all(
         repositories.map(({ name, workspace, files, directory }) => {
-            let time = new Date();
             debug(`Setting the modification time for ${files.length} files in ${name}/`);
             return getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=format:%ct', '-z', directory], {
                 silent: true
             }).then(async output => {
                 for (const line of output.stdout.split('\0\0')) {
                     const [rawTime, rawFiles] = line.split('\n');
-                    time = new Date(parseInt(rawTime) * 1000);
+                    const time = new Date(parseInt(rawTime) * 1000);
                     for (const file of rawFiles.split('\0').map(f => path.join(workspace, f))) {
                         if (files.length === 0) {
                             return;
