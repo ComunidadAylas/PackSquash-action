@@ -7,7 +7,7 @@ import { debug } from '@actions/core';
 interface Repository {
     name: string;
     workspace: string;
-    files: string[];
+    files: Set<string>;
     directory: string;
 }
 
@@ -30,17 +30,21 @@ async function ls(root_workspace: string, workspaces: string[], pack_directory: 
                 }
                 return getExecOutput('git', ['-C', workspace, 'ls-files', '-z', directory], {
                     silent: true
-                }).then(output => ({
-                    name: name,
-                    workspace: workspace,
-                    files: output.stdout.split('\n').flatMap(line =>
-                        line
-                            .split('\0')
-                            .filter(f => !!f)
-                            .map(f => path.join(workspace, f))
-                    ),
-                    directory: directory
-                }));
+                }).then(output => {
+                    return {
+                        name: name,
+                        workspace: workspace,
+                        files: new Set(
+                            output.stdout.split('\n').flatMap(line =>
+                                line
+                                    .split('\0')
+                                    .filter(f => !!f)
+                                    .map(f => path.join(workspace, f))
+                            )
+                        ),
+                        directory: directory
+                    };
+                });
             })
             .filter(<T>(item: T | null): item is T => item !== null)
     );
@@ -49,7 +53,7 @@ async function ls(root_workspace: string, workspaces: string[], pack_directory: 
 async function changeTime(repositories: Repository[]) {
     await Promise.all(
         repositories.map(({ name, workspace, files, directory }) => {
-            debug(`Setting the modification time for ${files.length} files in ${name}/`);
+            debug(`Setting the modification time for ${files.size} files in ${name}/`);
             return getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=format:%ct', '-z', directory], {
                 silent: true
             }).then(async output => {
@@ -57,18 +61,14 @@ async function changeTime(repositories: Repository[]) {
                     const [rawTime, rawFiles] = line.split('\n');
                     const time = new Date(parseInt(rawTime) * 1000);
                     for (const file of rawFiles.split('\0').map(f => path.join(workspace, f))) {
-                        if (files.length === 0) {
+                        if (files.size === 0) {
                             return;
                         }
-                        const index = files.indexOf(file);
-                        if (index < 0) {
-                            continue;
-                        }
-                        await utimes(file, time, time)
-                            .then(() => files.splice(index, 1))
-                            .catch(() => {
+                        if (files.delete(file)) {
+                            await utimes(file, time, time).catch(() => {
                                 // Ignore
                             });
+                        }
                     }
                 }
             });
