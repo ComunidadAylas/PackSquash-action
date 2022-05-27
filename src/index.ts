@@ -38,7 +38,7 @@ async function run() {
         restoredCacheKey = await restorePackSquashCache(workingDirectory, key, restoreKeys);
     }
     if (cacheMayBeUsed) {
-        await setGitFileModificationTimes(workspace);
+        await setGitFileModificationTimes(workspace, getInput(Options.Path));
     }
     await runPackSquash(workingDirectory);
     await uploadArtifact(workingDirectory);

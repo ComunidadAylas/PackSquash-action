@@ -3,46 +3,57 @@ import { utimes } from 'fs/promises';
 import * as path from 'path';
 import { getSubmodulePaths } from './util';
 import { getIntegerInput, Options } from './options';
-import { warning } from '@actions/core';
+import { debug, warning } from '@actions/core';
 
 interface Repository {
     name: string;
     workspace: string;
     files: string[];
+    directory: string;
 }
 
-async function setGitFileModificationTimes(workspace: string) {
+async function setGitFileModificationTimes(workspace: string, pack_directory: string) {
     return getSubmodulePaths(workspace).then(submodules => {
         const workspaces = [workspace, ...submodules];
-        return ls(workspace, workspaces).then(repositories => changeTime(repositories));
+        return ls(workspace, workspaces, pack_directory).then(repositories => changeTime(repositories));
     });
 }
 
-async function ls(root_workspace: string, workspaces: string[]): Promise<Repository[]> {
+async function ls(root_workspace: string, workspaces: string[], pack_directory: string): Promise<Repository[]> {
     return Promise.all(
-        workspaces.map(workspace =>
-            getExecOutput('git', ['-C', workspace, 'ls-files', '-z'], {
-                silent: true
-            }).then(output => ({
-                name: path.relative(root_workspace, workspace),
-                workspace: workspace,
-                files: output.stdout.split('\n').flatMap(line =>
-                    line
-                        .split('\0')
-                        .filter(f => !!f)
-                        .map(f => path.join(workspace, f))
-                )
-            }))
-        )
+        workspaces
+            .map(workspace => {
+                const name = path.relative(root_workspace, workspace);
+                const directory = path.relative(workspace, pack_directory) || '.';
+                if (directory.includes('..')) {
+                    debug(`${name}/ is outside the pack_directory and doesn't run git log`);
+                    return null;
+                }
+                return getExecOutput('git', ['-C', workspace, 'ls-files', '-z', directory], {
+                    silent: true
+                }).then(output => ({
+                    name: name,
+                    workspace: workspace,
+                    files: output.stdout.split('\n').flatMap(line =>
+                        line
+                            .split('\0')
+                            .filter(f => !!f)
+                            .map(f => path.join(workspace, f))
+                    ),
+                    directory: directory
+                }));
+            })
+            .filter(<T>(item: T | null): item is T => item !== null)
     );
 }
 
 async function changeTime(repositories: Repository[]) {
     await Promise.all(
-        repositories.map(({ name, workspace, files }) => {
+        repositories.map(({ name, workspace, files, directory }) => {
             let time = new Date();
+            debug(`Setting the modification time for ${files.length} files in ${name}/`);
             return Promise.race([
-                getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z'], {
+                getExecOutput('git', ['-C', workspace, 'log', '-m', '-r', '--name-only', '--no-color', '--pretty=raw', '-z', directory], {
                     silent: true
                 }).then(async output => {
                     for (const line of output.stdout.split('\n')) {
