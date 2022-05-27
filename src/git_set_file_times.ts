@@ -30,21 +30,19 @@ async function ls(root_workspace: string, workspaces: string[], pack_directory: 
                 }
                 return getExecOutput('git', ['-C', workspace, 'ls-files', '-z', directory], {
                     silent: true
-                }).then(output => {
-                    return {
-                        name: name,
-                        workspace: workspace,
-                        files: new Set(
-                            output.stdout.split('\n').flatMap(line =>
-                                line
-                                    .split('\0')
-                                    .filter(f => !!f)
-                                    .map(f => path.join(workspace, f))
-                            )
-                        ),
-                        directory: directory
-                    };
-                });
+                }).then(output => ({
+                    name: name,
+                    workspace: workspace,
+                    files: new Set(
+                        output.stdout.split('\n').flatMap(line =>
+                            line
+                                .split('\0')
+                                .filter(f => !!f)
+                                .map(f => path.join(workspace, f))
+                        )
+                    ),
+                    directory: directory
+                }));
             })
             .filter(<T>(item: T | null): item is T => item !== null)
     );
