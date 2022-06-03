@@ -1,0 +1,22 @@
+name: Test - System id
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run PackSquash
+        uses: ./ # Uses an action in the root directory
+        with:
+          path: test/empty_resource_pack
+          system_id: c5eb0603-093c-41fd-9c21-88c34a429e3b
+          action_cache_revision: system_id # Ignoring cache by other jobs
