@@ -72,6 +72,7 @@ function enableColorInPacksquashLogs() {
 export async function getSystemId(workingDirectory: WorkingDirectory) {
     const inputSystemId = getInput(Options.SystemId);
     if (inputSystemId) {
+        await writeFile(workingDirectory.systemIdFile, inputSystemId, 'utf8');
         return inputSystemId;
     }
 
