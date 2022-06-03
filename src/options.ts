@@ -104,7 +104,7 @@ export function shouldUseCache() {
  * @param options Optional input options to pass to {@link getInput}.
  * @returns The parsed integer value for the specified option.
  */
-export function getIntegerInput(name: string, options?: InputOptions): number {
+function getIntegerInput(name: string, options?: InputOptions): number {
     const rawInputValue = getInput(name, options);
     const inputValue = parseInt(rawInputValue, 10);
 
