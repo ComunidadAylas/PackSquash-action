@@ -20,7 +20,7 @@
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "dependencies": {
     "@actions/artifact": "^1.1.0",
-    "@actions/cache": "^2.0.5",
+    "@actions/cache": "^2.0.6",
     "@actions/core": "^1.8.2",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.0.3",
@@ -33,8 +33,8 @@
   "devDependencies": {
     "@types/unzipper": "^0.10.5",
     "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
-    "@typescript-eslint/parser": "^5.27.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
     "@vercel/ncc": "^0.34.0",
     "eslint": "^8.17.0",
     "eslint-config-prettier": "^8.5.0",
