@@ -11,6 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    # Only run if this is not a pull request, or for pull requests on forks
+    if: github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name != 'ComunidadAylas/PackSquash-action'
+
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
