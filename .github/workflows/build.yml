@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - src/**
+      - package-lock.json
+      - tsconfig.json
+      - test/**
   pull_request:
     types:
       - opened
