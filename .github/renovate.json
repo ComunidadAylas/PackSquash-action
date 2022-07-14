@@ -4,6 +4,7 @@
     "config:base", ":preserveSemverRanges"
   ],
   "schedule": ["on monday"],
+  "addLabels": ["dependencies"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
