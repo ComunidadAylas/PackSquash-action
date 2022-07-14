@@ -3,8 +3,8 @@
   "extends": [
     "config:base", ":preserveSemverRanges"
   ],
-  "schedule": ["on monday"],
   "addLabels": ["dependencies"],
+  "bumpVersion": "patch",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
