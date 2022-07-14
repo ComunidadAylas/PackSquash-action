@@ -4,7 +4,7 @@
     "config:base"
   ],
   "addLabels": ["dependencies"],
-  "schedule": ["on monday"],
+  "automergeType": "branch",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
