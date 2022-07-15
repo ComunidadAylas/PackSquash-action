@@ -1,0 +1,81 @@
+{
+  "projectName": "PackSquash-action",
+  "projectOwner": "ComunidadAylas",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "sya-ri",
+      "name": "sya-ri",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34268371?v=4",
+      "profile": "https://github.com/sya-ri",
+      "contributions": [
+        "bug",
+        "code",
+        "content",
+        "data",
+        "doc",
+        "example",
+        "ideas",
+        "infra",
+        "maintenance",
+        "question",
+        "research"
+      ]
+    },
+    {
+      "login": "AlexTMjugador",
+      "name": "Alejandro González",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7822554?v=4",
+      "profile": "https://github.com/AlexTMjugador",
+      "contributions": [
+        "code",
+        "content",
+        "doc",
+        "ideas",
+        "infra",
+        "maintenance",
+        "question",
+        "research",
+        "review"
+      ]
+    },
+    {
+      "login": "xMikux",
+      "name": "Miku",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26039249?v=4",
+      "profile": "https://github.com/xMikux",
+      "contributions": [
+        "bug",
+        "ideas"
+      ]
+    },
+    {
+      "login": "osfanbuff63",
+      "name": "osfanbuff63",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91388253?v=4",
+      "profile": "https://osfanbuff63.github.io/",
+      "contributions": [
+        "ideas",
+        "example"
+      ]
+    },
+    {
+      "login": "alumina6767",
+      "name": "alumina6767",
+      "avatar_url": "https://avatars.githubusercontent.com/u/85728971?v=4",
+      "profile": "https://alumina6767.net/",
+      "contributions": [
+        "blog",
+        "ideas"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

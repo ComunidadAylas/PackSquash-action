@@ -276,6 +276,30 @@ This action may store in a cache the encryption key needed to read file modifica
 
 Please check out the [PackSquash](https://github.com/ComunidadAylas/PackSquash) repository for contact information.
 
+## 🧑‍🤝‍🧑 Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/sya-ri"><img src="https://avatars.githubusercontent.com/u/34268371?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sya-ri</b></sub></a><br /><a href="https://github.com/ComunidadAylas/PackSquash-action/issues?q=author%3Asya-ri" title="Bug reports">🐛</a> <a href="https://github.com/ComunidadAylas/PackSquash-action/commits?author=sya-ri" title="Code">💻</a> <a href="#content-sya-ri" title="Content">🖋</a> <a href="#data-sya-ri" title="Data">🔣</a> <a href="https://github.com/ComunidadAylas/PackSquash-action/commits?author=sya-ri" title="Documentation">📖</a> <a href="#example-sya-ri" title="Examples">💡</a> <a href="#ideas-sya-ri" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-sya-ri" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-sya-ri" title="Maintenance">🚧</a> <a href="#question-sya-ri" title="Answering Questions">💬</a> <a href="#research-sya-ri" title="Research">🔬</a></td>
+    <td align="center"><a href="https://github.com/AlexTMjugador"><img src="https://avatars.githubusercontent.com/u/7822554?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alejandro González</b></sub></a><br /><a href="https://github.com/ComunidadAylas/PackSquash-action/commits?author=AlexTMjugador" title="Code">💻</a> <a href="#content-AlexTMjugador" title="Content">🖋</a> <a href="https://github.com/ComunidadAylas/PackSquash-action/commits?author=AlexTMjugador" title="Documentation">📖</a> <a href="#ideas-AlexTMjugador" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-AlexTMjugador" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-AlexTMjugador" title="Maintenance">🚧</a> <a href="#question-AlexTMjugador" title="Answering Questions">💬</a> <a href="#research-AlexTMjugador" title="Research">🔬</a> <a href="https://github.com/ComunidadAylas/PackSquash-action/pulls?q=is%3Apr+reviewed-by%3AAlexTMjugador" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/xMikux"><img src="https://avatars.githubusercontent.com/u/26039249?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Miku</b></sub></a><br /><a href="https://github.com/ComunidadAylas/PackSquash-action/issues?q=author%3AxMikux" title="Bug reports">🐛</a> <a href="#ideas-xMikux" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://osfanbuff63.github.io/"><img src="https://avatars.githubusercontent.com/u/91388253?v=4?s=100" width="100px;" alt=""/><br /><sub><b>osfanbuff63</b></sub></a><br /><a href="#ideas-osfanbuff63" title="Ideas, Planning, & Feedback">🤔</a> <a href="#example-osfanbuff63" title="Examples">💡</a></td>
+    <td align="center"><a href="https://alumina6767.net/"><img src="https://avatars.githubusercontent.com/u/85728971?v=4?s=100" width="100px;" alt=""/><br /><sub><b>alumina6767</b></sub></a><br /><a href="https://alumina6767.net/%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%83%91%E3%83%83%E3%82%AF%E5%9C%A7%E7%B8%AE%E3%82%BD%E3%83%95%E3%83%88packsquash%E3%82%92%E3%81%A4%E3%81%8B%E3%81%84%E3%81%9F%E3%81%84/" title="Blogposts">📝</a> <a href="#ideas-alumina6767" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
 ## ⭐ Authorship and governance highlights
 
 The original author of this action is [@sya-ri](https://github.com/sya-ri). Later, it was incubated as an open source project by the same team behind PackSquash.
