@@ -26,7 +26,7 @@ async function ls(root_workspace: string, workspaces: string[], pack_directory: 
                 const name = path.relative(root_workspace, workspace);
                 const directory = path.relative(workspace, pack_directory) || '.';
                 if (directory.includes('..')) {
-                    debug(`${name}/ is outside the pack_directory and doesn't run git log`);
+                    debug(`The candidate workspace ${name}/ is outside the pack_directory, ignoring it`);
                     return null;
                 }
                 return getExecOutput('git', ['-C', workspace, 'ls-files', '-z', directory], {
