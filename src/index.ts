@@ -19,8 +19,9 @@ async function run() {
     await workingDirectory.mkdir();
     const optionsFile = getInput(Options.OptionsFile);
     const cacheMayBeUsed = optionsFile || shouldUseCache();
+    const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
     if (cacheMayBeUsed) {
-        await checkRepositoryIsNotShallow();
+        await checkRepositoryIsNotShallow(workspace);
     }
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
@@ -37,7 +38,7 @@ async function run() {
         restoredCacheKey = await restorePackSquashCache(workingDirectory, key, restoreKeys);
     }
     if (cacheMayBeUsed) {
-        await setGitFileModificationTimes();
+        await setGitFileModificationTimes(workspace, getInput(Options.Path));
     }
     await runPackSquash(workingDirectory);
     await uploadArtifact(workingDirectory);
