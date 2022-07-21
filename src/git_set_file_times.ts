@@ -12,9 +12,10 @@ interface Repository {
 }
 
 async function setGitFileModificationTimes(workspace: string, pack_directory: string) {
-    return getSubmodulePaths(workspace).then(submodules => {
+    return getSubmodulePaths(workspace).then(async submodules => {
         const workspaces = [workspace, ...submodules];
-        return ls(workspace, workspaces, pack_directory).then(repositories => changeTime(repositories));
+        const repositories = await ls(workspace, workspaces, pack_directory);
+        return await changeTime(repositories);
     });
 }
 
