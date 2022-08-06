@@ -192,7 +192,12 @@ function getOptionsFileContent(workingDirectory: WorkingDirectory) {
     );
 }
 
-let packDirectory: undefined | string;
+let packDirectory: string;
+/**
+ * Returns the pack directory. This is equivalent to `getInput(Options.Path)`
+ * if a custom options file was not processed with `tweakAndCopyUserOptionsFile`;
+ * else, the pack directory will be the one specified in that file.
+ */
 export function getPackDirectory() {
     return packDirectory || getInput(Options.Path);
 }
