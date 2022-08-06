@@ -22,7 +22,7 @@ async function run() {
     const cacheMayBeUsed = optionsFile || shouldUseCache();
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
     if (cacheMayBeUsed) {
-        await checkRepositoryIsNotShallow(workspace);
+        await checkRepositoryIsNotShallow(packDirectory);
     }
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
