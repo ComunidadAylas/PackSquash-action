@@ -192,6 +192,11 @@ function getOptionsFileContent(workingDirectory: WorkingDirectory) {
     );
 }
 
+let packDirectory: undefined | string;
+export function getPackDirectory() {
+    return packDirectory || getInput(Options.Path);
+}
+
 export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
     await writeFile(workingDirectory.optionsFile, getOptionsFileContent(workingDirectory), 'utf8');
 }
@@ -205,6 +210,9 @@ export async function tweakAndCopyUserOptionsFile(path: string, workingDirectory
         warning('The custom options file sets the output_file_path option, but the action will ignore its value. Please remove it from the options file');
     }
     options.output_file_path = workingDirectory.outputFile;
+    if (typeof options.pack_directory === 'string') {
+        packDirectory = options.pack_directory;
+    }
 
     await writeFile(workingDirectory.optionsFile, TOML.stringify(options), 'utf-8');
 }

@@ -1,5 +1,5 @@
 import { getInput, info, setFailed } from '@actions/core';
-import { generateOptionsFile, Options, printOptionsFileContent, shouldUseCache, tweakAndCopyUserOptionsFile } from './options.js';
+import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, shouldUseCache, tweakAndCopyUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
@@ -18,14 +18,9 @@ async function run() {
     await workingDirectory.rm();
     await workingDirectory.mkdir();
     const optionsFile = getInput(Options.OptionsFile);
-    const packDirectory = getInput(Options.Path);
     const cacheMayBeUsed = optionsFile || shouldUseCache();
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
-    if (cacheMayBeUsed) {
-        await checkRepositoryIsNotShallow(packDirectory);
-    }
-    await downloadAppImage(workingDirectory);
-    await printPackSquashVersion(workingDirectory);
+
     if (optionsFile) {
         info(`Using custom options file: the ${Options.OptionsFile} action parameter is set`);
         await tweakAndCopyUserOptionsFile(optionsFile, workingDirectory);
@@ -33,6 +28,14 @@ async function run() {
         await generateOptionsFile(workingDirectory);
     }
     await printOptionsFileContent(workingDirectory);
+    const packDirectory = getPackDirectory();
+
+    if (cacheMayBeUsed) {
+        await checkRepositoryIsNotShallow(packDirectory);
+    }
+
+    await downloadAppImage(workingDirectory);
+    await printPackSquashVersion(workingDirectory);
     const [key, ...restoreKeys] = await computeCacheKey(workingDirectory);
     let restoredCacheKey;
     if (cacheMayBeUsed) {
