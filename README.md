@@ -209,7 +209,7 @@ Some users are creating [template repositories](https://docs.github.com/en/repos
 
 ## 📝 Input parameters
 
-The input parameters accepted by the action are listed below.
+The input parameters accepted by the action are documented below.
 
 ### Basic parameters
 
@@ -269,7 +269,7 @@ If `true`, the action will instruct PackSquash to color the log messages it gene
 
 There are two mutually exclusive ways to set PackSquash options (i.e., change the [options file](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files) that is passed to PackSquash) in this action:
 
-- **Let the action generate an options file**, which can be customized via input parameters that mirror the available PackSquash options. This is the easiest way to get started and saves the hassle of maintaining an options file. However, it does not support non-default PackSquash versions (see the [`packsquash_version`](#packsquash_version) parameter), neither setting file-specific options only to subsets of files.
+- **Let the action generate an options file**, which can be customized via input parameters that mirror the available PackSquash options. This is the easiest way to get started and saves the hassle of maintaining an options file. However, it does not support non-default PackSquash versions (see the [`packsquash_version`](#packsquash_version) parameter), neither setting file-specific options only for subsets of files.
 - **Use a preexisting options file** by setting the `options_file` parameter to its path. This provides more flexibility at the cost of potentially more complexity. Please note that, as the action relies on PackSquash generating an output file at a fixed location, it will ignore the value of the `output_file_path` option and it should be removed from the options file. When `options_file` is set, the action will ignore the value of every input parameter used to generate an options file.
 
 The following list shows all the available input parameters that can be set to customize action-generated options files.
