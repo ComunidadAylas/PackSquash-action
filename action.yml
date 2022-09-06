@@ -4,7 +4,7 @@ author: 'sya-ri, Alejandro "AlexTMjugador" González'
 inputs:
   # Action options
   path:
-    description: 'Relative path from the repository root to the pack directory.'
+    description: 'Relative path from the repository root to the directory of the pack that will be processed by the action.'
     required: false
     default: '.'
   system_id:
