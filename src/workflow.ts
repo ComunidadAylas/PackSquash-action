@@ -19,9 +19,15 @@ export async function getCurrentWorkflowId(owner: string, repo: string, workflow
 }
 
 export async function uploadArtifact(workingDirectory: WorkingDirectory) {
+    if ('ACT' in process.env) {
+        debug('Local act test environment detected. Skipping artifact upload');
+        return;
+    }
+
     startGroup('Upload generated ZIP file as artifact');
     const response = await create().uploadArtifact(getInput(Options.ArtifactName), [workingDirectory.outputFile], workingDirectory.path);
     endGroup();
+
     if (response.artifactItems.length === 0 || response.failedItems.length > 0) {
         throw new Error('Artifact upload failed');
     }
@@ -29,7 +35,9 @@ export async function uploadArtifact(workingDirectory: WorkingDirectory) {
 
 export async function downloadLatestArtifact(workingDirectory: WorkingDirectory, owner: string, repo: string, branch: string, workflowId: number, artifactName: string, destinationPath: string) {
     info(`Downloading latest ${artifactName} artifact`);
+
     const octokit = getOctokit(getInput(Options.Token));
+
     debug(`Getting latest run information for ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/runs', {
         owner: owner,
@@ -41,6 +49,7 @@ export async function downloadLatestArtifact(workingDirectory: WorkingDirectory,
     if (!latestRun) {
         throw new Error(`Could not get the latest run information for the ${artifactName} artifact`);
     }
+
     debug(`Getting latest ${artifactName} artifact data`);
     const artifacts = await octokit.request('GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts', {
         owner: owner,
@@ -51,18 +60,21 @@ export async function downloadLatestArtifact(workingDirectory: WorkingDirectory,
     if (!artifact) {
         throw new Error(`Could not get the latest ${artifactName} artifact data (#${latestRun.run_number})`);
     }
+
     const zip = await octokit.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
         owner: owner,
         repo: repo,
         artifact_id: artifact.id,
         archive_format: 'zip'
     });
+
     debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
     await downloadFile(zip.url, workingDirectory.artifactFile).catch(() => {
         throw new Error(`Could not download the latest ${artifactName} artifact`);
     });
     await extractFile(workingDirectory.artifactFile, destinationPath);
     await rm(workingDirectory.artifactFile);
+
     info(`Successfully downloaded the latest ${artifactName} artifact`);
 }
 
