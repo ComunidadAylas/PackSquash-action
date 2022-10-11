@@ -93,10 +93,6 @@ function getForceIncludeFiles() {
     return getMultilineInput(Options.ForceIncludeFiles).map(file => ({ [file]: { force_include: true } }));
 }
 
-export function shouldUseCache() {
-    return !getBooleanInput(Options.NeverStoreSquashTimes) && getInput(Options.ZipSpecConformanceLevel) !== 'pedantic';
-}
-
 /**
  * Like {@link getInput}, but parses the input value as an integer. If the
  * conversion to an integer is not successful, an error is thrown.
@@ -192,7 +188,10 @@ function getOptionsFileContent(workingDirectory: WorkingDirectory) {
     );
 }
 
-let packDirectory: string;
+let packDirectory: string | undefined;
+let neverStoreSquashTimes: boolean | undefined;
+let zipSpecConformanceLevel: string | undefined;
+
 /**
  * Returns the pack directory. This is equivalent to `getInput(Options.Path)`
  * if a custom options file was not processed with `tweakAndCopyUserOptionsFile`;
@@ -200,6 +199,13 @@ let packDirectory: string;
  */
 export function getPackDirectory() {
     return packDirectory || getInput(Options.Path);
+}
+
+export function mayCacheBeUsed() {
+    const neverStoreTimes = neverStoreSquashTimes !== undefined ? neverStoreSquashTimes : getBooleanInput(Options.NeverStoreSquashTimes);
+    const zipConformanceLevel = zipSpecConformanceLevel !== undefined ? zipSpecConformanceLevel : getInput(Options.ZipSpecConformanceLevel);
+
+    return !neverStoreTimes && zipConformanceLevel !== 'pedantic';
 }
 
 export async function generateOptionsFile(workingDirectory: WorkingDirectory) {
@@ -215,8 +221,15 @@ export async function tweakAndCopyUserOptionsFile(path: string, workingDirectory
         warning('The custom options file sets the output_file_path option, but the action will ignore its value. Please remove it from the options file');
     }
     options.output_file_path = workingDirectory.outputFile;
+
     if (typeof options.pack_directory === 'string') {
         packDirectory = options.pack_directory;
+    }
+    if (typeof options.never_store_squash_times === 'boolean') {
+        neverStoreSquashTimes = options.never_store_squash_times;
+    }
+    if (typeof options.zip_spec_conformance_level === 'string') {
+        zipSpecConformanceLevel = options.zip_spec_conformance_level;
     }
 
     await writeFile(workingDirectory.optionsFile, TOML.stringify(options), 'utf-8');

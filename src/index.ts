@@ -1,5 +1,5 @@
 import { getInput, info, setFailed } from '@actions/core';
-import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, shouldUseCache, tweakAndCopyUserOptionsFile } from './options.js';
+import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, mayCacheBeUsed, tweakAndCopyUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
@@ -17,8 +17,8 @@ async function run() {
     const workingDirectory = new WorkingDirectory();
     await workingDirectory.rm();
     await workingDirectory.mkdir();
+
     const optionsFile = getInput(Options.OptionsFile);
-    const cacheMayBeUsed = optionsFile || shouldUseCache();
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
 
     if (optionsFile) {
@@ -28,7 +28,9 @@ async function run() {
         await generateOptionsFile(workingDirectory);
     }
     await printOptionsFileContent(workingDirectory);
+
     const packDirectory = getPackDirectory();
+    const cacheMayBeUsed = mayCacheBeUsed();
 
     if (cacheMayBeUsed) {
         await checkRepositoryIsNotShallow(packDirectory);
