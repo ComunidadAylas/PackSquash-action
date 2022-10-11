@@ -13,7 +13,7 @@ const json = {
                 },
                 {
                     regexp: '^(?:\x1B\\[\\d+\\w*)* {2,3}(.+?)(?:\x1B\\[0m)?$',
-                    message: 1,
+                    code: 1,
                     loop: true
                 }
             ]
@@ -28,7 +28,7 @@ const json = {
                 },
                 {
                     regexp: '^(?:\x1B\\[\\d+\\w*)* {2,3}(.+?)(?:\x1B\\[0m)?$',
-                    message: 1,
+                    code: 1,
                     loop: true
                 }
             ]
