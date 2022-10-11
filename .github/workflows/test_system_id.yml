@@ -1,4 +1,4 @@
-name: Test - System id
+name: Test - System ID
 on:
   push:
   pull_request:
