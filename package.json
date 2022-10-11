@@ -5,8 +5,8 @@
   "scripts": {
     "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
     "lint": "eslint .",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format-check": "prettier --check \"src/**/*.ts\""
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
   },
   "repository": {
     "type": "git",
