@@ -8,12 +8,8 @@ const json = {
             severity: 'error',
             pattern: [
                 {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*[!❌] (.+?)(?:\x1B\\[0m)?$',
-                    message: 1
-                },
-                {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)* {2,3}(.+?)(?:\x1B\\[0m)?$',
-                    code: 1,
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*(?:[!❌] | {2,3})(.+?)(?:\x1B\\[0m)?$',
+                    message: 1,
                     loop: true
                 }
             ]
@@ -23,12 +19,8 @@ const json = {
             severity: 'warning',
             pattern: [
                 {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*[*⚡] (.+?)(?:\x1B\\[0m)?$',
-                    message: 1
-                },
-                {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)* {2,3}(.+?)(?:\x1B\\[0m)?$',
-                    code: 1,
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*(?:[*⚡] | {2,3})(.+?)(?:\x1B\\[0m)?$',
+                    message: 1,
                     loop: true
                 }
             ]
