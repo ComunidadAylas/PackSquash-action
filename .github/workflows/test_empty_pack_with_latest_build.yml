@@ -26,8 +26,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Generate minimal PackSquash options file
+        run: echo 'pack_directory = "test/empty_resource_pack"' > packsquash-options.toml
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
           packsquash_version: latest
-          path: test/empty_resource_pack
+          options_file: packsquash-options.toml
