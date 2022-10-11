@@ -8,7 +8,7 @@ const json = {
             severity: 'error',
             pattern: [
                 {
-                    regexp: '^[!❌] (?!.*Invalid stick parity bit)(.+)$',
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*[!❌] (?!.*Invalid stick parity bit)(.+?)(?:\x1B\\[0m)?$',
                     message: 1
                 }
             ]
@@ -18,8 +18,23 @@ const json = {
             severity: 'warning',
             pattern: [
                 {
-                    regexp: '^[*⚡] (.+)$',
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*[*⚡] (.+?)(?:\x1B\\[0m)?$',
                     message: 1
+                }
+            ]
+        },
+        {
+            owner: 'packsquash-file-warning',
+            severity: 'warning',
+            pattern: [
+                {
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*[*⚡] (.+): .+$',
+                    file: 1
+                },
+                {
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*   ?[*⚡] (.+?)(?:\x1B\\[0m)?$',
+                    message: 1,
+                    loop: 1
                 }
             ]
         }
