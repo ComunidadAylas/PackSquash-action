@@ -38,14 +38,18 @@ async function run() {
 
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
+
     const [key, ...restoreKeys] = await computeCacheKey(workingDirectory);
     let restoredCacheKey;
     if (cacheMayBeUsed) {
         restoredCacheKey = await restorePackSquashCache(workingDirectory, key, restoreKeys);
         await setGitFileModificationTimes(workspace, packDirectory);
     }
+
     await runPackSquash(workingDirectory);
+
     await uploadArtifact(workingDirectory);
+
     if (cacheMayBeUsed && !restoredCacheKey) {
         await savePackSquashCache(workingDirectory, key);
     }
