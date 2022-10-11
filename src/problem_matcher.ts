@@ -8,7 +8,7 @@ const json = {
             severity: 'error',
             pattern: [
                 {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*[!❌] (?!.*Invalid stick parity bit)(.+?)(?:\x1B\\[0m)?$',
+                    regexp: '^(?:\x1B\\[\\d+\\w*)*[!❌] (.+?)(?:\x1B\\[0m)?$',
                     message: 1
                 },
                 {

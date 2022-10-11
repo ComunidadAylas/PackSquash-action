@@ -1,6 +1,6 @@
-import { debug, endGroup, getBooleanInput, getInput, setSecret, startGroup, warning } from '@actions/core';
+import { debug, endGroup, getBooleanInput, getInput, setSecret, startGroup } from '@actions/core';
 import { exec } from '@actions/exec';
-import { readFile, rm, writeFile } from 'fs/promises';
+import { readFile, writeFile } from 'fs/promises';
 import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
 import { Options } from './options';
 import * as uuid from 'uuid';
@@ -22,38 +22,23 @@ export async function runPackSquash(workingDirectory: WorkingDirectory) {
     debug(`Using system ID: ${systemId}`);
     setSecret(systemId);
 
-    async function run(description: string | null) {
-        await addProblemMatcher(workingDirectory.problemMatcherFile);
-        if (description) {
-            startGroup(`PackSquash output (${description})`);
-        } else {
-            startGroup('PackSquash output');
-        }
-        const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile], {
-            env: {
-                PACKSQUASH_SYSTEM_ID: systemId,
-                PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
-                PACKSQUASH_COLOR: enableColorInPacksquashLogs()
-            }
-        });
-        endGroup();
-        removeProblemMatcher(workingDirectory.problemMatcherFile);
-        return exitCode;
-    }
+    await addProblemMatcher(workingDirectory.problemMatcherFile);
 
-    let exitCode = await run(null);
+    startGroup('PackSquash output');
+    const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile], {
+        env: {
+            PACKSQUASH_SYSTEM_ID: systemId,
+            PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
+            PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+        }
+    });
+    endGroup();
+
+    removeProblemMatcher(workingDirectory.problemMatcherFile);
+
     switch (exitCode) {
         case 0:
             // Success
-            break;
-        case 129:
-            // Actionable error code returned by v0.3.0 only
-            warning('PackSquash reported that the previous ZIP file could not be used to speed up processing. Discarding it.');
-            await rm(workingDirectory.outputFile);
-            exitCode = await run('discarded previous ZIP file');
-            if (exitCode !== 0) {
-                throw new Error(`PackSquash finished with an error code: ${exitCode}`);
-            }
             break;
         default:
             // Any other PackSquash error
