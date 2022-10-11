@@ -17,10 +17,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Temporarily disabled because the latest PackSquash build contains
-    # breaking options file changes.
-    # FIXME revert when preparing for a new release
-    if: false
+    # Only run if this is not a pull request, or for pull requests on forks
+    if: github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name != 'ComunidadAylas/PackSquash-action'
 
     steps:
       - name: Clone repository
