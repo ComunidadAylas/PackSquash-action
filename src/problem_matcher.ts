@@ -2,20 +2,41 @@ import { info } from '@actions/core';
 import { writeFile } from 'fs/promises';
 
 const json = {
+    // Matchers are tested in order for each input line. The first who matches wins,
+    // and the rest are reset for the next input line. Therefore, put most specific
+    // ones first
     problemMatcher: [
+        {
+            owner: 'packsquash-file-error',
+            severity: 'error',
+            pattern: [
+                {
+                    regexp: '^(?:\x1B\\[[0-9;]*m?)*[!❌] ((?:assets|data)\\/.+?): (.+?)(?:\x1B\\[0m)?$',
+                    file: 1,
+                    message: 2
+                }
+            ]
+        },
         {
             owner: 'packsquash-error',
             severity: 'error',
             pattern: [
-                // Workaround for https://github.com/actions/runner/blob/44d4d076fec3fddaf68c876cbea2217110d48892/src/Runner.Worker/IssueMatcher.cs#L449-L453
                 {
-                    regexp: '^.*$'
+                    regexp: '^(?:\x1B\\[[0-9;]*m?)*[!❌] (.+?)(?:\x1B\\[0m)?$',
+                    message: 1
+                }
+            ]
+        },
+        {
+            owner: 'packsquash-file-warning',
+            severity: 'warning',
+            pattern: [
+                {
+                    regexp: '^(?:\x1B\\[[0-9;]*m?)*[>🏁] (.+): .+$',
+                    file: 1
                 },
-                // message can't be set by several patterns, and when looping, it can only be set by the looping pattern.
-                // Work around that by matching error start lines as continuation lines, with the downside of considering
-                // consecutive errors as if they were a single error
                 {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*(?:[!❌] | {2,3})(.+?)(?:\x1B\\[0m)?$',
+                    regexp: '^(?:\x1B\\[[0-9;]*m?)* {2,3}[*⚡] (.+?)(?:\x1B\\[0m)?$',
                     message: 1,
                     loop: true
                 }
@@ -25,32 +46,9 @@ const json = {
             owner: 'packsquash-warning',
             severity: 'warning',
             pattern: [
-                // Workaround for https://github.com/actions/runner/blob/44d4d076fec3fddaf68c876cbea2217110d48892/src/Runner.Worker/IssueMatcher.cs#L449-L453
                 {
-                    regexp: '^.*$'
-                },
-                // message can't be set by several patterns, and when looping, it can only be set by the looping pattern.
-                // Work around that by matching error start lines as continuation lines, with the downside of considering
-                // consecutive errors as if they were a single error
-                {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*(?:[*⚡] | {2,3})(.+?)(?:\x1B\\[0m)?$',
-                    message: 1,
-                    loop: true
-                }
-            ]
-        },
-        {
-            owner: 'packsquash-file-warning',
-            severity: 'warning',
-            pattern: [
-                {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)*[>🏁] (.+): .+$',
-                    file: 1
-                },
-                {
-                    regexp: '^(?:\x1B\\[\\d+\\w*)* {2,3}[*⚡] (.+?)(?:\x1B\\[0m)?$',
-                    message: 1,
-                    loop: true
+                    regexp: '^(?:\x1B\\[[0-9;]*m?)*[*⚡] (.+?)(?:\x1B\\[0m)?$',
+                    message: 1
                 }
             ]
         }
