@@ -21,19 +21,6 @@ export async function downloadAppImage(workingDirectory: WorkingDirectory) {
         case 'v0.3.0-rc.1':
         case 'v0.3.0':
             throw Error(`Unsupported PackSquash version: ${version}. Please use PackSquash-action@v2 instead.`);
-        case 'latest':
-            switch (arch) {
-                case 'X64':
-                    arch_infix = 'x64';
-                    break;
-                case 'ARM64':
-                    arch_infix = 'arm64';
-                    break;
-                default:
-                    throw Error(`The latest PackSquash build does not support ${arch}. Please use a runner with a supported architecture, or request support for it.`);
-            }
-            await downloadLatestAppImage(workingDirectory, arch_infix);
-            break;
         case 'v0.3.1':
             switch (arch) {
                 case 'X64':
@@ -49,6 +36,19 @@ export async function downloadAppImage(workingDirectory: WorkingDirectory) {
             }
             await downloadReleaseAppImage(workingDirectory, version, `PackSquash-${version}-${arch_infix}.AppImage`);
             break;
+        case 'latest':
+            switch (arch) {
+                case 'X64':
+                    arch_infix = 'x86_64';
+                    break;
+                case 'ARM64':
+                    arch_infix = 'aarch64';
+                    break;
+                default:
+                    throw Error(`The latest PackSquash build does not support ${arch}. Please use a runner with a supported architecture, or request support for it.`);
+            }
+            await downloadLatestAppImage(workingDirectory, arch_infix);
+            break;
         default:
             throw Error(`Unsupported PackSquash version: ${version}`);
     }
@@ -56,7 +56,7 @@ export async function downloadAppImage(workingDirectory: WorkingDirectory) {
 }
 
 async function downloadLatestAppImage(workingDirectory: WorkingDirectory, arch_infix: string) {
-    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 5482008, `PackSquash CLI AppImage (${arch_infix})`, workingDirectory.packsquashBinary);
+    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 32465409, `PackSquash CLI AppImage (${arch_infix})`, workingDirectory.packsquashBinary);
 }
 
 async function downloadReleaseAppImage(workingDirectory: WorkingDirectory, version: string, asset_name: string) {
