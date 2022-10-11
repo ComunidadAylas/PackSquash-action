@@ -6,7 +6,8 @@
     "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml"
   },
   "repository": {
     "type": "git",

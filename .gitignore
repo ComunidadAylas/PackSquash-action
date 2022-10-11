@@ -325,3 +325,8 @@ fabric.properties
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,macos,node,intellij+all,visualstudiocode
+
+# Secrets to use when testing the action with act.
+# In some cases, the token action input parameter must be explicitly set to a GITHUB_TOKEN secret
+# specified in this file, which should be a valid personal token
+/.act-secrets
