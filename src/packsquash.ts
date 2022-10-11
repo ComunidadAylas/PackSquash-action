@@ -6,12 +6,21 @@ import { Options } from './options';
 import * as uuid from 'uuid';
 import WorkingDirectory from './working_directory';
 
+/// GitHub Actions runners run JavaScript actions directly on the host. For GitHub-hosted
+/// runners, this means that they run on a virtual machine, where mounting the AppImage
+/// filesystem with FUSE is not a problem. However, when running the action locally with
+/// act, a Docker container is used instead by default
+const skipAppImageFilesystemMount: Record<string, string> = 'ACT' in process.env ? { APPIMAGE_EXTRACT_AND_RUN: '1' } : {};
+
 export async function printPackSquashVersion(workingDirectory: WorkingDirectory) {
     startGroup('PackSquash version');
     await exec(workingDirectory.packsquashBinary, ['--version'], {
         env: {
-            PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
-            PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+            ...{
+                PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
+                PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+            },
+            ...skipAppImageFilesystemMount
         }
     });
     endGroup();
@@ -27,9 +36,12 @@ export async function runPackSquash(workingDirectory: WorkingDirectory) {
     startGroup('PackSquash output');
     const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile], {
         env: {
-            PACKSQUASH_SYSTEM_ID: systemId,
-            PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
-            PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+            ...{
+                PACKSQUASH_SYSTEM_ID: systemId,
+                PACKSQUASH_EMOJI: showEmojiInPacksquashLogs(),
+                PACKSQUASH_COLOR: enableColorInPacksquashLogs()
+            },
+            ...skipAppImageFilesystemMount
         }
     });
     endGroup();
