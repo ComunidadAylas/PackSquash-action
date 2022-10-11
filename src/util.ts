@@ -23,12 +23,13 @@ export async function checkRepositoryIsNotShallow(workspace: string) {
         });
     } catch (error) {
         throw Error(
-            `Could not check whether the repository is shallow: ${error}. Has the repository been checked out? If you don't want to check it out, the never_store_squash_times action parameter must be set to true.`
+            `Could not check whether the repository is shallow: ${error}. Has the repository been checked out? \
+            If you don't want to check it out, the never_store_squash_times action parameter must be set to true.`
         );
     }
 
     if (output.stdout === 'true\n') {
-        throw Error('The full commit history of the repository must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
+        throw Error('The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
     }
 }
 
