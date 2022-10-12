@@ -15,16 +15,16 @@ async function setPackFilesModificationTimesFromCommits(workspace: string, packD
     const submodules = await getSubmodules(workspace);
     debug(`Detected submodules: ${submodules.length > 0 ? submodules : 'none'}`);
 
-    const repositoryPaths = [workspace, ...submodules].filter(async candidatePath => {
+    const repositoryPaths = [workspace, ...submodules].filter(async candidateRepositoryPath => {
         // Ignore repositories that do not contribute to the pack directory.
         // For example, a workspace at /a/b is irrelevant for a pack at /a/c, but a workspace at
         // /a/c/d is. Notice that we deal with absolute paths here
-        const isRelevant = isPathWithin(candidatePath, packDirectory);
+        const isRelevant = isPathWithin(candidateRepositoryPath, packDirectory);
 
         // If this repository is relevant, it must be non-shallow for us to be able to access the
         // full commit history
         if (isRelevant) {
-            await ensureRepositoryIsNotShallow(candidatePath);
+            await ensureRepositoryIsNotShallow(candidateRepositoryPath);
         }
 
         return isRelevant;
