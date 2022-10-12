@@ -1,4 +1,4 @@
-import { getInput, info, setFailed } from '@actions/core';
+import { debug, getInput, info, setFailed } from '@actions/core';
 import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, mayCacheBeUsed, tweakAndCopyUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
@@ -51,4 +51,10 @@ async function run() {
     }
 }
 
-run().catch(err => setFailed(err));
+run().catch(err => {
+    if (err instanceof Error) {
+        debug(err.stack || 'Unknown error stack trace');
+    }
+
+    setFailed(err);
+});
