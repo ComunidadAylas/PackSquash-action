@@ -4,8 +4,8 @@ import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
 import { uploadArtifact } from './workflow';
-import setGitFileModificationTimes from './git_set_file_times';
-import { checkRepositoryIsNotShallow, getEnvOrThrow } from './util';
+import setPackFilesModificationTimesFromCommits from './git_set_file_times';
+import { getEnvOrThrow } from './util';
 import WorkingDirectory from './working_directory';
 
 async function run() {
@@ -32,10 +32,6 @@ async function run() {
     const packDirectory = getPackDirectory();
     const cacheMayBeUsed = mayCacheBeUsed();
 
-    if (cacheMayBeUsed) {
-        await checkRepositoryIsNotShallow(packDirectory);
-    }
-
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
 
@@ -43,7 +39,7 @@ async function run() {
     let restoredCacheKey;
     if (cacheMayBeUsed) {
         restoredCacheKey = await restorePackSquashCache(workingDirectory, key, restoreKeys);
-        await setGitFileModificationTimes(workspace, packDirectory);
+        await setPackFilesModificationTimesFromCommits(workspace, packDirectory);
     }
 
     await runPackSquash(workingDirectory);
