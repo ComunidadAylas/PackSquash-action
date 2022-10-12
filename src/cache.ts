@@ -1,14 +1,13 @@
 import { endGroup, getInput, info, startGroup, warning } from '@actions/core';
 import { restoreCache, saveCache } from '@actions/cache';
-import { hashFiles } from '@actions/glob';
 import { context } from '@actions/github';
 import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
 import { Options } from './options';
-import { getBranchName } from './util';
+import { getBranchName, md5Hash } from './util';
 import WorkingDirectory from './working_directory';
 
 export async function computeCacheKey(workingDirectory: WorkingDirectory) {
-    const optionsHash = await hashFiles(workingDirectory.optionsFile);
+    const optionsHash = await md5Hash(workingDirectory.optionsFile);
     const cacheRevision = Buffer.from(getInput(Options.ActionCacheRevision)).toString('base64');
     // Using different primary and restore keys is necessary to handle jobs
     // executing concurrently: if a job tries to write to a cache key that is

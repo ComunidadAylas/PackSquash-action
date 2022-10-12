@@ -1,10 +1,13 @@
 import { getExecOutput } from '@actions/exec';
 import { debug } from '@actions/core';
 import { HttpClient } from '@actions/http-client';
-import { createWriteStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import { promisify } from 'util';
 import * as stream from 'stream';
 import * as path from 'path';
+import crypto from 'crypto';
+
+const pipeline = promisify(stream.pipeline);
 
 /**
  * If caching may be used, and setGitFileModificationTimes should be executed,
@@ -81,7 +84,6 @@ export async function downloadFile(url: string, path: string) {
     const client = new HttpClient();
     const writeStream = createWriteStream(path);
     const response = await client.get(url);
-    const pipeline = promisify(stream.pipeline);
     await pipeline(response.message, writeStream);
 }
 
@@ -125,4 +127,12 @@ export function isPathWithin(descendant: string, parent: string) {
     }
 
     return descendant.lastIndexOf(parent, 0) == 0 && (descendant[parent.length] === path.sep || descendant[parent.length] === undefined);
+}
+
+export async function md5Hash(filePath: string) {
+    const hasher = crypto.createHash('md5');
+
+    await pipeline(createReadStream(filePath), hasher);
+
+    return hasher.digest().toString('hex');
 }
