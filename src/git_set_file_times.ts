@@ -5,8 +5,14 @@ import { debug } from '@actions/core';
 import * as path from 'path';
 import * as fs from 'fs';
 
+// Some interesting reads about the topic:
+// https://stackoverflow.com/questions/56235287/what-does-git-ls-files-do-exactly-and-how-do-we-remove-a-file-from-it
+// https://github.com/MestreLion/git-tools/blob/main/git-restore-mtime
+// https://git-scm.com/docs/git-log
+// https://git-scm.com/docs/git-ls-files
+
 async function setPackFilesModificationTimesFromCommits(workspace: string, packDirectory: string) {
-    debug(`Setting file modification times according to commit history for ${packDirectory}`);
+    debug(`Setting file modification times according to commit history for ${packDirectory} at ${workspace}`);
 
     // Absolutize the paths to avoid classes of problems related to relative paths
     workspace = path.resolve(workspace);

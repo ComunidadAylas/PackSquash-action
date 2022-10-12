@@ -52,9 +52,5 @@ async function run() {
 }
 
 run().catch(err => {
-    if (err instanceof Error) {
-        debug(err.stack || 'Unknown error stack trace');
-    }
-
-    setFailed(err);
+    setFailed(err instanceof Error ? err.stack || err.message : err);
 });
