@@ -44,9 +44,10 @@ async function setPackFilesModificationTimesFromCommits(workspace: string, packD
 }
 
 async function getIndexedPackFiles(repository: string, packDirectory: string) {
-    // Note that we shouldn't pass the pack directory to ls-files because it may be
-    // outside the repository; i.e., we might be a submodule at /a/b, but the
-    // pack directory can be /a
+    // Note that we shouldn't pass the pack directory to ls-files because it may
+    // match the submodule directory, and in that case we won't get useful output.
+    // There may be other gotchas too, but doing extra checks later does not impact
+    // performance much anyway
     const gitOut = await getExecOutput('git', ['-C', repository, 'ls-files', '-z'], {
         silent: true
     });
