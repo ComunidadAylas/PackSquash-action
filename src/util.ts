@@ -23,8 +23,8 @@ export async function checkRepositoryIsNotShallow(workspace: string) {
         });
     } catch (error) {
         throw Error(
-            `Could not check whether the repository is shallow: ${error}. Has the repository been checked out? \
-            If you don't want to check it out, the never_store_squash_times action parameter must be set to true.`
+            `Could not check whether the pack repository is shallow: ${error}. Has the repository been checked out? \
+            If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
         );
     }
 
