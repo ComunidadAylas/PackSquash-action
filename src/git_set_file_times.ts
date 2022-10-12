@@ -102,6 +102,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
 
     let logEntryMatch;
     while ((logEntryMatch = logEntryRegex.exec(gitLog)) != null) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const commitTime = logEntryMatch.groups!.commitTime;
         // The modified files group matches a string like "a\0b\0", which is NUL terminated,
         // so split will return an empty string in the end. Ignore it
