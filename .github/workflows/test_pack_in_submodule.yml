@@ -20,6 +20,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: action-checkout
+      - name: Modify pack files
+        run: |
+          echo '{ "pack": { "pack_format": 8, "description": "Dummy pack.mcmeta" } }' > golden-days/golden-days-base/pack.mcmeta
+          touch golden-days/golden-days-base/assets/minecraft/sounds.json
       - name: Run PackSquash
         uses: ./action-checkout
         with:
