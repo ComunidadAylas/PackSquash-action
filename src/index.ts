@@ -9,7 +9,6 @@ import { getEnvOrThrow } from './util';
 import WorkingDirectory from './working_directory';
 
 async function run() {
-    //getEnvOrThrow('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING');
     const runnerOs = getEnvOrThrow('RUNNER_OS');
     if (runnerOs !== 'Linux') {
         throw Error(`Unsupported runner OS: only Linux is supported at the moment, but the job is running on ${runnerOs}. Please switch to a Linux-based runner.`);
