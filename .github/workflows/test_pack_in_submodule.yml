@@ -9,14 +9,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clone repository
+      - name: Clone pack repository
         uses: actions/checkout@v3
         with:
           repository: ComunidadAylas/PackSquash-action-test
           fetch-depth: 0
           submodules: recursive
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone action repository
+        uses: actions/checkout@v3
+        with:
+          path: action-checkout
       - name: Run PackSquash
-        uses: ComunidadAylas/PackSquash-action@refactor/submodule-support
+        uses: ./action-checkout
         with:
           path: golden-days/golden-days-base
