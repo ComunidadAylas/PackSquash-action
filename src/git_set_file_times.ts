@@ -157,6 +157,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
     const logEntryRegex = /(?<commitTime>\d+)(?:\n(?<modifiedFiles>(?:[^\0]+\0)+)?)?\0{1,2}/gy;
 
     let logEntryMatch;
+    let lastLogEntryMatchIndex;
     while ((logEntryMatch = logEntryRegex.exec(gitLog)) != null) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const commitTime = logEntryMatch.groups!.commitTime;
@@ -182,6 +183,16 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
                 return;
             }
         }
+
+        lastLogEntryMatchIndex = logEntryRegex.lastIndex;
+    }
+
+    // Sanity check: if we didn't bail out due to no more pack files remaining, we should parse all the logs
+    if (lastLogEntryMatchIndex !== undefined && lastLogEntryMatchIndex != gitLog.length) {
+        throw new Error(
+            `Internal error: Could not parse the entire Git log for the repository at ${repository} \
+            (${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). Please report an issue`
+        );
     }
 }
 
