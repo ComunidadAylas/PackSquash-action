@@ -10,6 +10,8 @@ import * as path from 'path';
 // https://git-scm.com/docs/git-log
 // https://git-scm.com/docs/git-ls-files
 
+const VERBOSE_LOGGING_ENV_VAR = 'PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING';
+
 async function setPackFilesModificationTimesFromCommits(workspace: string, packDirectory: string) {
     // Absolutize the paths to avoid classes of problems related to relative paths
     workspace = path.resolve(workspace);
@@ -117,7 +119,7 @@ async function getUnmodifiedIndexedPackFiles(repository: string, packDirectory: 
 
                         wasFileModifiedInWorkflow = actualHash != indexedHash;
 
-                        if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
+                        if (VERBOSE_LOGGING_ENV_VAR in process.env && wasFileModifiedInWorkflow) {
                             debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
                         }
                     } else {
@@ -173,7 +175,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
             // Make sure we only change the modification time once for the expected
             // files, and only take into account the latest commit that modified them
             if (remainingPackFiles.delete(modifiedFile)) {
-                if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env) {
+                if (VERBOSE_LOGGING_ENV_VAR in process.env) {
                     debug(`Setting ${modifiedFile} modification time to ${new Date(parseInt(commitTime) * 1000)}`);
                 }
                 await utimes(modifiedFile, commitTime, commitTime);
