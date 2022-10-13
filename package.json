@@ -8,7 +8,8 @@
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
-    "test:submodules": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml"
+    "test:pack-in-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml",
+    "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml"
   },
   "repository": {
     "type": "git",

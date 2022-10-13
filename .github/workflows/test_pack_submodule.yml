@@ -1,0 +1,26 @@
+name: Test - Pack submodule
+on:
+  push:
+    branches:
+      - refactor/submodule-support
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone pack repository
+        uses: actions/checkout@v3
+        with:
+          repository: ComunidadAylas/PackSquash-action-test
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone action repository
+        uses: actions/checkout@v3
+        with:
+          path: action-checkout
+      - name: Run PackSquash
+        uses: ./action-checkout
+        with:
+          path: Programmer-Art-Plus
