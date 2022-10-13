@@ -19,35 +19,35 @@ const pipeline = promisify(stream.pipeline);
 export async function ensureRepositoryIsNotShallow(workspace: string) {
     debug(`Checking that the repository checkout at ${workspace} is not shallow`);
 
-    let output;
-    try {
-        output = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
-            silent: true
-        });
-    } catch (error) {
-        throw Error(
-            `Could not check whether the pack repository is shallow: ${error}. Has the repository been checked out? \
-            If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
-        );
-    }
+    const gitOut = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
+        silent: true
+    });
 
-    if (output.stdout === 'true\n') {
+    if (gitOut.stdout === 'true\n') {
         throw Error('The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
     }
 }
 
 /**
  * Returns the absolute paths of the submodules that belong to the given workspace.
- * Submodules within submodules will also be returned.
+ * Submodules within submodules will also be returned. Non-initialized submodules
+ * will not be returned.
  *
  * @param workspace The workspace to get its submodules of.
  */
 export async function getSubmodules(workspace: string): Promise<string[]> {
-    const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'echo "$displaypath"'], {
-        silent: true
-    });
+    try {
+        const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'echo "$displaypath"'], {
+            silent: true
+        });
 
-    return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
+        return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
+    } catch (error) {
+        throw Error(
+            `Could not get information about the repository: ${error}. Has the repository been checked out? \
+            If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
+        );
+    }
 }
 
 export function getArchitecture() {
