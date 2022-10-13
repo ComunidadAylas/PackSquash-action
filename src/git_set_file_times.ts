@@ -12,29 +12,35 @@ import * as fs from 'fs';
 // https://git-scm.com/docs/git-ls-files
 
 async function setPackFilesModificationTimesFromCommits(workspace: string, packDirectory: string) {
-    debug(`Setting file modification times according to commit history for ${packDirectory} at ${workspace}`);
-
     // Absolutize the paths to avoid classes of problems related to relative paths
     workspace = path.resolve(workspace);
     packDirectory = path.resolve(packDirectory);
 
+    debug(`Setting file modification times according to commit history for ${packDirectory} at ${workspace}`);
+
     const submodules = await getSubmodules(workspace);
     debug(`Detected submodules: ${submodules.length > 0 ? submodules : 'none'}`);
 
-    const repositoryPaths = [workspace, ...submodules].filter(async candidateRepositoryPath => {
+    const repositoryPaths = [];
+    for (const candidateRepositoryPath of [workspace, ...submodules]) {
         // Ignore repositories that do not contribute to the pack directory.
-        // For example, a workspace at /a/b is irrelevant for a pack at /a/c, but a workspace at
-        // /a/c/d is. Notice that we deal with absolute paths here
-        const isRelevant = isPathWithin(candidateRepositoryPath, packDirectory);
+        // A repository contributes to a pack when either the pack directory is within the
+        // repository, or the repository is within the pack. Examples:
+        // - A repository at /a/b is irrelevant for a pack at /a/c: /a/c is not within /a/b,
+        //   and /a/b is not within /a/c
+        // - A repository at /a/c/d is relevant for a pack at /a/c: /a/c/d is within /a/c
+        // - A repository at /a is relevant for a pack at /a/c: /a/c is within /a (note that
+        //   the actual pack files may be provided by a submodule within that repository, but
+        //   we will just do benign, useless work in that case)
+        const isRelevant = isPathWithin(packDirectory, candidateRepositoryPath) || isPathWithin(candidateRepositoryPath, packDirectory);
 
         // If this repository is relevant, it must be non-shallow for us to be able to access the
-        // full commit history
+        // full commit history, and we can accumulate it to the repository list
         if (isRelevant) {
             await ensureRepositoryIsNotShallow(candidateRepositoryPath);
+            repositoryPaths.push(candidateRepositoryPath);
         }
-
-        return isRelevant;
-    });
+    }
     debug(`Relevant repositories: ${repositoryPaths.length > 0 ? repositoryPaths : 'none'}`);
 
     for (const repositoryPath of repositoryPaths) {
