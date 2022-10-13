@@ -1,7 +1,7 @@
 import { getExecOutput } from '@actions/exec';
 import { utimes, stat } from 'fs/promises';
 import { ensureRepositoryIsNotShallow, getSubmodules, isPathWithin } from './util';
-import { debug } from '@actions/core';
+import { debug, warning } from '@actions/core';
 import * as path from 'path';
 
 // Some interesting reads about the topic:
@@ -194,9 +194,9 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
 
     // Sanity check: if we didn't bail out due to no more pack files remaining, we should parse all the logs
     if (lastLogEntryMatchIndex !== undefined && lastLogEntryMatchIndex != gitLog.length) {
-        throw new Error(
-            `Internal error: Could not parse the entire Git log for the repository at ${repository} \
-            (${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). Please report an issue`
+        warning(
+            `Could not parse the entire Git log for the repository at ${repository} (${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). ` +
+                `(${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). Caching effectiveness may be degraded. Please report an issue`
         );
     }
 }
