@@ -101,17 +101,22 @@ async function getIndexedPackFiles(repository: string, packDirectory: string) {
 
                     let wasFileModifiedInWorkflow;
                     if (wasFilePotentiallyModifiedInWorkflow) {
-                        const gitOut = await getExecOutput('git', ['-C', repository, 'hash-object', filePath], {
-                            silent: true
-                        });
+                        try {
+                            const gitOut = await getExecOutput('git', ['-C', repository, 'hash-object', filePath], {
+                                silent: true
+                            });
 
-                        const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
-                        const indexedHash = fileIndexData.split(' ', 3)[1];
+                            const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
+                            const indexedHash = fileIndexData.split(' ', 3)[1];
 
-                        wasFileModifiedInWorkflow = actualHash != indexedHash;
+                            wasFileModifiedInWorkflow = actualHash != indexedHash;
 
-                        if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
-                            debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
+                            if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
+                                debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
+                            }
+                        } catch {
+                            // Trying to get the hash of a directory fails, and directories don't meaningfully change
+                            wasFileModifiedInWorkflow = false;
                         }
                     } else {
                         wasFileModifiedInWorkflow = false;
