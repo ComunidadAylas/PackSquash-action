@@ -24,6 +24,8 @@ jobs:
         run: |
           echo '{ "pack": { "pack_format": 8, "description": "Dummy pack.mcmeta" } }' > golden-days/golden-days-base/pack.mcmeta
           touch golden-days/golden-days-base/assets/minecraft/sounds.json
+          rm golden-days/golden-days-base/pack.png
+          mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
       - name: Run PackSquash
         uses: ./action-checkout
         with:
