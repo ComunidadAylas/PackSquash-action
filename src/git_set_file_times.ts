@@ -79,7 +79,13 @@ async function getIndexedPackFiles(repository: string, packDirectory: string) {
             // is guaranteed to be in the pack directory, not every file is. For example, we might
             // be a repository at /a, while the pack is at /a/b, so only files within /a/b matter
             const fileMeta = fs.statSync(filePath); // Sync because async + flatMap gets messy
-            return isPathWithin(filePath, packDirectory) && fileMeta.mtimeMs <= fileMeta.birthtimeMs ? [filePath] : [];
+            const wasFileModifiedInWorkflow = fileMeta.mtimeMs <= fileMeta.birthtimeMs;
+
+            if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
+                debug(`${filePath} was modified in this workflow run: ${fileMeta.mtimeMs} <= ${fileMeta.birthtimeMs}`);
+            }
+
+            return isPathWithin(filePath, packDirectory) && wasFileModifiedInWorkflow ? [filePath] : [];
         } catch {
             // Ignore this file, it can be considered to not exist in the working tree
             return [];
@@ -126,7 +132,9 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
             // Make sure we only change the modification time once for the expected
             // files, and only take into account the latest commit that modified them
             if (remainingPackFiles.delete(modifiedFile)) {
-                debug(`Setting ${modifiedFile} modification time to ${new Date(parseInt(commitTime) * 1000)}`);
+                if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env) {
+                    debug(`Setting ${modifiedFile} modification time to ${new Date(parseInt(commitTime) * 1000)}`);
+                }
                 await utimes(modifiedFile, commitTime, commitTime);
             }
 
