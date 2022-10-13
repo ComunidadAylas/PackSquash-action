@@ -38,10 +38,10 @@ export async function restorePackSquashCache(workingDirectory: WorkingDirectory,
             }
         } catch (err) {
             warning(
-                `Could not fetch the ZIP file generated in the last run. \
-                PackSquash will thus not be able to reuse it to speed up processing. \
-                This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution. \
-                (${err})`
+                'Could not fetch the ZIP file generated in the last run. ' +
+                    'PackSquash will thus not be able to reuse it to speed up processing. ' +
+                    'This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution. ' +
+                    `(${err})`
             );
         }
     }

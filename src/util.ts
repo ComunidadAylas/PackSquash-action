@@ -44,8 +44,8 @@ export async function getSubmodules(workspace: string): Promise<string[]> {
         return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
     } catch (error) {
         throw Error(
-            `Could not get information about the repository: ${error}. Has the repository been checked out? \
-            If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
+            `Could not get information about the repository: ${error}. Has the repository been checked out? ` +
+                `If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
         );
     }
 }
