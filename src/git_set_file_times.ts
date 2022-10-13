@@ -45,16 +45,16 @@ async function setPackFilesModificationTimesFromCommits(workspace: string, packD
     for (const repositoryPath of repositoryPaths) {
         // It's only worth to set modification times of pack files that belong to the Git index.
         // If a pack file does not belong to the index, it can't have previous commit information.
-        // The index may contain files that no longer exist or were modified in the working tree by
-        // previous workflow steps. Both of these cases are handled in the called function
-        const indexedPackFiles = new Set(await getIndexedPackFiles(repositoryPath, packDirectory));
+        // However, the index may contain files that no longer exist or were modified in the working
+        // tree by previous workflow steps. Both of these cases are handled in the called function
+        const indexedPackFiles = new Set(await getUnmodifiedIndexedPackFiles(repositoryPath, packDirectory));
         debug(`Indexed pack files for ${repositoryPath}: ${indexedPackFiles.size}`);
 
         await setPackFilesModificationTime(repositoryPath, indexedPackFiles);
     }
 }
 
-async function getIndexedPackFiles(repository: string, packDirectory: string) {
+async function getUnmodifiedIndexedPackFiles(repository: string, packDirectory: string) {
     // Note that we shouldn't pass the pack directory to ls-files because it may
     // match the submodule directory, and in that case we won't get useful output.
     // There may be other gotchas too, but doing extra checks later does not impact
@@ -80,14 +80,14 @@ async function getIndexedPackFiles(repository: string, packDirectory: string) {
                     //    equals birthtime, but not necessarily (git clone may be running slow enough for timestamp
                     //    differences to be noticeable). This is cheap and saves lots of more expensive hash checks,
                     //    but assumes that the filesystem stores birthtimes, which is the case in GitHub-hosted runners
-                    //    and most sane Linux environments
+                    //    and most sane Linux environments.
                     // 2. For the potentially modified files that passed the above check, compute their git object
                     //    hash and compare it with the one stored in the index. If they match, the file is the same;
                     //    else, actual changes were made.
                     // There are several assumptions at play here:
                     // - Only a few files were truly modified (otherwise, it's less work to compare hashes directly)
-                    // - People don't modify files by deleting and creating them again (if you do, please file an
-                    //   issue and PackSquash will at least make this optimization toggleable, so it can rely on the
+                    // - People don't modify indexed files by deleting and creating them again (if you do, please file
+                    //   an issue and PackSquash will at least make this optimization toggleable, so it can rely on the
                     //   slower hash-only method)
                     let fileMeta;
                     try {
@@ -97,26 +97,28 @@ async function getIndexedPackFiles(repository: string, packDirectory: string) {
                         return [];
                     }
 
+                    // ls-files yields directories when the repository has submodules, and perhaps in other cases.
+                    // We are not interested in the directories themselves, so ignore this. Note that stat() resolves
+                    // symlinks, and throws an error if the symlink target does not exist
+                    if (fileMeta.isDirectory()) {
+                        return [];
+                    }
+
                     const wasFilePotentiallyModifiedInWorkflow = fileMeta.mtimeMs > fileMeta.birthtimeMs;
 
                     let wasFileModifiedInWorkflow;
                     if (wasFilePotentiallyModifiedInWorkflow) {
-                        try {
-                            const gitOut = await getExecOutput('git', ['-C', repository, 'hash-object', filePath], {
-                                silent: true
-                            });
+                        const gitOut = await getExecOutput('git', ['-C', repository, 'hash-object', filePath], {
+                            silent: true
+                        });
 
-                            const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
-                            const indexedHash = fileIndexData.split(' ', 3)[1];
+                        const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
+                        const indexedHash = fileIndexData.split(' ', 3)[1];
 
-                            wasFileModifiedInWorkflow = actualHash != indexedHash;
+                        wasFileModifiedInWorkflow = actualHash != indexedHash;
 
-                            if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
-                                debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
-                            }
-                        } catch {
-                            // Trying to get the hash of a directory fails, and directories don't meaningfully change
-                            wasFileModifiedInWorkflow = false;
+                        if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
+                            debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
                         }
                     } else {
                         wasFileModifiedInWorkflow = false;
