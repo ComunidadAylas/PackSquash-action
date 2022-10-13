@@ -1,0 +1,32 @@
+name: Test - Pack in submodule
+on:
+  push:
+    branches:
+      - refactor/submodule-support
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone pack repository
+        uses: actions/checkout@v3
+        with:
+          repository: ComunidadAylas/PackSquash-action-test
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone action repository
+        uses: actions/checkout@v3
+        with:
+          path: action-checkout
+      - name: Modify pack files
+        run: |
+          echo '{ "pack": { "pack_format": 8, "description": "Dummy pack.mcmeta" } }' > golden-days/golden-days-base/pack.mcmeta
+          touch golden-days/golden-days-base/assets/minecraft/sounds.json
+          rm golden-days/golden-days-base/pack.png
+          mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
+      - name: Run PackSquash
+        uses: ./action-checkout
+        with:
+          path: golden-days/golden-days-base

@@ -1,10 +1,13 @@
 import { getExecOutput } from '@actions/exec';
 import { debug } from '@actions/core';
 import { HttpClient } from '@actions/http-client';
-import { createWriteStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import { promisify } from 'util';
 import * as stream from 'stream';
 import * as path from 'path';
+import crypto from 'crypto';
+
+const pipeline = promisify(stream.pipeline);
 
 /**
  * If caching may be used, and setGitFileModificationTimes should be executed,
@@ -13,7 +16,7 @@ import * as path from 'path';
  *
  * @returns A rejected promise if the check fails.
  */
-export async function checkRepositoryIsNotShallow(workspace: string) {
+export async function ensureRepositoryIsNotShallow(workspace: string) {
     debug(`Checking that the repository checkout at ${workspace} is not shallow`);
 
     let output;
@@ -33,15 +36,18 @@ export async function checkRepositoryIsNotShallow(workspace: string) {
     }
 }
 
-export async function getSubmodulePaths(workspace: string): Promise<string[]> {
-    const registeredSubmodules = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'printf "$displaypath\0"'], {
+/**
+ * Returns the absolute paths of the submodules that belong to the given workspace.
+ * Submodules within submodules will also be returned.
+ *
+ * @param workspace The workspace to get its submodules of.
+ */
+export async function getSubmodules(workspace: string): Promise<string[]> {
+    const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'echo "$displaypath"'], {
         silent: true
     });
 
-    return registeredSubmodules.stdout
-        .split('\0')
-        .filter(l => !!l)
-        .map(l => path.join(workspace, l));
+    return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
 }
 
 export function getArchitecture() {
@@ -78,7 +84,6 @@ export async function downloadFile(url: string, path: string) {
     const client = new HttpClient();
     const writeStream = createWriteStream(path);
     const response = await client.get(url);
-    const pipeline = promisify(stream.pipeline);
     await pipeline(response.message, writeStream);
 }
 
@@ -94,4 +99,40 @@ export function getEnvOrThrow(variable: string) {
     } else {
         throw new Error(`Internal error: the ${variable} environment variable is missing`);
     }
+}
+
+/**
+ * Checks whether a descendant path is contained within a parent path. A descendant
+ * path equal to a parent path is considered to be within that parent path.
+ *
+ * Both paths are assumed to be absolute.
+ *
+ * @param descendant The path to check whether it is within `parent`.
+ * @param parent The path to which `descendant` should belong to.
+ */
+// Function adapted from https://github.com/domenic/path-is-inside/blob/05a9bf7c5e008505539e14e96c4d2fc8b2c6d058/lib/path-is-inside.js
+export function isPathWithin(descendant: string, parent: string) {
+    function stripTrailingPathSep(subject: string) {
+        return subject.endsWith(path.sep) ? subject.slice(0, -1) : subject;
+    }
+
+    // For inside-directory checking, we want to allow trailing slashes, so normalize
+    descendant = stripTrailingPathSep(descendant);
+    parent = stripTrailingPathSep(parent);
+
+    // Node treats only Windows as case-insensitive in its path module. We follow those conventions
+    if (process.platform === 'win32') {
+        descendant = descendant.toLowerCase();
+        parent = parent.toLowerCase();
+    }
+
+    return descendant.lastIndexOf(parent, 0) == 0 && (descendant[parent.length] === path.sep || descendant[parent.length] === undefined);
+}
+
+export async function md5Hash(filePath: string) {
+    const hasher = crypto.createHash('md5');
+
+    await pipeline(createReadStream(filePath), hasher);
+
+    return hasher.digest().toString('hex');
 }
