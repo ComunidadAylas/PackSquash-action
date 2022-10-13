@@ -43,11 +43,11 @@ export async function ensureRepositoryIsNotShallow(workspace: string) {
  * @param workspace The workspace to get its submodules of.
  */
 export async function getSubmodules(workspace: string): Promise<string[]> {
-    const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'printf "$displaypath\0"'], {
+    const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'echo "$displaypath"'], {
         silent: true
     });
 
-    return gitOut.stdout.split('\0').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
+    return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
 }
 
 export function getArchitecture() {
