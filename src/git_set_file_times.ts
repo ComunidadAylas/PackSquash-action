@@ -142,15 +142,16 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
     }
 
     // git log --diff-merges=cc --name-only --pretty=format:%ct -z log entry format:
-    // <timestamp>(\n(<file>\0)*)?\0{1,2}
-    // => consecutive matches of (?<commitTime>\d+)(?:\n(?<modifiedFiles>(?:[^\0]+\0)+)?)?\0{1,2}
+    // <timestamp>([\n\0](<file>\0)*)?\0{1,2}
+    // => consecutive matches of (?<commitTime>\d+)(?:[\n\0](?<modifiedFiles>(?:[^\0]+\0)+)?)?\0{1,2}
     // Not every commit has a diff, and we should handle that:
     // - Empty commits print a single NUL after their timestamp: they do not show any diff.
     // - Merge commits that didn't change anything print a NUL to separate the timestamp from their empty diff,
     //   and then another NUL to end that diff.
     // Due to --name-only, the diff consists on the file names that were changed by the commit.
     // Note that the output format is almost the same as when not using -z, the only difference being that
-    // NUL is used instead of newline for separating most fields, barring the commit diff start
+    // NUL is used instead of newline for separating most fields, barring the commit diff start. In some strange
+    // cases found in the openssl repo, \0 may be used instead of \n for separating the commit diff start anyway
     const gitOut = await getExecOutput('git', ['-C', repository, 'log', '--diff-merges=cc', '--name-only', '--pretty=format:%ct', '-z'], {
         silent: true
     });
@@ -158,7 +159,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
     // Append a trailing NUL to not ignore the last log entry
     const gitLog = gitOut.stdout + '\0';
 
-    const logEntryRegex = /(?<commitTime>\d+)(?:\n(?<modifiedFiles>(?:[^\0]+\0)+)?)?\0{1,2}/gy;
+    const logEntryRegex = /(?<commitTime>\d+)(?:[\n\0](?<modifiedFiles>(?:[^\0]+\0)+)?)?\0{1,2}/gy;
 
     let logEntryMatch;
     let lastLogEntryMatchIndex;
