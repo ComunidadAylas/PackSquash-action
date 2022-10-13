@@ -1,9 +1,8 @@
 import { getExecOutput } from '@actions/exec';
-import { utimes } from 'fs/promises';
+import { utimes, stat } from 'fs/promises';
 import { ensureRepositoryIsNotShallow, getSubmodules, isPathWithin } from './util';
 import { debug } from '@actions/core';
 import * as path from 'path';
-import * as fs from 'fs';
 
 // Some interesting reads about the topic:
 // https://stackoverflow.com/questions/56235287/what-does-git-ls-files-do-exactly-and-how-do-we-remove-a-file-from-it
@@ -60,37 +59,71 @@ async function getIndexedPackFiles(repository: string, packDirectory: string) {
     // match the submodule directory, and in that case we won't get useful output.
     // There may be other gotchas too, but doing extra checks later does not impact
     // performance much anyway
-    const gitOut = await getExecOutput('git', ['-C', repository, 'ls-files', '-z'], {
+    const gitOut = await getExecOutput('git', ['-C', repository, 'ls-files', '-s', '-z'], {
         silent: true
     });
 
-    return gitOut.stdout.split('\0').flatMap(filePath => {
-        // Ignore empty file paths due to a possible trailing NUL char
-        if (!filePath) {
-            return [];
-        }
+    return (
+        await Promise.all(
+            gitOut.stdout
+                .split('\0')
+                .slice(0, -1) // Ignore empty entry due to the trailing NUL char
+                .flatMap(async fileInfo => {
+                    const fileInfoFields = fileInfo.split('\t', 2);
+                    const filePath = path.join(repository, fileInfoFields[1]);
+                    const fileIndexData = fileInfoFields[0];
 
-        filePath = path.join(repository, filePath);
+                    // We should ignore files that were modified by the workflow run, as the repository history
+                    // is no longer representative of when they were last modified. To achieve this, do a two-step
+                    // check:
+                    // 1. Weed out files that were not modified after being created. When cloning, mtime usually
+                    //    equals birthtime, but not necessarily (git clone may be running slow enough for timestamp
+                    //    differences to be noticeable). This is cheap and saves lots of more expensive hash checks,
+                    //    but assumes that the filesystem stores birthtimes, which is the case in GitHub-hosted runners
+                    //    and most sane Linux environments
+                    // 2. For the potentially modified files that passed the above check, compute their git object
+                    //    hash and compare it with the one stored in the index. If they match, the file is the same;
+                    //    else, actual changes were made.
+                    // There are several assumptions at play here:
+                    // - Only a few files were truly modified (otherwise, it's less work to compare hashes directly)
+                    // - People don't modify files by deleting and creating them again (if you do, please file an
+                    //   issue and PackSquash will at least make this optimization toggleable, so it can rely on the
+                    //   slower hash-only method)
+                    let fileMeta;
+                    try {
+                        fileMeta = await stat(filePath);
+                    } catch {
+                        // Ignore this file, it can be considered to not exist in the working tree
+                        return [];
+                    }
 
-        try {
-            // Ignore files that were modified after they were created, as a best effort to handle
-            // files modified after cloning (i.e., being created) by previous steps.
-            // The isPathWithin check is necessary because, even though some file in this repository
-            // is guaranteed to be in the pack directory, not every file is. For example, we might
-            // be a repository at /a, while the pack is at /a/b, so only files within /a/b matter
-            const fileMeta = fs.statSync(filePath); // Sync because async + flatMap gets messy
-            const wasFileNotModifiedInWorkflow = fileMeta.mtimeMs <= fileMeta.birthtimeMs;
+                    const wasFilePotentiallyModifiedInWorkflow = fileMeta.mtimeMs > fileMeta.birthtimeMs;
 
-            if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && !wasFileNotModifiedInWorkflow) {
-                debug(`${filePath} was modified in this workflow run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}`);
-            }
+                    let wasFileModifiedInWorkflow;
+                    if (wasFilePotentiallyModifiedInWorkflow) {
+                        const gitOut = await getExecOutput('git', ['-C', repository, 'hash-object', filePath], {
+                            silent: true
+                        });
 
-            return isPathWithin(filePath, packDirectory) && wasFileNotModifiedInWorkflow ? [filePath] : [];
-        } catch {
-            // Ignore this file, it can be considered to not exist in the working tree
-            return [];
-        }
-    });
+                        const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
+                        const indexedHash = fileIndexData.split(' ', 3)[1];
+
+                        wasFileModifiedInWorkflow = actualHash != indexedHash;
+
+                        if ('PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING' in process.env && wasFileModifiedInWorkflow) {
+                            debug(`${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`);
+                        }
+                    } else {
+                        wasFileModifiedInWorkflow = false;
+                    }
+
+                    // The isPathWithin check is necessary because, even though some file in this repository
+                    // is guaranteed to be in the pack directory, not every file is. For example, we might
+                    // be a repository at /a, while the pack is at /a/b, so only files within /a/b matter
+                    return isPathWithin(filePath, packDirectory) && !wasFileModifiedInWorkflow ? [filePath] : [];
+                })
+        )
+    ).flat();
 }
 
 async function setPackFilesModificationTime(repository: string, remainingPackFiles: Set<string>) {
