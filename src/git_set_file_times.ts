@@ -196,7 +196,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
     if (lastLogEntryMatchIndex !== undefined && lastLogEntryMatchIndex != gitLog.length) {
         warning(
             `Could not parse the entire Git log for the repository at ${repository} (${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). ` +
-                `(${lastLogEntryMatchIndex}/${gitLog.length} bytes parsed). Caching effectiveness may be degraded. Please report an issue`
+                'Caching effectiveness may be degraded. Please report an issue'
         );
     }
 }
