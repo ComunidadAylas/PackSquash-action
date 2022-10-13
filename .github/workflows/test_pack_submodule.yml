@@ -1,8 +1,5 @@
 name: Test - Pack submodule
 on:
-  push:
-    branches:
-      - refactor/submodule-support
   workflow_dispatch:
 jobs:
   test:
