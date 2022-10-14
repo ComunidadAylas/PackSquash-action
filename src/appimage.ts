@@ -20,9 +20,7 @@ export async function downloadAppImage(workingDirectory: WorkingDirectory) {
             archInfix = 'aarch64';
             break;
         default:
-            throw Error(
-              `The ${arch} architecture is not supported by this action. Please use a runner with a supported architecture.`
-            );
+            throw Error(`The ${arch} architecture is not supported by this action. Please use a runner with a supported architecture.`);
     }
 
     switch (version) {
