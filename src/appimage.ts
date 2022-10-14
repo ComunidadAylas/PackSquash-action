@@ -39,11 +39,11 @@ export async function downloadAppImage(workingDirectory: WorkingDirectory) {
     await chmod(workingDirectory.packsquashBinary, '755');
 }
 
-async function downloadLatestAppImage(workingDirectory: WorkingDirectory, arch_infix: string) {
-    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 32465409, `PackSquash CLI AppImage (${arch_infix})`, workingDirectory.packsquashBinary);
+async function downloadLatestAppImage(workingDirectory: WorkingDirectory, archInfix: string) {
+    await downloadLatestArtifact(workingDirectory, 'ComunidadAylas', 'PackSquash', 'master', 32465409, `PackSquash CLI AppImage (${archInfix})`, workingDirectory.packsquashBinary);
 }
 
-async function downloadReleaseAppImage(workingDirectory: WorkingDirectory, version: string, asset_name: string) {
-    info(`Downloading PackSquash AppImage for release ${version} (asset ${asset_name})`);
-    await downloadFile(`https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${asset_name}`, workingDirectory.packsquashBinary);
+async function downloadReleaseAppImage(workingDirectory: WorkingDirectory, version: string, assetName: string) {
+    info(`Downloading PackSquash AppImage for release ${version} (asset ${assetName})`);
+    await downloadFile(`https://github.com/ComunidadAylas/PackSquash/releases/download/${version}/${assetName}`, workingDirectory.packsquashBinary);
 }

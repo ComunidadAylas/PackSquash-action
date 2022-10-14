@@ -22,9 +22,9 @@ export async function computeCacheKey(workingDirectory: WorkingDirectory) {
  * artifact if needed, and if this workflow has been run at least once
  * @returns The restored cache key, or undefined if no cache was restored
  */
-export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restore_keys: string[]) {
+export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restoreKeys: string[]) {
     startGroup('Restoring cached data');
-    const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restore_keys);
+    const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restoreKeys);
     if (restoredCacheKey || getInput(Options.SystemId)) {
         try {
             const branch = getBranchName();

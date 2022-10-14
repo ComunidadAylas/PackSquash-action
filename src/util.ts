@@ -66,18 +66,15 @@ export function getArchitecture() {
  *
  * @see https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
  * @see https://github.com/ComunidadAylas/PackSquash-action/pull/17#discussion_r868154905
- * @return The branch name, or `null` if the triggering ref is a tag.
+ * @return The branch name, or `undefined` if the triggering ref is a tag.
  */
 export function getBranchName() {
-    if (process.env.GITHUB_REF_TYPE === 'branch') {
-        const head_ref = process.env.GITHUB_HEAD_REF;
-        if (head_ref) {
-            return head_ref;
-        }
-        return process.env.GITHUB_REF_NAME as string;
-    } else {
-        return null;
+    if (process.env.GITHUB_REF_TYPE !== 'branch') {
+        return undefined;
     }
+
+    const headRef = process.env.GITHUB_HEAD_REF;
+    return headRef ? headRef : process.env.GITHUB_REF_NAME;
 }
 
 export async function downloadFile(url: string, path: string) {
