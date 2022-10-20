@@ -51,4 +51,4 @@ async function run() {
     }
 }
 
-run().catch(err => setFailed(err instanceof Error ? err.stack || err.message : err));
+run().catch(err => setFailed(err instanceof Error ? err.message : err));
