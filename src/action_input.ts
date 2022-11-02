@@ -1,5 +1,6 @@
 import { getBooleanInput, getInput } from '@actions/core';
 
+// Dummy object. Only the keys and the type of the property values matters
 const ActionInputsObject = {
     options_file: 'string',
     system_id: 'string',
@@ -12,12 +13,13 @@ const ActionInputsObject = {
 };
 
 export type ActionInputIdentifier = keyof typeof ActionInputsObject;
+type ActionInputValue<T extends ActionInputIdentifier> = typeof ActionInputsObject[T];
 
-export function getInputValue<T extends ActionInputIdentifier>(input: T): typeof ActionInputsObject[T] {
+export function getInputValue<T extends ActionInputIdentifier>(input: T): ActionInputValue<T> {
     switch (typeof ActionInputsObject[input]) {
         case 'string':
-            return getInput(input) as never;
+            return getInput(input) as ActionInputValue<T>;
         case 'boolean':
-            return getBooleanInput(input) as never;
+            return getBooleanInput(input) as ActionInputValue<T>;
     }
 }
