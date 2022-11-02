@@ -6,7 +6,7 @@ import { getBranchName, md5Hash } from './util';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
 
-export async function computeCacheKey(workingDirectory: WorkingDirectory) {
+export async function computeCacheKeys(workingDirectory: WorkingDirectory) {
     const optionsHash = await md5Hash(workingDirectory.optionsFile);
     const cacheRevision = Buffer.from(getInputValue('action_cache_revision')).toString('base64');
     // Using different primary and restore keys is necessary to handle jobs
@@ -24,8 +24,17 @@ export async function computeCacheKey(workingDirectory: WorkingDirectory) {
  */
 export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restoreKeys: string[]) {
     startGroup('Restoring cached data');
-    const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restoreKeys);
-    if (restoredCacheKey || getInputValue('system_id')) {
+
+    let cacheRestored: boolean;
+    if (getInputValue('system_id')) {
+        // We only use the cache for storing the system ID we need to read the previous artifact, so if we already
+        // have a fixed system ID, we can restore that artifact no matter what
+        cacheRestored = true;
+    } else {
+        cacheRestored = !!(await restoreCache([workingDirectory.systemIdFile], key, restoreKeys));
+    }
+
+    if (cacheRestored) {
         try {
             const branch = getBranchName();
             if (branch) {
@@ -43,10 +52,13 @@ export async function restorePackSquashCache(workingDirectory: WorkingDirectory,
                     'This is a normal occurrence when running a workflow for the first time, or after a long time since its last execution. ' +
                     `(${err})`
             );
+            cacheRestored = false;
         }
     }
+
     endGroup();
-    return restoredCacheKey;
+
+    return cacheRestored;
 }
 
 export async function savePackSquashCache(workingDirectory: WorkingDirectory, key: string) {

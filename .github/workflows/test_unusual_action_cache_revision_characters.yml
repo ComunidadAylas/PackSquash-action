@@ -22,5 +22,6 @@ jobs:
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
-          path: test/empty_resource_pack
           action_cache_revision: '👍 revision, リビジョン'
+          options: |
+            pack_directory = 'test/empty_resource_pack'

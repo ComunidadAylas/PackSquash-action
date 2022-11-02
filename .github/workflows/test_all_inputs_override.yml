@@ -21,46 +21,12 @@ jobs:
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
-          path: test/empty_resource_pack
-          recompress_compressed_files: true # <- false
-          zip_compression_iterations: 10 # <- 20
-          automatic_minecraft_quirks_detection: false # <- true
-          work_around_grayscale_images_gamma_miscorrection_quirk: true # <- false
-          work_around_java8_zip_parsing_quirk: true # <- false
-          work_around_restrictive_banner_layer_texture_format_check_quirk: true # <- false
-          work_around_bad_entity_eye_layer_texture_transparency_blending_quirk: true # <- false
-          automatic_asset_types_mask_detection: false # <- true
-          allow_optifine_mod: true # <- false
-          allow_mtr3_mod: true # <- false
-          skip_pack_icon: true # <- false
-          validate_pack_metadata_file: false # <- true
-          ignore_system_and_hidden_files: false # <- true
-          zip_spec_conformance_level: disregard # <- high
-          size_increasing_zip_obfuscation: true # <- false
-          percentage_of_zip_structures_tuned_for_obfuscation_discretion: 100 # <- 0
-          never_store_squash_times: true # <- false
-          transcode_ogg: false # <- true
-          audio_sampling_frequency: 44100 # <- 32000
-          target_audio_pitch: 1.5 # <- 1.0
-          minimum_audio_bitrate: 64000 # <- 40000
-          maximum_audio_bitrate: 128000 # <- 96000
-          minify_json_files: false # <- true
-          delete_bloat_json_keys: false # <- true
-          always_allow_json_comments: false # <- true
-          image_data_compression_iterations: 15 # <- 5
-          image_color_quantization_target: none # <- auto
-          image_color_quantization_dithering_level: 1 # <- 0.85
-          maximum_image_width_and_height: 4096 # <- 8192
-          skip_image_alpha_optimizations: true # <- false
-          minify_shaders: false # <- true
-          minify_legacy_language_files: false # <- true
-          strip_legacy_language_files_bom: false # <- true
-          minify_command_function_files: false # <- true
-          minify_properties_files: false # <- true
-          force_include_files: |
-            dummy_file1.txt
-            dummy_file2.txt
+          # packsquash_version is not overridden for reproducibility
           system_id: c5eb0603-093c-41fd-9c21-88c34a429e3b # <- (Automatically generated)
           artifact_name: Test Artifact Name # <- Optimized pack
           show_emoji_in_packsquash_logs: false # <- true
           enable_color_in_packsquash_logs: false # <- true
+          token: ${{ secrets.GITHUB_TOKEN }} # <- ${{ github.token }}
+          action_cache_revision: 3 # <- (empty)
+          options: |
+            pack_directory = 'test/empty_resource_pack'

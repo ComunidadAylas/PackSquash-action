@@ -36,5 +36,8 @@ jobs:
       - name: Run PackSquash
         uses: ./action-checkout
         with:
-          path: golden-days/golden-days-base
-          maximum_image_width_and_height: 65535
+          options: |
+            pack_directory = 'golden-days/golden-days-base'
+
+            ['**/*.png']
+            maximum_width_and_height = 65535
