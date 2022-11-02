@@ -1,4 +1,4 @@
-import { debug, endGroup, getInput, info, startGroup } from '@actions/core';
+import { debug, endGroup, info, startGroup } from '@actions/core';
 import { create } from '@actions/artifact';
 import { getOctokit } from '@actions/github';
 import { createWriteStream } from 'fs';
