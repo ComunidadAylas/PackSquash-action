@@ -50,10 +50,6 @@ export async function getSubmodules(workspace: string): Promise<string[]> {
     }
 }
 
-export function getArchitecture() {
-    return getEnvOrThrow('RUNNER_ARCH');
-}
-
 /**
  * - **GITHUB_REF_TYPE**
  *   The type of ref that triggered the workflow run. Valid values are branch or tag.

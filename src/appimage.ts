@@ -1,6 +1,6 @@
 import { debug, info } from '@actions/core';
 import { chmod } from 'fs/promises';
-import { downloadFile, getArchitecture } from './util';
+import { downloadFile, getEnvOrThrow } from './util';
 import { downloadLatestArtifact } from './workflow';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
@@ -8,7 +8,7 @@ import { getInputValue } from './action_input';
 export async function downloadAppImage(workingDirectory: WorkingDirectory) {
     const version = getInputValue('packsquash_version');
     debug(`PackSquash version input variable value: ${version}`);
-    const arch = getArchitecture();
+    const arch = getEnvOrThrow('RUNNER_ARCH');
     debug(`Runner architecture: ${arch}`);
 
     let archInfix;
