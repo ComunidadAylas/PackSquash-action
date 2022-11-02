@@ -7,7 +7,7 @@ import { getEnvOrThrow } from './util';
  * its operation will be temporarily stored.
  *
  * The contents of this working directory are step-private and not meant to be
- * read outside of the action. The action should clean it up after finishing.
+ * read outside the action. The action should clean it up after finishing.
  * Its contents may change between releases without notice.
  */
 class WorkingDirectory {

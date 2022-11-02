@@ -1,15 +1,15 @@
 import { debug, endGroup, getInput, info, startGroup } from '@actions/core';
 import { create } from '@actions/artifact';
 import { getOctokit } from '@actions/github';
-import { Options } from './options';
 import { createWriteStream } from 'fs';
 import { rm } from 'fs/promises';
 import unzipper from 'unzipper';
 import { downloadFile } from './util';
 import WorkingDirectory from './working_directory';
+import { getInputValue } from './action_input';
 
 export async function getCurrentWorkflowId(owner: string, repo: string, workflow: string) {
-    const octokit = getOctokit(getInput(Options.Token));
+    const octokit = getOctokit(getInputValue('token'));
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows', {
         owner: owner,
         repo: repo
@@ -25,7 +25,7 @@ export async function uploadArtifact(workingDirectory: WorkingDirectory) {
     }
 
     startGroup('Upload generated ZIP file as artifact');
-    const response = await create().uploadArtifact(getInput(Options.ArtifactName), [workingDirectory.outputFile], workingDirectory.path);
+    const response = await create().uploadArtifact(getInputValue('artifact_name'), [workingDirectory.outputFile], workingDirectory.path);
     endGroup();
 
     if (response.artifactItems.length === 0 || response.failedItems.length > 0) {
@@ -36,7 +36,7 @@ export async function uploadArtifact(workingDirectory: WorkingDirectory) {
 export async function downloadLatestArtifact(workingDirectory: WorkingDirectory, owner: string, repo: string, branch: string, workflowId: number, artifactName: string, destinationPath: string) {
     info(`Downloading latest ${artifactName} artifact`);
 
-    const octokit = getOctokit(getInput(Options.Token));
+    const octokit = getOctokit(getInputValue('token'));
 
     debug(`Getting latest run information for ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/runs', {

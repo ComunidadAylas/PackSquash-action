@@ -1,18 +1,18 @@
-import { endGroup, getInput, info, startGroup, warning } from '@actions/core';
+import { endGroup, info, startGroup, warning } from '@actions/core';
 import { restoreCache, saveCache } from '@actions/cache';
 import { context } from '@actions/github';
 import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
-import { Options } from './options';
 import { getBranchName, md5Hash } from './util';
 import WorkingDirectory from './working_directory';
+import { getInputValue } from './action_input';
 
 export async function computeCacheKey(workingDirectory: WorkingDirectory) {
     const optionsHash = await md5Hash(workingDirectory.optionsFile);
-    const cacheRevision = Buffer.from(getInput(Options.ActionCacheRevision)).toString('base64');
+    const cacheRevision = Buffer.from(getInputValue('action_cache_revision')).toString('base64');
     // Using different primary and restore keys is necessary to handle jobs
     // executing concurrently: if a job tries to write to a cache key that is
     // already being written to by another job, it will error out
-    const restoreKey = `packsquash-0-${cacheRevision}-${getInput(Options.PackSquashVersion)}-${optionsHash}`;
+    const restoreKey = `packsquash-0-${cacheRevision}-${getInputValue('packsquash_version')}-${optionsHash}`;
     const primaryKey = `${restoreKey}-${context.runId}-${context.job}`;
     return [primaryKey, restoreKey];
 }
@@ -20,21 +20,21 @@ export async function computeCacheKey(workingDirectory: WorkingDirectory) {
 /**
  * Restore the system ID file from the cache and the pack ZIP from the previous
  * artifact if needed, and if this workflow has been run at least once
- * @returns The restored cache key, or undefined if no cache was restored
+ * @returns Whether the pack ZIP from the previous artifact was restored or not
  */
 export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restoreKeys: string[]) {
     startGroup('Restoring cached data');
     const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restoreKeys);
-    if (restoredCacheKey || getInput(Options.SystemId)) {
+    if (restoredCacheKey || getInputValue("system_id")) {
         try {
             const branch = getBranchName();
             if (branch) {
                 const owner = context.repo.owner;
                 const repo = context.repo.repo;
                 const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
-                await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInput(Options.ArtifactName), workingDirectory.outputFile);
+                await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInputValue('artifact_name'), workingDirectory.outputFile);
             } else {
-                info('Caching is disabled for workflows triggered by tag events');
+                info('Caching is unavailable for workflows triggered by tag events');
             }
         } catch (err) {
             warning(

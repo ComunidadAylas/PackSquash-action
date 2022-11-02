@@ -1,4 +1,4 @@
-import { getInput, info, setFailed } from '@actions/core';
+import { info, setFailed } from '@actions/core';
 import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, mayCacheBeUsed, tweakAndCopyUserOptionsFile } from './options.js';
 import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
@@ -18,7 +18,7 @@ async function run() {
     await workingDirectory.rm();
     await workingDirectory.mkdir();
 
-    const optionsFile = getInput(Options.OptionsFile);
+    const optionsFile = getInputValue("options_file");
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
 
     if (optionsFile) {
