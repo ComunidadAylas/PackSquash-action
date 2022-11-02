@@ -1,13 +1,12 @@
-import { info, setFailed } from '@actions/core';
-import { generateOptionsFile, getPackDirectory, Options, printOptionsFileContent, mayCacheBeUsed, tweakAndCopyUserOptionsFile } from './options.js';
-import { computeCacheKey, restorePackSquashCache, savePackSquashCache } from './cache';
+import { setFailed } from '@actions/core';
+import { PackSquashOptions } from './packsquash_options';
+import { computeCacheKeys, restorePackSquashCache, savePackSquashCache } from './cache';
 import { downloadAppImage } from './appimage';
 import { printPackSquashVersion, runPackSquash } from './packsquash';
 import { uploadArtifact } from './workflow';
 import setPackFilesModificationTimesFromCommits from './git_set_file_times';
 import { getEnvOrThrow } from './util';
 import WorkingDirectory from './working_directory';
-import { getInputValue } from './action_input';
 
 async function run() {
     const runnerOs = getEnvOrThrow('RUNNER_OS');
@@ -19,35 +18,34 @@ async function run() {
     await workingDirectory.rm();
     await workingDirectory.mkdir();
 
-    const optionsFile = getInputValue('options_file');
-    const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
+    const packSquashOptions = await PackSquashOptions.parseAndTweak(workingDirectory);
+    await packSquashOptions.showAndWriteToWorkingDirectory();
 
-    if (optionsFile) {
-        info(`Using custom options file: the ${Options.OptionsFile} action parameter is set`);
-        await tweakAndCopyUserOptionsFile(optionsFile, workingDirectory);
-    } else {
-        await generateOptionsFile(workingDirectory);
+    const packDirectory = packSquashOptions.getPackDirectory();
+    if (packDirectory === undefined) {
+        // This likely common error would be caught later by PackSquash,
+        // but handling it here avoids wasting time
+        throw Error(
+            'The required pack_directory option is missing from the specified options. ' +
+                'Please specify the relative path to the folder containing the pack.mcmeta file of the pack you want to optimize.'
+        );
     }
-    await printOptionsFileContent(workingDirectory);
-
-    const packDirectory = getPackDirectory();
-    const cacheMayBeUsed = mayCacheBeUsed();
 
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
 
-    const [key, ...restoreKeys] = await computeCacheKey(workingDirectory);
-    let restoredCacheKey;
-    if (cacheMayBeUsed) {
-        restoredCacheKey = await restorePackSquashCache(workingDirectory, key, restoreKeys);
-        await setPackFilesModificationTimesFromCommits(workspace, packDirectory);
+    const [key, ...restoreKeys] = await computeCacheKeys(workingDirectory);
+    let cacheRestored = false;
+    if (packSquashOptions.mayCacheBeUsed()) {
+        cacheRestored = await restorePackSquashCache(workingDirectory, key, restoreKeys);
+        await setPackFilesModificationTimesFromCommits(getEnvOrThrow('GITHUB_WORKSPACE'), packDirectory);
     }
 
     await runPackSquash(workingDirectory);
 
     await uploadArtifact(workingDirectory);
 
-    if (cacheMayBeUsed && !restoredCacheKey) {
+    if (packSquashOptions.mayCacheBeUsed() && !cacheRestored) {
         await savePackSquashCache(workingDirectory, key);
     }
 }

@@ -77,4 +77,4 @@ jobs:
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
-          options_file: packsquash_options.toml
+          options: packsquash_options.toml

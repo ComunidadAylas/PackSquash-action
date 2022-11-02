@@ -31,4 +31,5 @@ jobs:
         uses: ./ # Uses an action in the root directory
         with:
           packsquash_version: latest
-          options_file: packsquash-options.toml
+          options: |
+            pack_directory = 'test/empty_resource_pack'

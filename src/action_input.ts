@@ -2,7 +2,7 @@ import { getBooleanInput, getInput } from '@actions/core';
 
 // Dummy object. Only the keys and the type of the property values matters
 const ActionInputsObject = {
-    options_file: 'string',
+    options: 'string',
     system_id: 'string',
     packsquash_version: 'string',
     token: 'string',
