@@ -25,7 +25,7 @@ export async function computeCacheKey(workingDirectory: WorkingDirectory) {
 export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restoreKeys: string[]) {
     startGroup('Restoring cached data');
     const restoredCacheKey = await restoreCache([workingDirectory.systemIdFile], key, restoreKeys);
-    if (restoredCacheKey || getInputValue("system_id")) {
+    if (restoredCacheKey || getInputValue('system_id')) {
         try {
             const branch = getBranchName();
             if (branch) {

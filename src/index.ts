@@ -7,6 +7,7 @@ import { uploadArtifact } from './workflow';
 import setPackFilesModificationTimesFromCommits from './git_set_file_times';
 import { getEnvOrThrow } from './util';
 import WorkingDirectory from './working_directory';
+import { getInputValue } from './action_input';
 
 async function run() {
     const runnerOs = getEnvOrThrow('RUNNER_OS');
@@ -18,7 +19,7 @@ async function run() {
     await workingDirectory.rm();
     await workingDirectory.mkdir();
 
-    const optionsFile = getInputValue("options_file");
+    const optionsFile = getInputValue('options_file');
     const workspace = getEnvOrThrow('GITHUB_WORKSPACE');
 
     if (optionsFile) {
