@@ -1,4 +1,4 @@
-import { debug, endGroup, getBooleanInput, getInput, setSecret, startGroup } from '@actions/core';
+import { debug, endGroup, setSecret, startGroup } from '@actions/core';
 import { exec } from '@actions/exec';
 import { readFile, writeFile } from 'fs/promises';
 import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
