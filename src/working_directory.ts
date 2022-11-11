@@ -29,10 +29,6 @@ class WorkingDirectory {
         return path.join(this.path, 'packsquash');
     }
 
-    get optionsFile() {
-        return path.join(this.path, 'packsquash-options.toml');
-    }
-
     get systemIdFile() {
         return path.join(this.path, 'system_id');
     }

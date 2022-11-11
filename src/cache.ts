@@ -5,9 +5,10 @@ import { downloadLatestArtifact, getCurrentWorkflowId } from './workflow';
 import { getBranchName, md5Hash } from './util';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
+import { PackSquashOptions } from './packsquash_options';
 
-export async function computeCacheKeys(workingDirectory: WorkingDirectory) {
-    const optionsHash = await md5Hash(workingDirectory.optionsFile);
+export async function computeCacheKeys(packSquashOptions: PackSquashOptions) {
+    const optionsHash = await md5Hash(packSquashOptions.stringifiedOptions);
     const cacheRevision = Buffer.from(getInputValue('action_cache_revision')).toString('base64');
     // Using different primary and restore keys is necessary to handle jobs
     // executing concurrently: if a job tries to write to a cache key that is

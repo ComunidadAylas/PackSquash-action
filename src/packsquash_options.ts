@@ -1,5 +1,5 @@
 import { endGroup, info, startGroup, warning } from '@actions/core';
-import { open, writeFile } from 'fs/promises';
+import { open } from 'fs/promises';
 import { Readable } from 'stream';
 import WorkingDirectory from './working_directory';
 import TOML from '@iarna/toml';
@@ -7,10 +7,12 @@ import { getInputValue } from './action_input';
 
 export class PackSquashOptions {
     private readonly options: TOML.JsonMap;
+    public readonly stringifiedOptions: string;
     private readonly workingDirectory: WorkingDirectory;
 
-    private constructor(options: TOML.JsonMap, workingDirectory: WorkingDirectory) {
+    private constructor(options: TOML.JsonMap, stringifiedOptions: string, workingDirectory: WorkingDirectory) {
         this.options = options;
+        this.stringifiedOptions = stringifiedOptions;
         this.workingDirectory = workingDirectory;
     }
 
@@ -40,7 +42,7 @@ export class PackSquashOptions {
             options.zip_spec_conformance_level = 'high';
         }
 
-        return new this(options, workingDirectory);
+        return new this(options, TOML.stringify(options), workingDirectory);
     }
 
     getPackDirectory() {
@@ -54,18 +56,14 @@ export class PackSquashOptions {
         return !neverStoreTimes && zipConformanceLevel != 'pedantic';
     }
 
-    async showAndWriteToWorkingDirectory() {
-        const stringifiedOptions = TOML.stringify(this.options);
-
+    show() {
         startGroup('PackSquash options');
-        stringifiedOptions
+        this.stringifiedOptions
             .trimEnd()
             .split('\n')
             .forEach((line, index) => {
                 info(`${(index + 1).toString().padEnd(6, ' ')} ${line}`);
             });
         endGroup();
-
-        await writeFile(this.workingDirectory.optionsFile, stringifiedOptions, 'utf-8');
     }
 }

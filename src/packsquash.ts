@@ -5,6 +5,7 @@ import { addProblemMatcher, removeProblemMatcher } from './problem_matcher';
 import * as uuid from 'uuid';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
+import { PackSquashOptions } from './packsquash_options';
 
 const prettyOutputEnvironment = {
     PACKSQUASH_EMOJI: getInputValue('show_emoji_in_packsquash_logs') ? 'show' : '',
@@ -31,7 +32,7 @@ export async function printPackSquashVersion(workingDirectory: WorkingDirectory)
     endGroup();
 }
 
-export async function runPackSquash(workingDirectory: WorkingDirectory) {
+export async function runPackSquash(packSquashOptions: PackSquashOptions, workingDirectory: WorkingDirectory) {
     const systemId = await getSystemId(workingDirectory);
     debug(`Using system ID: ${systemId}`);
     setSecret(systemId);
@@ -39,7 +40,8 @@ export async function runPackSquash(workingDirectory: WorkingDirectory) {
     await addProblemMatcher(workingDirectory.problemMatcherFile);
 
     startGroup('PackSquash output');
-    const exitCode = await exec(workingDirectory.packsquashBinary, [workingDirectory.optionsFile], {
+    const exitCode = await exec(workingDirectory.packsquashBinary, [], {
+        input: Buffer.from(packSquashOptions.stringifiedOptions),
         env: {
             PACKSQUASH_SYSTEM_ID: systemId,
             ...prettyOutputEnvironment,

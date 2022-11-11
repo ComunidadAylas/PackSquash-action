@@ -19,7 +19,7 @@ async function run() {
     await workingDirectory.mkdir();
 
     const packSquashOptions = await PackSquashOptions.parseAndTweak(workingDirectory);
-    await packSquashOptions.showAndWriteToWorkingDirectory();
+    await packSquashOptions.show();
 
     const packDirectory = packSquashOptions.getPackDirectory();
     if (packDirectory === undefined) {
@@ -34,14 +34,14 @@ async function run() {
     await downloadAppImage(workingDirectory);
     await printPackSquashVersion(workingDirectory);
 
-    const [key, ...restoreKeys] = await computeCacheKeys(workingDirectory);
+    const [key, ...restoreKeys] = await computeCacheKeys(packSquashOptions);
     let cacheRestored = false;
     if (packSquashOptions.mayCacheBeUsed()) {
         cacheRestored = await restorePackSquashCache(workingDirectory, key, restoreKeys);
         await setPackFilesModificationTimesFromCommits(getEnvOrThrow('GITHUB_WORKSPACE'), packDirectory);
     }
 
-    await runPackSquash(workingDirectory);
+    await runPackSquash(packSquashOptions, workingDirectory);
 
     await uploadArtifact(workingDirectory);
 
