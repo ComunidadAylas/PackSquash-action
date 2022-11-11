@@ -122,10 +122,8 @@ export function isPathWithin(descendant: string, parent: string) {
     return descendant.lastIndexOf(parent, 0) == 0 && (descendant[parent.length] === path.sep || descendant[parent.length] === undefined);
 }
 
-export async function md5Hash(filePath: string) {
+export async function md5Hash(data: string) {
     const hasher = crypto.createHash('md5');
 
-    await pipeline(createReadStream(filePath), hasher);
-
-    return hasher.digest().toString('hex');
+    return hasher.update(data).digest().toString('hex');
 }
