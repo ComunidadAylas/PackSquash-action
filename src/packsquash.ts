@@ -14,8 +14,11 @@ const prettyOutputEnvironment = {
 /// GitHub Actions runners run JavaScript actions directly on the host. For GitHub-hosted
 /// runners, this means that they run on a virtual machine, where mounting the AppImage
 /// filesystem with FUSE is not a problem. However, when running the action locally with
-/// act, a Docker container is used instead by default
-const appImageMountEnvironment: Record<string, string> = 'ACT' in process.env ? { APPIMAGE_EXTRACT_AND_RUN: '1' } : {};
+/// act, a Docker container is used instead by default. Moreover, the AppImage runtime
+/// depends on libfuse2, which is no longer included with GitHub Ubuntu 22 images.
+/// Therefore, play it safe and always extract the image, which does not require FUSE to
+/// be available
+const appImageMountEnvironment: Record<string, string> = { APPIMAGE_EXTRACT_AND_RUN: '1' };
 
 export async function printPackSquashVersion(workingDirectory: WorkingDirectory) {
     startGroup('PackSquash version');
