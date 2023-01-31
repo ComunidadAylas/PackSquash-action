@@ -24,8 +24,8 @@
   "devDependencies": {
     "@types/unzipper": "0.10.5",
     "@types/uuid": "9.0.0",
-    "@typescript-eslint/eslint-plugin": "5.49.0",
-    "@typescript-eslint/parser": "5.49.0",
+    "@typescript-eslint/eslint-plugin": "5.50.0",
+    "@typescript-eslint/parser": "5.50.0",
     "@vercel/ncc": "0.36.1",
     "eslint": "8.33.0",
     "eslint-config-prettier": "8.6.0",
@@ -39,7 +39,7 @@
     "@actions/exec": "1.1.1",
     "@actions/github": "5.1.1",
     "@actions/http-client": "2.0.1",
-    "@iarna/toml": "2.2.5",
+    "@iarna/toml": "3.0.0",
     "unzipper": "0.10.11",
     "uuid": "9.0.0"
   }
