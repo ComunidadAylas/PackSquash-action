@@ -30,7 +30,8 @@
     "eslint": "8.36.0",
     "eslint-config-prettier": "8.7.0",
     "prettier": "2.8.4",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "all-contributors-cli": "6.24.0"
   },
   "dependencies": {
     "@actions/artifact": "1.1.1",
