@@ -13,7 +13,7 @@ const ActionInputsObject = {
 };
 
 export type ActionInputIdentifier = keyof typeof ActionInputsObject;
-type ActionInputValue<T extends ActionInputIdentifier> = typeof ActionInputsObject[T];
+type ActionInputValue<T extends ActionInputIdentifier> = (typeof ActionInputsObject)[T];
 
 export function getInputValue<T extends ActionInputIdentifier>(input: T): ActionInputValue<T> {
     switch (typeof ActionInputsObject[input]) {
