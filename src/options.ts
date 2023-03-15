@@ -169,7 +169,7 @@ function getOptionsFileContent(workingDirectory: WorkingDirectory) {
                     maximum_width_and_height: getIntegerInput(Options.MaximumImageWidthAndHeight),
                     skip_alpha_optimizations: getBooleanInput(Options.SkipImageAlphaOptimizations)
                 },
-                '**/*.{fsh,vsh}': {
+                '**/*.{fsh,vsh,glsl}': {
                     minify_shader: getBooleanInput(Options.MinifyShaders)
                 },
                 '**/*.lang': {

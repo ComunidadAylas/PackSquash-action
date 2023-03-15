@@ -55,7 +55,7 @@ jobs:
             maximum_width_and_height = 4096
             skip_alpha_optimizations = true
 
-            ['**/*.{fsh,vsh}']
+            ['**/*.{fsh,vsh,glsl}']
             minify_shader = false
 
             ['**/*.lang']
