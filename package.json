@@ -1,6 +1,6 @@
 {
   "name": "packsquash-action",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
     "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
