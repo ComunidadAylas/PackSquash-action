@@ -17,9 +17,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Only run if this is not a pull request, or for pull requests on forks
-    if: github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name != 'ComunidadAylas/PackSquash-action'
+    # Exclude in-repo PRs from running this job
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
     steps:
       - name: Clone repository
