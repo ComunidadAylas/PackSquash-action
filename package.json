@@ -9,7 +9,8 @@
     "format-check": "prettier --check .",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
     "test:pack-in-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml",
-    "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml"
+    "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -27,11 +28,12 @@
     "@typescript-eslint/eslint-plugin": "5.57.0",
     "@typescript-eslint/parser": "5.57.0",
     "@vercel/ncc": "0.36.1",
+    "all-contributors-cli": "6.24.0",
     "eslint": "8.37.0",
     "eslint-config-prettier": "8.8.0",
+    "husky": "8.0.3",
     "prettier": "2.8.7",
-    "typescript": "5.0.2",
-    "all-contributors-cli": "6.24.0"
+    "typescript": "5.0.2"
   },
   "dependencies": {
     "@actions/artifact": "1.1.1",
