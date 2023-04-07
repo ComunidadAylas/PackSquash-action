@@ -4,7 +4,7 @@
 <a href="#"><img alt="Latest version" src="https://img.shields.io/github/v/release/ComunidadAylas/PackSquash-action?label=Latest%20version"></a>
 <a href="https://github.com/ComunidadAylas/PackSquash/releases/tag/v0.3.1"><img alt="Uses PackSquash version" src="https://img.shields.io/badge/Uses%20PackSquash%20version-v0.3.1-red"></a>
 
-Official action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
+Action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
 </div>
 
 ## ⚙️ Usage examples
