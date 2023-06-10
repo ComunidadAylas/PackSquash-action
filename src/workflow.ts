@@ -1,15 +1,13 @@
 import { debug, endGroup, info, startGroup } from '@actions/core';
 import { create } from '@actions/artifact';
-import { getOctokit } from '@actions/github';
-import { createWriteStream } from 'fs';
-import { rm } from 'fs/promises';
-import unzipper from 'unzipper';
-import { downloadFile } from './util';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
+import octokit from './octokit';
+import { HttpClient } from '@actions/http-client';
+import { pipeline } from 'node:stream/promises';
+import { extractFirstFileFromZip } from './util';
 
 export async function getCurrentWorkflowId(owner: string, repo: string, workflow: string) {
-    const octokit = getOctokit(getInputValue('token'));
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows', {
         owner: owner,
         repo: repo
@@ -36,8 +34,6 @@ export async function uploadArtifact(workingDirectory: WorkingDirectory) {
 export async function downloadLatestArtifact(workingDirectory: WorkingDirectory, owner: string, repo: string, branch: string, workflowId: number, artifactName: string, destinationPath: string) {
     info(`Downloading latest ${artifactName} artifact`);
 
-    const octokit = getOctokit(getInputValue('token'));
-
     debug(`Getting latest run information for ${artifactName} artifact (repository: ${owner}/${repo}, branch: ${branch}, workflow ID: ${workflowId})`);
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/runs', {
         owner: owner,
@@ -61,26 +57,19 @@ export async function downloadLatestArtifact(workingDirectory: WorkingDirectory,
         throw new Error(`Could not get the latest ${artifactName} artifact data (#${latestRun.run_number})`);
     }
 
-    const zip = await octokit.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}', {
+    const zip = await octokit.request('GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/zip', {
         owner: owner,
         repo: repo,
-        artifact_id: artifact.id,
-        archive_format: 'zip'
+        artifact_id: artifact.id
     });
 
     debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
-    await downloadFile(zip.url, workingDirectory.artifactFile).catch(() => {
+    try {
+        await pipeline((await new HttpClient().get(zip.url)).message, workingDirectory.temporaryDownloadFileWriteStream);
+    } catch {
         throw new Error(`Could not download the latest ${artifactName} artifact`);
-    });
-    await extractFile(workingDirectory.artifactFile, destinationPath);
-    await rm(workingDirectory.artifactFile);
+    }
+    await extractFirstFileFromZip(workingDirectory.temporaryDownloadFile, destinationPath);
 
     info(`Successfully downloaded the latest ${artifactName} artifact`);
-}
-
-async function extractFile(zip: string, path: string) {
-    const directory = await unzipper.Open.file(zip);
-    return new Promise((resolve, reject) => {
-        directory.files[0].stream().pipe(createWriteStream(path)).on('error', reject).on('finish', resolve);
-    });
 }

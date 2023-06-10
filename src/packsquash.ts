@@ -12,27 +12,18 @@ const prettyOutputEnvironment = {
     PACKSQUASH_COLOR: getInputValue('enable_color_in_packsquash_logs') ? 'show' : ''
 };
 
-/// GitHub Actions runners run JavaScript actions directly on the host. For GitHub-hosted
-/// runners, this means that they run on a virtual machine, where mounting the AppImage
-/// filesystem with FUSE is not a problem. However, when running the action locally with
-/// act, a Docker container is used instead by default. Moreover, the AppImage runtime
-/// depends on libfuse2, which is no longer included with GitHub Ubuntu 22 images.
-/// Therefore, play it safe and always extract the image, which does not require FUSE to
-/// be available
-const appImageMountEnvironment: Record<string, string> = { APPIMAGE_EXTRACT_AND_RUN: '1' };
-
-export async function printPackSquashVersion(workingDirectory: WorkingDirectory) {
+export async function printPackSquashVersion(environment: Record<string, string>, workingDirectory: WorkingDirectory) {
     startGroup('PackSquash version');
     await exec(workingDirectory.packsquashBinary, ['--version'], {
         env: {
             ...prettyOutputEnvironment,
-            ...appImageMountEnvironment
+            ...environment
         }
     });
     endGroup();
 }
 
-export async function runPackSquash(packSquashOptions: PackSquashOptions, workingDirectory: WorkingDirectory) {
+export async function runPackSquash(packSquashOptions: PackSquashOptions, environment: Record<string, string>, workingDirectory: WorkingDirectory) {
     const systemId = await getSystemId(workingDirectory);
     debug(`Using system ID: ${systemId}`);
     setSecret(systemId);
@@ -45,7 +36,7 @@ export async function runPackSquash(packSquashOptions: PackSquashOptions, workin
         env: {
             PACKSQUASH_SYSTEM_ID: systemId,
             ...prettyOutputEnvironment,
-            ...appImageMountEnvironment
+            ...environment
         }
     });
     endGroup();

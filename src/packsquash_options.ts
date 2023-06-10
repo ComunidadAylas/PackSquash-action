@@ -22,8 +22,8 @@ export class PackSquashOptions {
         let optionsStream: NodeJS.ReadableStream;
         try {
             optionsStream = (await open(optionsInputValue)).createReadStream();
-        } catch (e) {
-            info(`The specified PackSquash options string could not be opened as a file: ${e}. Treating it as a TOML string instead`);
+        } catch (err) {
+            info(`The specified PackSquash options string could not be opened as a file. Treating it as a TOML string instead`);
             optionsStream = Readable.from([optionsInputValue]);
         }
 

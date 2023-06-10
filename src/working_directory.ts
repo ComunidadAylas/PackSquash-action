@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { mkdir, rm } from 'fs/promises';
 import { getEnvOrThrow } from './util';
+import { createWriteStream } from 'fs';
 
 /**
  * Represents the PackSquash working directory, where any files necessary for
@@ -37,8 +38,12 @@ class WorkingDirectory {
         return path.join(this.path, 'pack.zip');
     }
 
-    get artifactFile() {
-        return path.join(this.path, 'artifact.zip');
+    get temporaryDownloadFile() {
+        return path.join(this.path, 'download');
+    }
+
+    get temporaryDownloadFileWriteStream() {
+        return createWriteStream(this.temporaryDownloadFile);
     }
 
     get problemMatcherFile() {
