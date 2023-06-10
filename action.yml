@@ -12,8 +12,7 @@ inputs:
     default: ''
   packsquash_version:
     description: 'The PackSquash version the action will use. Please note that too old or too new versions may be incompatible with or not properly supported by the action.'
-    required: false
-    default: 'latest'
+    required: true
   token:
     description: 'The GitHub API authentication token that will be used for operations that may require authentication.'
     required: false

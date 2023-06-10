@@ -27,5 +27,6 @@ jobs:
       - name: Run PackSquash
         uses: ./action-checkout
         with:
+          packsquash_version: latest
           options: |
             pack_directory = 'Programmer-Art-Plus'

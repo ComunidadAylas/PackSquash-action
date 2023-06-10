@@ -21,6 +21,7 @@ jobs:
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
+          packsquash_version: latest
           system_id: c5eb0603-093c-41fd-9c21-88c34a429e3b
           action_cache_revision: system_id # Ignoring cache by other jobs
           options: |

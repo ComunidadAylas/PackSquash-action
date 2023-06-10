@@ -20,12 +20,14 @@ jobs:
       - name: Run PackSquash
         uses: ./ # Uses an action in the root directory
         with:
+          packsquash_version: latest
           artifact_name: 'Optimized pack 1'
           options: |
             pack_directory = 'test/empty_resource_pack'
       - name: Run PackSquash
         uses: ./
         with:
+          packsquash_version: latest
           artifact_name: 'Optimized pack 2'
           options: |
             pack_directory = 'test/empty_resource_pack'
