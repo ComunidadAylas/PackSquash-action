@@ -296,8 +296,8 @@ fabric.properties
 
 .idea/*
 
-!.idea/codeStyles
-!.idea/runConfigurations
+#!.idea/codeStyles
+#!.idea/runConfigurations
 
 ### VisualStudioCode ###
 .vscode/*
