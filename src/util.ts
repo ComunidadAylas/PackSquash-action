@@ -1,7 +1,7 @@
 import { getExecOutput } from '@actions/exec';
 import { debug } from '@actions/core';
 import { HttpClient } from '@actions/http-client';
-import { createReadStream, createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import { promisify } from 'util';
 import * as stream from 'stream';
 import * as path from 'path';
