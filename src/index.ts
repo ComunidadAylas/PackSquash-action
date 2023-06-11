@@ -23,7 +23,7 @@ async function run() {
         // but handling it here avoids wasting time
         throw new Error(
             'The required pack_directory option is missing from the specified options. ' +
-                'Please specify the relative path to the folder containing the pack.mcmeta file of the pack you want to optimize.'
+                'Please specify the relative path to the folder containing the pack.mcmeta file of the pack you want to optimize'
         );
     }
 

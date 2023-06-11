@@ -97,6 +97,10 @@ export class PackSquashBinaryManifest {
     /// - `latest-unstable`: fetches the latest unstable build.
     /// - Commit hash: fetches the unstable build generated for the specified mainline commit hash.
     public async download(version: string, workingDirectory: WorkingDirectory) {
+        if (!version) {
+            throw new Error('The PackSquash version was not specified in the action inputs, but it is required');
+        }
+
         debug(`Downloading PackSquash, version: ${version}`);
 
         let manifest;

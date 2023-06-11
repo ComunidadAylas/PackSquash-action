@@ -21,7 +21,7 @@ export async function ensureRepositoryIsNotShallow(workspace: string) {
     });
 
     if (gitOut.stdout === 'true\n') {
-        throw Error('The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0.');
+        throw Error('The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0');
     }
 }
 
@@ -42,7 +42,7 @@ export async function getSubmodules(workspace: string): Promise<string[]> {
     } catch (error) {
         throw Error(
             `Could not get information about the repository: ${error}. Has the repository been checked out? ` +
-                `If you don't want to check it out, disable caching by setting the never_store_squash_times option to true.`
+                `If you don't want to check it out, disable caching by setting the never_store_squash_times option to true`
         );
     }
 }
