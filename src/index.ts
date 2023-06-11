@@ -35,13 +35,13 @@ async function run() {
     const [key, ...restoreKeys] = await computeCacheKeys(packSquashOptions);
     let cacheRestored = false;
     if (packSquashOptions.mayCacheBeUsed()) {
-        cacheRestored = await restorePackSquashCache(workingDirectory, key, restoreKeys);
+        cacheRestored = await restorePackSquashCache(workingDirectory, packSquashOptions, key, restoreKeys);
         await setPackFilesModificationTimesFromCommits(getEnvOrThrow('GITHUB_WORKSPACE'), packDirectory);
     }
 
     await runPackSquash(packSquashOptions, binaryEnvironment, workingDirectory);
 
-    await uploadArtifact(workingDirectory);
+    await uploadArtifact(packSquashOptions);
 
     if (packSquashOptions.mayCacheBeUsed() && !cacheRestored) {
         await savePackSquashCache(workingDirectory, key);

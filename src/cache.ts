@@ -23,7 +23,7 @@ export async function computeCacheKeys(packSquashOptions: PackSquashOptions) {
  * artifact if needed, and if this workflow has been run at least once
  * @returns Whether the pack ZIP from the previous artifact was restored or not
  */
-export async function restorePackSquashCache(workingDirectory: WorkingDirectory, key: string, restoreKeys: string[]) {
+export async function restorePackSquashCache(workingDirectory: WorkingDirectory, packSquashOptions: PackSquashOptions, key: string, restoreKeys: string[]) {
     startGroup('Restoring cached data');
 
     let cacheRestored: boolean;
@@ -42,7 +42,7 @@ export async function restorePackSquashCache(workingDirectory: WorkingDirectory,
                 const owner = context.repo.owner;
                 const repo = context.repo.repo;
                 const workflowId = await getCurrentWorkflowId(owner, repo, context.workflow);
-                await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInputValue('artifact_name'), workingDirectory.outputFile);
+                await downloadLatestArtifact(workingDirectory, owner, repo, branch, workflowId, getInputValue('artifact_name'), packSquashOptions.getOutputFilePath());
             } else {
                 info('Caching is unavailable for workflows triggered by tag events');
             }

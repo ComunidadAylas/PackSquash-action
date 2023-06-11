@@ -21,6 +21,7 @@ jobs:
         run: |
           cat <<'OPTIONS_FILE' > packsquash_options.toml
             pack_directory = 'test/empty_resource_pack'
+            output_file_path = 'pack.zip'
             skip_pack_icon = true
             validate_pack_metadata_file = false
             recompress_compressed_files = true

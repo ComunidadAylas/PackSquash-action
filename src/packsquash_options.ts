@@ -1,4 +1,4 @@
-import { endGroup, info, startGroup, warning } from '@actions/core';
+import { endGroup, info, startGroup } from '@actions/core';
 import { open } from 'fs/promises';
 import { Readable } from 'stream';
 import WorkingDirectory from './working_directory';
@@ -29,12 +29,8 @@ export class PackSquashOptions {
 
         const options = await TOML.parse.stream(optionsStream);
 
-        // This path is an implementation detail of the action. We should always set
-        // it, overriding any user preferences
-        if ('output_file_path' in options) {
-            warning('The options set a value for output_file_path, but it will be ignored by the action. Please remove it');
-        }
-        options.output_file_path = workingDirectory.outputFile;
+        // If no output file path was specified, set a default one
+        options.output_file_path = options.output_file_path ?? workingDirectory.defaultOutputFile;
 
         // Use a different default for the ZIP spec conformance level option that is
         // more amenable to continuous integration
@@ -47,6 +43,10 @@ export class PackSquashOptions {
 
     getPackDirectory() {
         return typeof this.options.pack_directory == 'string' ? this.options.pack_directory : undefined;
+    }
+
+    getOutputFilePath() {
+        return this.options.output_file_path as string;
     }
 
     mayCacheBeUsed() {

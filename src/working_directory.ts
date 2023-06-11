@@ -34,7 +34,7 @@ class WorkingDirectory {
         return path.join(this.path, 'system_id');
     }
 
-    get outputFile() {
+    get defaultOutputFile() {
         return path.join(this.path, 'pack.zip');
     }
 

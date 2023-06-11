@@ -6,6 +6,8 @@ import octokit from './octokit';
 import { HttpClient } from '@actions/http-client';
 import { pipeline } from 'node:stream/promises';
 import { extractFirstFileFromZip } from './util';
+import { PackSquashOptions } from './packsquash_options';
+import { dirname } from 'path';
 
 export async function getCurrentWorkflowId(owner: string, repo: string, workflow: string) {
     const workflows = await octokit.request('GET /repos/{owner}/{repo}/actions/workflows', {
@@ -16,14 +18,15 @@ export async function getCurrentWorkflowId(owner: string, repo: string, workflow
     return workflows.data.workflows.find(w => w.name === workflow)!.id;
 }
 
-export async function uploadArtifact(workingDirectory: WorkingDirectory) {
+export async function uploadArtifact(packSquashOptions: PackSquashOptions) {
     if ('ACT' in process.env) {
         debug('Local act test environment detected. Skipping artifact upload');
         return;
     }
 
     startGroup('Upload generated ZIP file as artifact');
-    const response = await create().uploadArtifact(getInputValue('artifact_name'), [workingDirectory.outputFile], workingDirectory.path);
+    const outputFilePath = packSquashOptions.getOutputFilePath();
+    const response = await create().uploadArtifact(getInputValue('artifact_name'), [outputFilePath], dirname(outputFilePath));
     endGroup();
 
     if (response.artifactItems.length === 0 || response.failedItems.length > 0) {
