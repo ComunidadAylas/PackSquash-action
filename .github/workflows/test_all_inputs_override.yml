@@ -29,3 +29,4 @@ jobs:
           action_cache_revision: 3 # <- (empty)
           options: |
             pack_directory = 'test/empty_resource_pack'
+            output_file_path = '${{ env.RUNNER_TEMP }}/pack.zip'
