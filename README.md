@@ -125,12 +125,12 @@ jobs:
 
             # Set a custom output file path to work with the generated ZIP file
             # without needing to download its artifact in a separate step
-            output_file_path = '${{ env.RUNNER_TEMP }}/pack.zip'
+            output_file_path = '/tmp/pack.zip'
       - name: Tag and create release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: action-v${{ github.run_number }}
-          files: ${{ env.RUNNER_TEMP }}/pack.zip
+          files: /tmp/pack.zip
 ```
 
 #### Workflow file (every tag push): `.github/workflows/packsquash.yml`
@@ -158,11 +158,11 @@ jobs:
           packsquash_version: latest
           options: |
             pack_directory = '.'
-            output_file_path = '${{ env.RUNNER_TEMP }}/pack.zip'
+            output_file_path = '/tmp/pack.zip'
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.RUNNER_TEMP }}/pack.zip
+          files: /tmp/pack.zip
 ```
 
 ### Advanced: automatic release deployment via SSH
