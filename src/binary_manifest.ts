@@ -236,6 +236,8 @@ export class PackSquashBinaryManifest {
                     })
                 ).url;
 
+                debug(`Downloading run artifact from ${artifactArchiveUrl}`);
+
                 await pipeline((await httpClient.get(artifactArchiveUrl)).message, workingDirectory.temporaryDownloadFileWriteStream);
 
                 break;
@@ -243,9 +245,13 @@ export class PackSquashBinaryManifest {
 
         try {
             await extractFirstFileFromZip(workingDirectory.temporaryDownloadFile, workingDirectory.packsquashBinary);
+
+            debug(`Extracted binary from downloaded file`);
         } catch {
             // Assume that the downloaded file is not a ZIP, i.e. a binary we can run directly
             await rename(workingDirectory.temporaryDownloadFile, workingDirectory.packsquashBinary);
+
+            debug(`Downloaded binary`);
         }
 
         await chmod(workingDirectory.packsquashBinary, '500');
@@ -290,8 +296,6 @@ interface ApplicabilityPeriod {
 }
 
 function resolve(string: PlatformSpecificString) {
-    debug(`Resolving platform-specific string: ${JSON.stringify(string)}`);
-
     const os = getEnvOrThrow('RUNNER_OS');
     const arch = getEnvOrThrow('RUNNER_ARCH');
 
@@ -299,6 +303,8 @@ function resolve(string: PlatformSpecificString) {
     if (resolvedString === undefined) {
         throw new Error(`The specified PackSquash version can't be run on a ${os} ${arch} runner. Please switch to a runner on a supported OS and architecture, or request support for it`);
     }
+
+    debug(`Resolved platform-specific string ${JSON.stringify(string)} to ${resolvedString}`);
 
     return resolvedString;
 }

@@ -13,9 +13,11 @@ import { createWriteStream } from 'fs';
  */
 class WorkingDirectory {
     path: string;
+    binaryExtension: string;
 
     constructor() {
         this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), 'packsquash');
+        this.binaryExtension = getEnvOrThrow('RUNNER_OS') == 'Windows' ? '.exe' : '';
     }
 
     async rm() {
@@ -27,7 +29,7 @@ class WorkingDirectory {
     }
 
     get packsquashBinary() {
-        return path.join(this.path, 'packsquash');
+        return path.join(this.path, `packsquash${this.binaryExtension}`);
     }
 
     get systemIdFile() {
