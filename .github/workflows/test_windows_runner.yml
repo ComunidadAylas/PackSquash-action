@@ -1,0 +1,26 @@
+name: Test - Windows runner
+on:
+  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: windows-latest
+
+    # Exclude in-repo PRs from running this job
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run PackSquash
+        uses: ./ # Uses an action in the root directory
+        with:
+          packsquash_version: latest-unstable
+          options: |
+            pack_directory = 'test/empty_resource_pack'
