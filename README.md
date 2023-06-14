@@ -2,6 +2,7 @@
 <h1>PackSquash-action</h1>
 
 <a href="#"><img alt="Latest version" src="https://img.shields.io/github/v/release/ComunidadAylas/PackSquash-action?label=Latest%20version"></a>
+<a href="https://github.com/ComunidadAylas/PackSquash-action/actions/workflows/build.yml"><img alt="CI status" src="https://github.com/ComunidadAylas/PackSquash-action/actions/workflows/build.yml/badge.svg"></a>
 
 Action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
 </div>
