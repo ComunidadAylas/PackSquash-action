@@ -4,18 +4,36 @@
 <a href="#"><img alt="Latest version" src="https://img.shields.io/github/v/release/ComunidadAylas/PackSquash-action?label=Latest%20version"></a>
 <a href="https://github.com/ComunidadAylas/PackSquash-action/actions/workflows/build.yml"><img alt="CI status" src="https://github.com/ComunidadAylas/PackSquash-action/actions/workflows/build.yml/badge.svg"></a>
 
-Action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which allows it to better integrate in continuous integration processes.
+Action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a
+Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which
+allows it to better integrate in continuous integration processes.
 </div>
 
 ## ⚙️ Usage examples
 
-This section contains some example GitHub Actions workflow files that leverage this action to achieve typical continuous integration tasks.
+This section contains some example GitHub Actions workflow files that leverage
+this action to achieve typical continuous integration tasks.
 
-The action accepts many input parameters under the `with` key. Most are optional, but you might want to set them to customize the behavior of the action. These examples cover only the most salient parameters, so head over to the [input parameters](#-input-parameters) section if you want to know more about them.
+The action accepts many input parameters under the `with` key. Most are
+optional, but you might want to set them to customize the behavior of the
+action. These examples cover only the most salient parameters, so head over to
+the [input parameters](#-input-parameters) section if you want to know more
+about them.
 
 ### Optimize each commit to an artifact
 
-This workflow will execute PackSquash for each push to the repository, generating an [artifact](https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts) with the optimized pack for each change. The workflow expects the pack to be in the repository root. The generated artifact can be downloaded by users with read access to the repository [via the GitHub web UI or CLI](https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts). It can also be downloaded in other steps or workflows using the [`actions/download-artifact`](https://github.com/marketplace/actions/download-a-build-artifact) or [`dawidd6/action-download-artifact`](https://github.com/marketplace/actions/download-workflow-artifact) actions.
+This workflow will execute PackSquash for each push to the repository,
+generating an
+[artifact](https://docs.github.com/en/actions/using-workflows/storing-workflow-data-as-artifacts)
+with the optimized pack for each change. The workflow expects the pack to be in
+the repository root. The generated artifact can be downloaded by users with read
+access to the repository [via the GitHub web UI or
+CLI](https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts).
+It can also be downloaded in other steps or workflows using the
+[`actions/download-artifact`](https://github.com/marketplace/actions/download-a-build-artifact)
+or
+[`dawidd6/action-download-artifact`](https://github.com/marketplace/actions/download-workflow-artifact)
+actions.
 
 #### File tree
 
@@ -51,9 +69,17 @@ jobs:
 
 ### Optimize each commit to an artifact, but changing the pack directory
 
-In some cases, the directory where the pack is located is not the same as repository root. You can specify a directory other than the repository root by changing the `options` input parameter, which can be a path to a TOML file or an inline TOML string containing the options to pass to the PackSquash command-line application. These options follow the same format as the options files used by the PackSquash application, which are documented [here](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files).
+In some cases, the directory where the pack is located is not the same as
+repository root. You can specify a directory other than the repository root by
+changing the `options` input parameter, which can be a path to a TOML file or an
+inline TOML string containing the options to pass to the PackSquash command-line
+application. These options follow the same format as the options files used by
+the PackSquash application, which are documented
+[here](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files).
 
-Changing the pack directory is handy for repositories that contain multiple packs, or for isolating the pack from the rest of the repository to prevent miscellaneous files from being considered as pack files by PackSquash.
+Changing the pack directory is handy for repositories that contain multiple
+packs, or for isolating the pack from the rest of the repository to prevent
+miscellaneous files from being considered as pack files by PackSquash.
 
 #### File tree
 
@@ -97,11 +123,13 @@ jobs:
 
 ### Optimize to an artifact and create a release
 
-The previous examples can easily be expanded to create releases automatically by downloading the generated artifact and uploading it again as a release.
+The previous examples can easily be expanded to create releases automatically by
+downloading the generated artifact and uploading it again as a release.
 
 #### Workflow file (every push): `.github/workflows/packsquash.yml`
 
-This workflow creates a new tag and release named `action-v{number}` for every push event, which is triggered by commits and other tags.
+This workflow creates a new tag and release named `action-v{number}` for every
+push event, which is triggered by commits and other tags.
 
 ```yaml
 name: Optimize resource pack
@@ -136,7 +164,8 @@ jobs:
 
 #### Workflow file (every tag push): `.github/workflows/packsquash.yml`
 
-This workflow creates a new release whenever a tag is pushed. The release will have the same name as the tag.
+This workflow creates a new release whenever a tag is pushed. The release will
+have the same name as the tag.
 
 ```yaml
 name: Optimize resource pack
@@ -168,13 +197,26 @@ jobs:
 
 ### Advanced: automatic release deployment via SSH
 
-When developing in private repositories it is not possible for vanilla Minecraft clients to download resource packs from release artifacts, as they lack the required authentication credentials. A common solution is to upload releases to an external web server directly from a GitHub Actions workflow via SSH.
+When developing in private repositories it is not possible for vanilla Minecraft
+clients to download resource packs from release artifacts, as they lack the
+required authentication credentials. A common solution is to upload releases to
+an external web server directly from a GitHub Actions workflow via SSH.
 
-> **Warning**: **keep in mind that just uploading files to the web server might not be enough to make players download the new version the next time they connect**. The Minecraft server should be configured with the appropriate resource pack ZIP file URL and hash each time the pack is updated. Otherwise, clients will receive stale information and may decide to use the copy they have downloaded already. This example omits that part on purpose because the precise way of doing it (running plugin commands via RCON, modifying the `server.properties` file and restarting the server, etc.) is environment-specific.
+> **Warning**: **keep in mind that just uploading files to the web server might
+> not be enough to make players download the new version the next time they
+> connect**. The Minecraft server should be configured with the appropriate
+> resource pack ZIP file URL and hash each time the pack is updated. Otherwise,
+> clients will receive stale information and may decide to use the copy they
+> have downloaded already. This example omits that part on purpose because the
+> precise way of doing it (running plugin commands via RCON, modifying the
+> `server.properties` file and restarting the server, etc.) is
+> environment-specific.
 
 #### Secrets
 
-This example workflow uses the following [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets), which can be set in the repository settings.
+This example workflow uses the following
+[secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets),
+which can be set in the repository settings.
 
 | Name | Description |
 |---|---|
@@ -218,10 +260,20 @@ jobs:
 
 ## 📄 Template repositories
 
-Some users are creating [template repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) with this action, making it very easy to get up and running with the development of your very own pack. We have curated a list of handy repository templates below, but feel free to send pull requests to add new reusable templates here!
+Some users are creating [template
+repositories](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)
+with this action, making it very easy to get up and running with the development
+of your very own pack. We have curated a list of handy repository templates
+below, but feel free to send pull requests to add new reusable templates here!
 
-- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate) (in Japanese): a template repository for Minecraft resource packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact, and a release is made when a new tag is pushed.
-- [`osfanbuff63/minecraft-datapack`](https://github.com/osfanbuff63/minecraft-datapack): a template repository for vanilla Minecraft data packs that uses PackSquash to bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact. No releases or deployments are made.
+- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate)
+  (in Japanese): a template repository for Minecraft resource packs that uses
+  PackSquash to bundle them in optimized ZIP files. Each commit is optimized to
+  a ZIP artifact, and a release is made when a new tag is pushed.
+- [`osfanbuff63/minecraft-datapack`](https://github.com/osfanbuff63/minecraft-datapack):
+  a template repository for vanilla Minecraft data packs that uses PackSquash to
+  bundle them in optimized ZIP files. Each commit is optimized to a ZIP
+  artifact. No releases or deployments are made.
 
 ## 📝 Input parameters
 
@@ -229,7 +281,8 @@ The input parameters accepted by the action are documented below.
 
 ### Basic parameters
 
-These parameters enable essential tuning of the options passed to PackSquash and the behavior of the action.
+These parameters enable essential tuning of the options passed to PackSquash and
+the behavior of the action.
 
 #### `packsquash_version`
 
@@ -239,12 +292,26 @@ None (**required**)
 
 **Description**
 
-The PackSquash version that the action will use. Please note that too old or too new versions may be incompatible or fully supported by the action. There are four types of versions that can be specified:
+The PackSquash version that the action will use. Please note that too old or too
+new versions may be incompatible or fully supported by the action. There are
+four types of versions that can be specified:
 
-- **`vXXX`**, where `XXX` is a PackSquash release version, such as `0.4.0` or `0.3.1`.
-- **`latest`**, which refers to the latest PackSquash release version. This version will change over time as new PackSquash releases are published. Different PackSquash version may use distinct options, so if you use custom options it may be necessary to change them when new PackSquash releases come out.
-- **`latest-unstable`**, which refers to the latest unstable PackSquash build, automatically generated by CI from the source code on the `master` branch in the PackSquash repository. As with `latest`, please note that this version varies over time.
-- **The full SHA hash of a commit on the `master` branch of the PackSquash repository**. This references the unstable build generated by CI for the specified source code commit. Please bear in mind that GitHub retains unstable build artifacts for a limited time, so too old commits may no longer have their associated build available.
+- **`vXXX`**, where `XXX` is a PackSquash release version, such as `0.4.0` or
+  `0.3.1`.
+- **`latest`**, which refers to the latest PackSquash release version. This
+  version will change over time as new PackSquash releases are published.
+  Different PackSquash version may use distinct options, so if you use custom
+  options it may be necessary to change them when new PackSquash releases come
+  out.
+- **`latest-unstable`**, which refers to the latest unstable PackSquash build,
+  automatically generated by CI from the source code on the `master` branch in
+  the PackSquash repository. As with `latest`, please note that this version
+  varies over time.
+- **The full SHA hash of a commit on the `master` branch of the PackSquash
+  repository**. This references the unstable build generated by CI for the
+  specified source code commit. Please bear in mind that GitHub retains unstable
+  build artifacts for a limited time, so too old commits may no longer have
+  their associated build available.
 
 #### `options`
 
@@ -254,7 +321,9 @@ The PackSquash version that the action will use. Please note that too old or too
 
 **Description**
 
-The options to pass to PackSquash, either as a file path or as a TOML string. Relative paths are interpreted from the repository root. If not specified, PackSquash will optimize a pack in the repository root with the default options.
+The options to pass to PackSquash, either as a file path or as a TOML string.
+Relative paths are interpreted from the repository root. If not specified,
+PackSquash will optimize a pack in the repository root with the default options.
 
 #### `token`
 
@@ -264,7 +333,13 @@ The options to pass to PackSquash, either as a file path or as a TOML string. Re
 
 **Description**
 
-The GitHub API authentication token that will be used for operations that may require authentication. Documentation about the default token is available [here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow). By default, the [GitHub-generated `GITHUB_TOKEN` secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret) is used, which is suitable for use in most scenarios, including private repositories.
+The GitHub API authentication token that will be used for operations that may
+require authentication. Documentation about the default token is available
+[here](https://docs.github.com/en/actions/reference/authentication-in-a-workflow).
+By default, the [GitHub-generated `GITHUB_TOKEN`
+secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflow#about-the-github_token-secret)
+is used, which is suitable for use in most scenarios, including private
+repositories.
 
 #### `artifact_name`
 
@@ -274,7 +349,10 @@ The GitHub API authentication token that will be used for operations that may re
 
 **Description**
 
-The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times.
+The name of the workflow artifact containing the generated ZIP file that the
+action will upload. Later steps in the workflow will be able to download it by
+this name. Changing this may be needed in complex workflows, where the action
+runs several times.
 
 #### `show_emoji_in_packsquash_logs`
 
@@ -284,7 +362,9 @@ The name of the workflow artifact containing the generated ZIP file that the act
 
 **Description**
 
-If `true`, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead.
+If `true`, the action will instruct PackSquash to use emojis in the logs it
+generates, which look prettier. Otherwise, plain ASCII decoration characters
+will be used instead.
 
 #### `enable_color_in_packsquash_logs`
 
@@ -294,11 +374,14 @@ If `true`, the action will instruct PackSquash to use emojis in the logs it gene
 
 **Description**
 
-If `true`, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored.
+If `true`, the action will instruct PackSquash to color the log messages it
+generates, which looks prettier. Otherwise, the messages will not be colored.
 
 ### Advanced action parameters
 
-This action also supports additional parameters that might be useful for more specific use cases. It shouldn't be necessary to set them for most circumstances, though.
+This action also supports additional parameters that might be useful for more
+specific use cases. It shouldn't be necessary to set them for most
+circumstances, though.
 
 #### `system_id`
 
@@ -308,7 +391,10 @@ Automatically generated
 
 **Description**
 
-The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what you are doing, it is recommended to leave this parameter unset, as doing so will let the action generate and use a suitable system identifier automatically.
+The system identifier PackSquash will use to generate cryptographic secrets.
+Unless you know what you are doing, it is recommended to leave this parameter
+unset, as doing so will let the action generate and use a suitable system
+identifier automatically.
 
 #### `action_cache_revision`
 
@@ -318,19 +404,35 @@ The system identifier PackSquash will use to generate cryptographic secrets. Unl
 
 **Description**
 
-The revision of the cache the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage `system_id` yourself.
+The revision of the cache the action uses internally. You should only need to
+change this revision if you want the action to not reuse any cached information,
+like the system identifier, or want to isolate jobs from each other due to
+undesired interferences between them. This will render any previously generated
+ZIP file unusable for speed optimizations unless you manage `system_id`
+yourself.
 
 ## 🔒 Security
 
-This action may store in a cache the encryption key needed to read file modification times from the ZIP files PackSquash generates. Therefore, such encryption key can be exposed to anyone that has access to the repository. However, this is not a concern in practical scenarios, because the file modification times are generated from the commit history, so having access to the repository already provides this information. If for some reason you do not want this behavior, you can set `never_store_squash_times` to `true`, although that will likely slow down PackSquash. For more information about the implications of caching potentially-sensitive data, please read the [GitHub documentation](https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows#about-caching-workflow-dependencies).
+This action may store in a cache the encryption key needed to read file
+modification times from the ZIP files PackSquash generates. Therefore, such
+encryption key can be exposed to anyone that has access to the repository.
+However, this is not a concern in practical scenarios, because the file
+modification times are generated from the commit history, so having access to
+the repository already provides this information. If for some reason you do not
+want this behavior, you can set `never_store_squash_times` to `true`, although
+that will likely slow down PackSquash. For more information about the
+implications of caching potentially-sensitive data, please read the [GitHub
+documentation](https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows#about-caching-workflow-dependencies).
 
 ## ✉️ Contact and support
 
-Please check out the [PackSquash](https://github.com/ComunidadAylas/PackSquash) repository for contact information.
+Please check out the [PackSquash](https://github.com/ComunidadAylas/PackSquash)
+repository for contact information.
 
 ## 🧑‍🤝‍🧑 Contributors
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+Thanks goes to these wonderful people ([emoji
+key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -352,4 +454,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the
+[all-contributors](https://github.com/all-contributors/all-contributors)
+specification. Contributions of any kind welcome!
