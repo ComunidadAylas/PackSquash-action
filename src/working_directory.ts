@@ -16,7 +16,7 @@ class WorkingDirectory {
     binaryExtension: string;
 
     constructor() {
-        this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), 'packsquash');
+        this.path = path.join(getEnvOrThrow('RUNNER_TEMP'), 'packsquash-1040c4a92c59083e9c206174a4ad7103');
         this.binaryExtension = getEnvOrThrow('RUNNER_OS') == 'Windows' ? '.exe' : '';
     }
 
