@@ -22,57 +22,6 @@ jobs:
           cat <<'OPTIONS_FILE' > packsquash_options.toml
             pack_directory = 'test/empty_resource_pack'
             output_file_path = 'pack.zip'
-            skip_pack_icon = true
-            validate_pack_metadata_file = false
-            recompress_compressed_files = true
-            zip_compression_iterations = 10
-            automatic_minecraft_quirks_detection = false
-            work_around_minecraft_quirks = [ 'grayscale_images_gamma_miscorrection', 'java8_zip_parsing', 'restrictive_banner_layer_texture_format_check', 'bad_entity_eye_layer_texture_transparency_blending' ]
-            automatic_asset_types_mask_detection = false
-            ignore_system_and_hidden_files = false
-            allow_mods = [ 'OptiFine', 'Minecraft Transit Railway 3' ]
-            zip_spec_conformance_level = 'disregard'
-            size_increasing_zip_obfuscation = true
-            percentage_of_zip_structures_tuned_for_obfuscation_discretion = 100
-            never_store_squash_times = true
-
-            ['**/*.{og[ga],mp3,wav,flac}']
-            transcode_ogg = false
-            sampling_frequency = 44100
-            minimum_bitrate = 64000
-            maximum_bitrate = 128000
-            target_pitch = 1.5
-
-            ['**/*.{json,jsonc,mcmeta,mcmetac,jpm,jpmc,jem,jemc,bbmodel,bbmodelc}']
-            minify_json = false
-            delete_bloat_keys = false
-            always_allow_json_comments = false
-
-            ['**/*.png']
-            image_data_compression_iterations = 15
-            color_quantization_target = 'none'
-            color_quantization_dithering_level = 1
-            maximum_width_and_height = 4096
-            skip_alpha_optimizations = true
-
-            ['**/*.{fsh,vsh,glsl}']
-            minify_shader = false
-
-            ['**/*.lang']
-            minify_legacy_language = false
-            strip_legacy_language_bom = false
-
-            ['**/*.mcfunction']
-            minify_command_function = false
-
-            ['**/*.properties']
-            minify_properties = false
-
-            ['dummy_file1.txt']
-            force_include = true
-
-            ['dummy_file2.txt']
-            force_include = true
           OPTIONS_FILE
 
       - name: Run PackSquash
