@@ -3,9 +3,14 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to [Semantic
+Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+No changes yet.
+
+## [4.0.0] - 2023-06-25
 
 ### Added
 
@@ -68,4 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   your case so we can consider providing an upgrade path for you.
 
 [Unreleased]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v3.0.2...HEAD
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.0...HEAD
+[4.0.0]:
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v3.0.2...v4.0.0
