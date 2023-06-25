@@ -26,7 +26,8 @@ No changes yet.
     respectively.
 - **Windows and macOS runners are now supported**, as long as the PackSquash
   version used by the workflow is distributed in the required way. Currently,
-  only the latest unstable builds will work with these operating systems.
+  only v0.4.0 and the latest unstable builds will work with these operating
+  systems.
   ([`414ee5c`](https://github.com/ComunidadAylas/PackSquash-action/commit/414ee5cec8f1197f310e5c7e6f68b6efdffc1c66))
 - Created a **`CHANGELOG.md`** file to make it more comfortable for interested
   parties to track changes to the project.
