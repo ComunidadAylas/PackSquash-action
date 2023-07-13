@@ -266,14 +266,15 @@ with this action, making it very easy to get up and running with the development
 of your very own pack. We have curated a list of handy repository templates
 below, but feel free to send pull requests to add new reusable templates here!
 
-- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate)
-  (in Japanese): a template repository for Minecraft resource packs that uses
-  PackSquash to bundle them in optimized ZIP files. Each commit is optimized to
-  a ZIP artifact, and a release is made when a new tag is pushed.
 - [`osfanbuff63/minecraft-datapack`](https://github.com/osfanbuff63/minecraft-datapack):
   a template repository for vanilla Minecraft data packs that uses PackSquash to
   bundle them in optimized ZIP files. Each commit is optimized to a ZIP
   artifact. No releases or deployments are made.
+- [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate)
+  (in Japanese; uses outdated versions of PackSquash and this action): a
+  template repository for Minecraft resource packs that uses PackSquash to
+  bundle them in optimized ZIP files. Each commit is optimized to a ZIP
+  artifact, and a release is made when a new tag is pushed.
 
 ## 📝 Input parameters
 
