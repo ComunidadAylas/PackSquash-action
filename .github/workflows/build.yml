@@ -29,7 +29,7 @@ jobs:
           node-version: 16.x
           cache: npm
       - name: Install npm development dependencies
-        run: npm install
+        run: npm ci
       - name: Build action
         run: npm run build
       - name: Commit and push action bundle
