@@ -13,19 +13,14 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
     steps:
-      - name: Clone pack repository
-        uses: actions/checkout@v3
-        with:
-          repository: ComunidadAylas/PackSquash-action-test
-          fetch-depth: 0
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clone action repository
         uses: actions/checkout@v3
         with:
-          path: action-checkout
+          path: action
+      - name: Set up empty Git repository with public pack submodules
+        uses: ./action/.github/workflows/actions/set_up_repo_with_submodules
       - name: Run PackSquash
-        uses: ./action-checkout
+        uses: ./action
         with:
           packsquash_version: latest
           options: |

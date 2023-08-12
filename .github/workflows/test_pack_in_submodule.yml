@@ -13,27 +13,19 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
     steps:
-      - name: Clone pack repository
-        uses: actions/checkout@v3
-        with:
-          repository: ComunidadAylas/PackSquash-action-test
-          fetch-depth: 0
-          submodules: recursive
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Clone action repository
         uses: actions/checkout@v3
         with:
-          path: action-checkout
-      - name: Modify pack files
+          path: action
+      - name: Set up empty Git repository with public pack submodules
+        uses: ./action/.github/workflows/actions/set_up_repo_with_submodules
+      - name: Modify pack files (test that working directory changes are handled well)
         run: |
-          echo '{ "pack": { "pack_format": 8, "description": "Dummy pack.mcmeta" } }' > golden-days/golden-days-base/pack.mcmeta
           touch golden-days/golden-days-base/assets/minecraft/sounds.json
           mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
-          # Remove some files that generate GStreamer negotiation errors on v0.3.1.
-          # This also serves to check that the action handles files being deleted from the working copy correctly
-          rm golden-days/golden-days-base/assets/minecraft/sounds/liquid/*.ogg
+          rm golden-days/golden-days-base/assets/minecraft/optifine/color.properties
       - name: Run PackSquash
-        uses: ./action-checkout
+        uses: ./action
         with:
           packsquash_version: latest
           options: |

@@ -1,0 +1,36 @@
+name: Set up empty Git repository with public pack submodules
+description: Reusable steps to set up a repository with packs in submodules for testing
+runs:
+  using: composite
+  steps:
+    # The packs checked out by these steps are distributed to the public
+    # and, to the best of our knowledge, used in conformance with the
+    # usage rights given in their licenses, which are, in no particular
+    # order:
+    # - CC BY 4.0,
+    # - CC BY-NC-SA 4.0,
+    # - Custom licenses.
+    # Thanks to their authors for making such great packs!
+    - name: Set up empty Git repository with public pack submodules
+      shell: sh
+      run: |
+        git -c init.defaultBranch=master init
+
+        while read -r submodule_info; do
+          url="${submodule_info%% *}"
+          name="${submodule_info#* }"
+          name="${name% *}"
+          commitish="${submodule_info##* }"
+
+          git submodule add "$url" "$name"
+          git -C "$name" -c advice.detachedHead=false checkout "$commitish"
+          git add "$name"
+        done <<'SUBMODULES'
+        https://github.com/PoeticRainbow/golden-days.git golden-days 1.9.0
+        https://github.com/Crackers0106/Programmer-Art-Plus.git Programmer-Art-Plus 8ddc173e274094588f04d1c989a58378fb56b303
+        https://github.com/SummerFields/SummerFields.git SummerFields 645be0fc27495117a7decc96fee810ff1ed584ab
+        SUBMODULES
+
+        GIT_AUTHOR_NAME='github-actions[bot]' GIT_AUTHOR_EMAIL='41898282+github-actions[bot]@users.noreply.github.com' \
+        GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME" GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL" \
+        git commit -m 'Root commit'
