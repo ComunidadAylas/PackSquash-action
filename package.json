@@ -44,6 +44,6 @@
     "@actions/http-client": "2.1.1",
     "@iarna/toml": "3.0.0",
     "unzipper": "0.10.14",
-    "uuid": "9.0.0"
+    "uuid": "9.0.1"
   }
 }
