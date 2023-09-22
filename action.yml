@@ -34,7 +34,7 @@ inputs:
     required: false
     default: 'true'
 runs:
-  using: node16
+  using: node20
   main: dist/main/index.js
   post: dist/cleanup_working_directory/index.js
 branding:

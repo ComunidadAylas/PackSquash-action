@@ -8,7 +8,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-No changes yet.
+### Changed
+
+- Updated the action Node.js runner to 20 from 16.
 
 ## [4.0.0] - 2023-06-25
 
