@@ -1,6 +1,6 @@
-name: 'PackSquash'
-description: 'Official action to run PackSquash in a GitHub Actions workflow.'
-author: 'sya-ri, Alejandro "AlexTMjugador" González'
+name: PackSquash
+description: Official action to run PackSquash in a GitHub Actions workflow.
+author: sya-ri, Alejandro "AlexTMjugador" González
 inputs:
   options:
     description: 'The options to pass to PackSquash, either as a file path or as a TOML string. Relative paths are interpreted from the repository root. If not specified, PackSquash will optimize a pack in the repository root with the default options.'
@@ -34,9 +34,9 @@ inputs:
     required: false
     default: 'true'
 runs:
-  using: 'node16'
-  main: 'dist/main/index.js'
-  post: 'dist/cleanup_working_directory/index.js'
+  using: node16
+  main: dist/main/index.js
+  post: dist/cleanup_working_directory/index.js
 branding:
-  icon: 'archive'
-  color: 'orange'
+  icon: archive
+  color: orange
