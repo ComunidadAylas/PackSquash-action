@@ -8,9 +8,14 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+No changes yet.
+
+## [4.0.1] - 2023-10-24
+
 ### Changed
 
 - Updated the action Node.js runner to 20 from 16.
+- Several minor internal CI workflow tidy ups and dependency updates.
 
 ## [4.0.0] - 2023-06-25
 
@@ -76,6 +81,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   your case so we can consider providing an upgrade path for you.
 
 [Unreleased]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.0...HEAD
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.1...HEAD
+[4.0.1]:
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.0...v4.0.1
 [4.0.0]:
     https://github.com/ComunidadAylas/PackSquash-action/compare/v3.0.2...v4.0.0
