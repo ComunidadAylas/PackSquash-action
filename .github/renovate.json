@@ -8,17 +8,17 @@
   "minimumReleaseAge": "3 days",
   "schedule": ["every 2 day"],
   "packageRules": [
-		{
-			"matchUpdateTypes": ["major"],
-			"automerge": false
-		},
-		{
-			"matchCategories": ["js"],
-			"groupName": "JS/TS dependencies"
-		},
-		{
-			"matchCategories": ["ci"],
-			"groupName": "CI dependencies"
-		}
+    {
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "matchCategories": ["js"],
+      "groupName": "JS/TS dependencies"
+    },
+    {
+      "matchCategories": ["ci"],
+      "groupName": "CI dependencies"
+    }
   ]
 }
