@@ -2,11 +2,23 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:best-practices"],
   "addLabels": ["dependencies"],
+  "reviewers": ["team:packsquash-github-action-developers"],
+  "automerge": true,
   "automergeType": "branch",
+  "minimumReleaseAge": "3 days",
+  "schedule": ["every 2 day"],
   "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
+		{
+			"matchUpdateTypes": ["major"],
+			"automerge": false
+		},
+		{
+			"matchCategories": ["js"],
+			"groupName": "JS/TS dependencies"
+		},
+		{
+			"matchCategories": ["ci"],
+			"groupName": "CI dependencies"
+		}
   ]
 }
