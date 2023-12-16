@@ -8,7 +8,12 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-No changes yet.
+### Changed
+
+- Updated dependency on `@actions/artifact` to
+  [v2](https://github.com/actions/toolkit/blob/68f22927e727a60caff909aaaec1ab7267b39f75/packages/artifact/README.md#v2---whats-new),
+  bringing potentially substantial performance improvements when uploading the
+  generated ZIP file as an artifact.
 
 ## [4.0.1] - 2023-10-24
 

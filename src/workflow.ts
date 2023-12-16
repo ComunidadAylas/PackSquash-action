@@ -1,5 +1,5 @@
 import { debug, endGroup, info, startGroup } from '@actions/core';
-import { create } from '@actions/artifact';
+import { default as artifactClient } from '@actions/artifact';
 import WorkingDirectory from './working_directory';
 import { getInputValue } from './action_input';
 import octokit from './octokit';
@@ -26,10 +26,10 @@ export async function uploadArtifact(packSquashOptions: PackSquashOptions) {
 
     startGroup('Upload generated ZIP file as artifact');
     const outputFilePath = packSquashOptions.getOutputFilePath();
-    const response = await create().uploadArtifact(getInputValue('artifact_name'), [outputFilePath], dirname(outputFilePath));
+    const response = await artifactClient.uploadArtifact(getInputValue('artifact_name'), [outputFilePath], dirname(outputFilePath));
     endGroup();
 
-    if (response.artifactItems.length === 0 || response.failedItems.length > 0) {
+    if (!response.size) {
         throw new Error('Artifact upload failed');
     }
 }
