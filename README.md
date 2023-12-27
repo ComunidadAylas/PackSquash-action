@@ -31,9 +31,7 @@ access to the repository [via the GitHub web UI or
 CLI](https://docs.github.com/en/actions/managing-workflow-runs/downloading-workflow-artifacts).
 It can also be downloaded in other steps or workflows using the
 [`actions/download-artifact`](https://github.com/marketplace/actions/download-a-build-artifact)
-or
-[`dawidd6/action-download-artifact`](https://github.com/marketplace/actions/download-workflow-artifact)
-actions.
+action.
 
 #### File tree
 
