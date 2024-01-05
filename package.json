@@ -25,8 +25,8 @@
   "devDependencies": {
     "@types/unzipper": "0.10.9",
     "@types/uuid": "9.0.7",
-    "@typescript-eslint/eslint-plugin": "6.16.0",
-    "@typescript-eslint/parser": "6.16.0",
+    "@typescript-eslint/eslint-plugin": "6.17.0",
+    "@typescript-eslint/parser": "6.17.0",
     "@vercel/ncc": "0.38.1",
     "all-contributors-cli": "6.26.1",
     "eslint": "8.56.0",
