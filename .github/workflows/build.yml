@@ -33,7 +33,7 @@ jobs:
       - name: Build action
         run: npm run build
       - name: Commit and push action bundle
-        uses: EndBug/add-and-commit@1bad3abcf0d6ec49a5857d124b0bfb52dc7bb081 # v9
+        uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9
         with:
           add: -f dist/main/index.js dist/cleanup_working_directory/index.js
           message: 'chore(dist): build'
