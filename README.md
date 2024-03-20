@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
@@ -138,7 +138,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
@@ -154,7 +154,7 @@ jobs:
             # without needing to download its artifact in a separate step
             output_file_path = '/tmp/pack.zip'
       - name: Tag and create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: action-v${{ github.run_number }}
           files: /tmp/pack.zip
@@ -177,7 +177,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
       - name: Run PackSquash
@@ -188,7 +188,7 @@ jobs:
             pack_directory = '.'
             output_file_path = '/tmp/pack.zip'
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: /tmp/pack.zip
 ```
