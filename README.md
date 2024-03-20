@@ -235,7 +235,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download latest released pack
-        uses: dsaltares/fetch-gh-release-asset@v1.0.0
+        uses: dsaltares/fetch-gh-release-asset@1.1.1
         with:
           file: pack.zip
           target: pack.zip
@@ -246,7 +246,7 @@ jobs:
         # doing this in production!
         run: mv pack.zip pack-${{ github.run_number }}.zip
       - name: Deploy pack file
-        uses: appleboy/scp-action@v0.1.2
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
