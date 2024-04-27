@@ -247,11 +247,11 @@ export class PackSquashBinaryManifest {
             await extractFirstFileFromZip(workingDirectory.temporaryDownloadFile, workingDirectory.packsquashBinary);
 
             debug(`Extracted binary from downloaded file`);
-        } catch {
+        } catch (err) {
             // Assume that the downloaded file is not a ZIP, i.e. a binary we can run directly
             await rename(workingDirectory.temporaryDownloadFile, workingDirectory.packsquashBinary);
 
-            debug(`Downloaded binary`);
+            debug(`Downloaded binary, extraction failure reason: ${err}`);
         }
 
         await chmod(workingDirectory.packsquashBinary, '500');
