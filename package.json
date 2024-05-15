@@ -43,7 +43,7 @@
     "@actions/github": "6.0.0",
     "@actions/http-client": "2.2.1",
     "@iarna/toml": "3.0.0",
-    "unzipper": "0.11.5",
+    "unzipper": "0.11.6",
     "uuid": "9.0.1"
   }
 }
