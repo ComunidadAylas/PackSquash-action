@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "moduleResolution": "Node",
+    "target": "ES2021",
+    "module": "ES2020",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
