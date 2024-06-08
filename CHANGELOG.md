@@ -13,6 +13,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Migrated the TOML parsing and serializing library from `@iarna/toml` to
   `smol-toml`. This new library is more lightweight, has fewer issues, and is
   better maintained.
+  - This should fix a spurious TOML parse error for TOML files with comments and
+    CRLF line endings.
 
 ## [4.0.2] - 2023-12-27
 
