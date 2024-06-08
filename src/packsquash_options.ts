@@ -1,33 +1,30 @@
 import { endGroup, info, startGroup } from '@actions/core';
-import { open } from 'fs/promises';
-import { Readable } from 'stream';
+import { readFile } from 'fs/promises';
 import WorkingDirectory from './working_directory';
-import TOML from '@iarna/toml';
+import * as TOML from 'smol-toml';
 import { getInputValue } from './action_input';
 
 export class PackSquashOptions {
-    private readonly options: TOML.JsonMap;
+    private readonly options: Record<string, TOML.TomlPrimitive>;
     public readonly stringifiedOptions: string;
-    private readonly workingDirectory: WorkingDirectory;
 
-    private constructor(options: TOML.JsonMap, stringifiedOptions: string, workingDirectory: WorkingDirectory) {
+    private constructor(options: Record<string, TOML.TomlPrimitive>, stringifiedOptions: string) {
         this.options = options;
         this.stringifiedOptions = stringifiedOptions;
-        this.workingDirectory = workingDirectory;
     }
 
-    static async parseAndTweak(workingDirectory: WorkingDirectory) {
+    public static async parseAndTweak(workingDirectory: WorkingDirectory) {
         const optionsInputValue = getInputValue('options');
 
-        let optionsStream: NodeJS.ReadableStream;
+        let optionsToml: string;
         try {
-            optionsStream = (await open(optionsInputValue)).createReadStream();
+            optionsToml = await readFile(optionsInputValue, { encoding: 'utf8' });
         } catch (err) {
             info(`The specified PackSquash options string could not be opened as a file. Treating it as a TOML string instead`);
-            optionsStream = Readable.from([optionsInputValue]);
+            optionsToml = optionsInputValue;
         }
 
-        const options = await TOML.parse.stream(optionsStream);
+        const options = await TOML.parse(optionsToml);
 
         // If no output file path was specified, set a default one
         options.output_file_path = options.output_file_path ?? workingDirectory.defaultOutputFile;
@@ -38,7 +35,7 @@ export class PackSquashOptions {
             options.zip_spec_conformance_level = 'high';
         }
 
-        return new this(options, TOML.stringify(options), workingDirectory);
+        return new this(options, TOML.stringify(options));
     }
 
     getPackDirectory() {

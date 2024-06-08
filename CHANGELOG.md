@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic
 Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Migrated the TOML parsing and serializing library from `@iarna/toml` to
+  `smol-toml`. This new library is more lightweight, has fewer issues, and is
+  better maintained.
+
 ## [4.0.2] - 2023-12-27
 
 ### Changed
