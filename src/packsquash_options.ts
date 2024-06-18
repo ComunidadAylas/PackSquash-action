@@ -19,7 +19,7 @@ export class PackSquashOptions {
         let optionsToml: string;
         try {
             optionsToml = await readFile(optionsInputValue, { encoding: 'utf8' });
-        } catch (err) {
+        } catch {
             info(`The specified PackSquash options string could not be opened as a file. Treating it as a TOML string instead`);
             optionsToml = optionsInputValue;
         }
