@@ -25,7 +25,7 @@
   "devDependencies": {
     "@types/unzipper": "0.10.9",
     "@types/uuid": "9.0.8",
-    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.30",
+    "@typescript-eslint/eslint-plugin": "8.0.0-alpha.33",
     "@vercel/ncc": "0.38.1",
     "all-contributors-cli": "6.26.1",
     "eslint": "9.5.0",
@@ -41,7 +41,7 @@
     "@actions/exec": "1.1.1",
     "@actions/github": "6.0.0",
     "@actions/http-client": "2.2.1",
-    "smol-toml": "1.2.1",
+    "smol-toml": "1.2.2",
     "unzipper": "0.12.1",
     "uuid": "10.0.0"
   }
