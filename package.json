@@ -24,7 +24,7 @@
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "devDependencies": {
     "@types/unzipper": "0.10.9",
-    "@types/uuid": "9.0.8",
+    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.0.0-alpha.33",
     "@vercel/ncc": "0.38.1",
     "all-contributors-cli": "6.26.1",
