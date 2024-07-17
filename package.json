@@ -42,7 +42,7 @@
     "@actions/github": "6.0.0",
     "@actions/http-client": "2.2.1",
     "smol-toml": "1.2.2",
-    "unzipper": "0.12.1",
+    "unzipper": "0.12.2",
     "uuid": "10.0.0"
   }
 }
