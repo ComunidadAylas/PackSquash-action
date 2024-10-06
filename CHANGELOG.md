@@ -16,6 +16,11 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   - This should fix a spurious TOML parse error for TOML files with comments and
     CRLF line endings.
 
+### Fixed
+
+- The action will no longer occasionally hang for a few minutes when uploading
+  the generated pack for caching.
+
 ## [4.0.2] - 2023-12-27
 
 ### Changed
