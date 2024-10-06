@@ -132,6 +132,11 @@ push event, which is triggered by commits and other tags.
 ```yaml
 name: Optimize resource pack
 on: [push]
+# This permissions section explicitly gives the workflow permission to create releases.
+# Most of the time it's not needed to set it, as the default GITHUB_TOKEN permissions
+# are permissive enough, but that's not always the case
+permissions:
+  contents: write
 jobs:
   packsquash:
     name: Optimize resource pack
