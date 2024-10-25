@@ -4,9 +4,9 @@
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
     "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "format-check": "prettier --check .",
+    "check": "biome check --write --unsafe",
+    "format": "biome format --error-on-warnings",
+    "lint": "biome lint --error-on-warnings",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
     "test:pack-in-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml",
     "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml",
@@ -23,15 +23,12 @@
   },
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/unzipper": "0.10.10",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/eslint-plugin": "8.11.0",
     "@vercel/ncc": "0.38.2",
     "all-contributors-cli": "6.26.1",
-    "eslint": "9.13.0",
-    "eslint-config-prettier": "9.1.0",
     "husky": "9.1.6",
-    "prettier": "3.3.3",
     "typescript": "5.6.3"
   },
   "dependencies": {

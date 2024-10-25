@@ -15,6 +15,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   better maintained.
   - This should fix a spurious TOML parse error for TOML files with comments and
     CRLF line endings.
+- Migrated formatting and linting development tools from Prettier and ESLint to
+  [Biome](https://biomejs.dev/), which is significantly faster and simpler to
+  use and set up.
 
 ### Fixed
 

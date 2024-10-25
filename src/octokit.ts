@@ -1,4 +1,4 @@
-import { getOctokit } from '@actions/github';
-import { getInputValue } from './action_input';
+import { getOctokit } from "@actions/github";
+import { getInputValue } from "./action_input";
 
-export default getOctokit(getInputValue('token'));
+export default getOctokit(getInputValue("token"));

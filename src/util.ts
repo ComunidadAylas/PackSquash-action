@@ -1,10 +1,10 @@
-import { getExecOutput } from '@actions/exec';
-import { debug } from '@actions/core';
-import * as path from 'path';
-import crypto from 'crypto';
-import unzipper from 'unzipper';
-import { createWriteStream } from 'fs';
-import { pipeline } from 'node:stream/promises';
+import crypto from "node:crypto";
+import { createWriteStream } from "node:fs";
+import * as path from "node:path";
+import { pipeline } from "node:stream/promises";
+import { debug } from "@actions/core";
+import { getExecOutput } from "@actions/exec";
+import unzipper from "unzipper";
 
 /**
  * If caching may be used, and setGitFileModificationTimes should be executed,
@@ -14,15 +14,17 @@ import { pipeline } from 'node:stream/promises';
  * @returns A rejected promise if the check fails.
  */
 export async function ensureRepositoryIsNotShallow(workspace: string) {
-    debug(`Checking that the repository checkout at ${workspace} is not shallow`);
+  debug(`Checking that the repository checkout at ${workspace} is not shallow`);
 
-    const gitOut = await getExecOutput('git', ['-C', workspace, 'rev-parse', '--is-shallow-repository'], {
-        silent: true
-    });
+  const gitOut = await getExecOutput("git", ["-C", workspace, "rev-parse", "--is-shallow-repository"], {
+    silent: true,
+  });
 
-    if (gitOut.stdout === 'true\n') {
-        throw Error('The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0');
-    }
+  if (gitOut.stdout === "true\n") {
+    throw Error(
+      "The full commit history must be checked out. Please set the fetch-depth parameter of actions/checkout to 0",
+    );
+  }
 }
 
 /**
@@ -33,18 +35,23 @@ export async function ensureRepositoryIsNotShallow(workspace: string) {
  * @param workspace The workspace to get its submodules of.
  */
 export async function getSubmodules(workspace: string): Promise<string[]> {
-    try {
-        const gitOut = await getExecOutput('git', ['-C', workspace, 'submodule', 'foreach', '--recursive', '--quiet', 'echo "$displaypath"'], {
-            silent: true
-        });
+  try {
+    const gitOut = await getExecOutput(
+      "git",
+      ["-C", workspace, "submodule", "foreach", "--recursive", "--quiet", 'echo "$displaypath"'],
+      {
+        silent: true,
+      },
+    );
 
-        return gitOut.stdout.split('\n').flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
-    } catch (error) {
-        throw Error(
-            `Could not get information about the repository: ${error}. Has the repository been checked out? ` +
-                `If you don't want to check it out, disable caching by setting the never_store_squash_times option to true`
-        );
-    }
+    return gitOut.stdout
+      .split("\n")
+      .flatMap(submodulePath => (submodulePath ? [path.join(workspace, submodulePath)] : []));
+  } catch (error) {
+    throw Error(
+      `Could not get information about the repository: ${error}. Has the repository been checked out? If you don't want to check it out, disable caching by setting the never_store_squash_times option to true`,
+    );
+  }
 }
 
 /**
@@ -62,12 +69,12 @@ export async function getSubmodules(workspace: string): Promise<string[]> {
  * @return The branch name, or `undefined` if the triggering ref is a tag.
  */
 export function getBranchName() {
-    if (process.env.GITHUB_REF_TYPE !== 'branch') {
-        return undefined;
-    }
+  if (process.env.GITHUB_REF_TYPE !== "branch") {
+    return undefined;
+  }
 
-    const headRef = process.env.GITHUB_HEAD_REF;
-    return headRef ? headRef : process.env.GITHUB_REF_NAME;
+  const headRef = process.env.GITHUB_HEAD_REF;
+  return headRef ? headRef : process.env.GITHUB_REF_NAME;
 }
 
 /**
@@ -77,11 +84,10 @@ export function getBranchName() {
  * @returns The value of the environment variable.
  */
 export function getEnvOrThrow(variable: string) {
-    if (variable in process.env) {
-        return process.env[variable] as string;
-    } else {
-        throw new Error(`Internal error: the ${variable} environment variable is missing`);
-    }
+  if (variable in process.env) {
+    return process.env[variable] as string;
+  }
+  throw new Error(`Internal error: the ${variable} environment variable is missing`);
 }
 
 /**
@@ -95,28 +101,31 @@ export function getEnvOrThrow(variable: string) {
  */
 // Function adapted from https://github.com/domenic/path-is-inside/blob/05a9bf7c5e008505539e14e96c4d2fc8b2c6d058/lib/path-is-inside.js
 export function isPathWithin(descendant: string, parent: string) {
-    function stripTrailingPathSep(subject: string) {
-        return subject.endsWith(path.sep) ? subject.slice(0, -1) : subject;
-    }
+  function stripTrailingPathSep(subject: string) {
+    return subject.endsWith(path.sep) ? subject.slice(0, -1) : subject;
+  }
 
-    // For inside-directory checking, we want to allow trailing slashes, so normalize
-    descendant = stripTrailingPathSep(descendant);
-    parent = stripTrailingPathSep(parent);
+  // For inside-directory checking, we want to allow trailing slashes, so normalize
+  descendant = stripTrailingPathSep(descendant);
+  parent = stripTrailingPathSep(parent);
 
-    // Node treats only Windows as case-insensitive in its path module. We follow those conventions
-    if (process.platform === 'win32') {
-        descendant = descendant.toLowerCase();
-        parent = parent.toLowerCase();
-    }
+  // Node treats only Windows as case-insensitive in its path module. We follow those conventions
+  if (process.platform === "win32") {
+    descendant = descendant.toLowerCase();
+    parent = parent.toLowerCase();
+  }
 
-    return descendant.lastIndexOf(parent, 0) == 0 && (descendant[parent.length] === path.sep || descendant[parent.length] === undefined);
+  return (
+    descendant.lastIndexOf(parent, 0) === 0 &&
+    (descendant[parent.length] === path.sep || descendant[parent.length] === undefined)
+  );
 }
 
 export async function md5Hash(data: string) {
-    return crypto.createHash('md5').update(data).digest().toString('hex');
+  return crypto.createHash("md5").update(data).digest().toString("hex");
 }
 
 export async function extractFirstFileFromZip(zipPath: string, destinationPath: string) {
-    const centralDirectory = await unzipper.Open.file(zipPath);
-    await pipeline(centralDirectory.files[0].stream(), createWriteStream(destinationPath));
+  const centralDirectory = await unzipper.Open.file(zipPath);
+  await pipeline(centralDirectory.files[0].stream(), createWriteStream(destinationPath));
 }

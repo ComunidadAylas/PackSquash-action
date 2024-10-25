@@ -25,6 +25,6 @@ jobs:
       - name: Install npm development dependencies
         run: npm ci
       - name: Check format
-        run: npm run format-check
-      - name: Run ESLint
+        run: npm run format
+      - name: Run linter
         run: npm run lint
