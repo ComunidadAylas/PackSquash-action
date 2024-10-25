@@ -1,8 +1,6 @@
 name: Static analysis - Check format and run linter
 on:
   push:
-    paths:
-      - src/**
   pull_request:
     types:
       - opened
