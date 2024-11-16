@@ -205,15 +205,15 @@ clients to download resource packs from release artifacts, as they lack the
 required authentication credentials. A common solution is to upload releases to
 an external web server directly from a GitHub Actions workflow via SSH.
 
-> **Warning**: **keep in mind that just uploading files to the web server might
-> not be enough to make players download the new version the next time they
-> connect**. The Minecraft server should be configured with the appropriate
-> resource pack ZIP file URL and hash each time the pack is updated. Otherwise,
-> clients will receive stale information and may decide to use the copy they
-> have downloaded already. This example omits that part on purpose because the
-> precise way of doing it (running plugin commands via RCON, modifying the
-> `server.properties` file and restarting the server, etc.) is
-> environment-specific.
+> [!IMPORTANT]
+> *Keep in mind that just uploading files to the web server might not be enough
+> to make players download the new version the next time they connect*. The
+> Minecraft server should be configured with the appropriate resource pack ZIP
+> file URL and hash each time the pack is updated. Otherwise, clients will
+> receive stale information and may decide to use the copy they have downloaded
+> already. This example omits that part on purpose because the precise way of
+> doing it (running plugin commands via RCON, modifying the `server.properties`
+> file and restarting the server, etc.) is environment-specific.
 
 #### Secrets
 
@@ -228,6 +228,29 @@ which can be set in the repository settings.
 | `SSH_PRIVATE_KEY` | Private key for SSH authentication |
 | `SSH_PORT` | SSH server listen port |
 | `DEPLOY_DIRECTORY` | Directory where the pack will be deployed to. Usually `/var/www/` for the web server root |
+
+> [!TIP]
+> *To enhance security, consider not disabling SSH host key verification with
+> the `-o 'StrictHostKeyChecking=no'` option used in the workflow file below.*
+>
+> Instead, you can add SSHFP records with the expected host key to its DNS host
+> name. When using a DNSSEC-aware resolver with DNSSEC-protected SSHFP records
+> in place, the `-o 'VerifyHostKeyDNS=yes'` SSH client option is enough to
+> automatically and securely authenticate the host key. GitHub-hosted runners
+> have been experimentally confirmed to use a DNSSEC-aware resolver that works
+> well for SSHFP record validation.
+>
+> Another similarly secure but simpler to set up approach involves adding the
+> expected host key beforehand to the `/etc/ssh/ssh_known_hosts` or
+> `~/.ssh/known_hosts` file. However, this method leads to a decentralization of
+> the locations where the host key needs to be stored, which may be less
+> scalable and maintainable. The format for these files is documented
+> [here](https://man7.org/linux/man-pages/man8/sshd.8.html#SSH_KNOWN_HOSTS_FILE_FORMAT).
+>
+> Further reading:
+> - <https://blog.apnic.net/2022/12/02/improving-sshs-security-with-sshfp-dns-records/>
+> - <https://man7.org/linux/man-pages/man1/ssh.1.html#VERIFYING_HOST_KEYS>
+> - <https://sha256.net/VerifyHostKeyDNS.html>
 
 #### Workflow file: `.github/workflows/deploy.yml`
 
@@ -246,15 +269,13 @@ jobs:
           target: pack.zip
       # An unique name guarantees an unique URL. Different URLs
       # compel Minecraft clients to download packs again, but
-      # make sure to read and understand the warning above before
+      # make sure to read and understand the note above before
       # doing this in production!
       - name: Deploy pack file
         run: |
           echo '${{ secrets.SSH_PRIVATE_KEY }}' > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           scp -P ${{ secrets.SSH_PORT }} \
-            `# Consider using SSHFP DNS records and replacing the option by 'VerifyHostKeyDNS=yes' for improved security.` \
-            `# GitHub-hosted runners use DNSSEC-compatible resolvers that can validate SSHFP records.` \
-            `# See: <https://man7.org/linux/man-pages/man1/ssh.1.html#VERIFYING_HOST_KEYS>, <https://sha256.net/VerifyHostKeyDNS.html>` \
             -o 'StrictHostKeyChecking=no' \
             pack.zip \
             ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_DIRECTORY }}/pack-${{ github.run_number }}.zip
