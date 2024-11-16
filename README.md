@@ -244,21 +244,20 @@ jobs:
         with:
           file: pack.zip
           target: pack.zip
-      - name: Rename pack file
-        # An unique name guarantees an unique URL. Different URLs
-        # compel Minecraft clients to download packs again, but
-        # make sure to read and understand the warning above before
-        # doing this in production!
-        run: mv pack.zip pack-${{ github.run_number }}.zip
+      # An unique name guarantees an unique URL. Different URLs
+      # compel Minecraft clients to download packs again, but
+      # make sure to read and understand the warning above before
+      # doing this in production!
       - name: Deploy pack file
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          source: pack-${{ github.run_number }}.zip
-          target: ${{ secrets.DEPLOY_DIRECTORY }}
+        run: |
+          echo '${{ secrets.SSH_PRIVATE_KEY }}' > ~/.ssh/id_rsa
+          scp -P ${{ secrets.SSH_PORT }} \
+            `# Consider using SSHFP DNS records and replacing the option by 'VerifyHostKeyDNS=yes' for improved security.` \
+            `# GitHub-hosted runners use DNSSEC-compatible resolvers that can validate SSHFP records.` \
+            `# See: <https://man7.org/linux/man-pages/man1/ssh.1.html#VERIFYING_HOST_KEYS>, <https://sha256.net/VerifyHostKeyDNS.html>` \
+            -o 'StrictHostKeyChecking=no' \
+            pack.zip \
+            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_DIRECTORY }}/pack-${{ github.run_number }}.zip
 ```
 
 ## 📄 Template repositories
