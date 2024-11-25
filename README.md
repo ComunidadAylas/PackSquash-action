@@ -317,8 +317,8 @@ None (**required**)
 **Description**
 
 The PackSquash version that the action will use. Please note that too old or too
-new versions may be incompatible or fully supported by the action. There are
-four types of versions that can be specified:
+new versions may be incompatible with or not fully supported by the action.
+There are four types of versions that can be specified:
 
 - **`vXXX`**, where `XXX` is a PackSquash release version, such as `0.4.0` or
   `0.3.1`.
