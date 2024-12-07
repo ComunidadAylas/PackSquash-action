@@ -18,6 +18,11 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Migrated formatting and linting development tools from Prettier and ESLint to
   [Biome](https://biomejs.dev/), which is significantly faster and simpler to
   use and set up.
+- Updated dependency on `@actions/cache` to `v4`, bringing [compatibility with
+  new internal GitHub Actions Cache API versions which are claimed to be much
+  faster](https://github.com/actions/toolkit/discussions/1890).
+  - The previous API version is set to shut down in the near future, so this
+    update is essential to ensure the action continues functioning as expected.
 
 ### Fixed
 
