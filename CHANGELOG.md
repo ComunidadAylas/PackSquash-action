@@ -8,6 +8,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+No changes yet.
+
+## [4.0.3] - 2024-12-13
+
 ### Changed
 
 - Migrated the TOML parsing and serializing library from `@iarna/toml` to
@@ -116,7 +120,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   your case so we can consider providing an upgrade path for you.
 
 [Unreleased]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.2...HEAD
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.3...HEAD
+[4.0.3]:
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.2...v4.0.3
 [4.0.2]:
     https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.1...v4.0.2
 [4.0.1]:
