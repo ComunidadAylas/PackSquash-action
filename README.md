@@ -237,8 +237,8 @@ which can be set in the repository settings.
 > name. When using a DNSSEC-aware resolver with DNSSEC-protected SSHFP records
 > in place, the `-o 'VerifyHostKeyDNS=yes'` SSH client option is enough to
 > automatically and securely authenticate the host key. GitHub-hosted runners
-> have been experimentally confirmed to use a DNSSEC-aware resolver that works
-> well for SSHFP record validation.
+> have been experimentally sighted to sometimes use a DNSSEC-aware resolver that
+> works well for SSHFP record validation.
 >
 > Another similarly secure but simpler to set up approach involves adding the
 > expected host key beforehand to the `/etc/ssh/ssh_known_hosts` or
