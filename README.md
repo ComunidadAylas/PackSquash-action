@@ -206,12 +206,13 @@ required authentication credentials. A common solution is to upload releases to
 an external web server directly from a GitHub Actions workflow via SSH.
 
 > [!IMPORTANT]
-> *Keep in mind that just uploading files to the web server might not be enough
-> to make players download the new version the next time they connect*. The
+> *Keep in mind that just uploading files to the web server may not be enough to
+> make players download the new version the next time they connect*. The
 > Minecraft server should be configured with the appropriate resource pack ZIP
 > file URL and hash each time the pack is updated. Otherwise, clients will
-> receive stale information and may decide to use the copy they have downloaded
-> already. This example omits that part on purpose because the precise way of
+> receive stale information, and may decide to use the copy they have downloaded
+> already, or fail to download the pack for the first time if there is a hash
+> mismatch. This example omits that part on purpose because the precise way of
 > doing it (running plugin commands via RCON, modifying the `server.properties`
 > file and restarting the server, etc.) is environment-specific.
 
