@@ -26,6 +26,8 @@ jobs:
           rm golden-days/golden-days-base/assets/minecraft/optifine/color.properties
       - name: Run PackSquash
         uses: ./action
+        env:
+          PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING: 1
         with:
           packsquash_version: latest
           options: |
