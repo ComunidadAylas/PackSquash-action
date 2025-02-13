@@ -23,6 +23,7 @@ jobs:
         run: |
           touch golden-days/golden-days-base/assets/minecraft/sounds.json
           printf ' ' >> golden-days/golden-days-base/assets/minecraft/models/block/acacia_leaves.json
+          sed -i 's/:/ :/g' golden-days/golden-days-base/assets/minecraft/models/block/acacia_log.json
           mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
           rm golden-days/golden-days-base/assets/minecraft/optifine/color.properties
       - name: Run PackSquash
