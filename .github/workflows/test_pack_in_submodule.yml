@@ -22,8 +22,8 @@ jobs:
       - name: Modify pack files (test that working directory changes are handled well)
         run: |
           touch golden-days/golden-days-base/assets/minecraft/sounds.json
-          printf ' ' >> golden-days/golden-days-base/assets/minecraft/models/block/acacia_leaves.json
-          sed -i 's/:/ :/g' golden-days/golden-days-base/assets/minecraft/models/block/acacia_log.json
+          printf ' ' >> golden-days/golden-days-base/assets/minecraft/models/block/acacia_leaves.json # mtimeMs >> btimeMs (most likely)
+          sed -i 's/:/ :/g' golden-days/golden-days-base/assets/minecraft/models/block/acacia_log.json # mtimeMs == btimeMs (most likely)
           mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
           rm golden-days/golden-days-base/assets/minecraft/optifine/color.properties
       - name: Run PackSquash
