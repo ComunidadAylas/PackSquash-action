@@ -8,7 +8,12 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-No changes yet.
+### Fixed
+
+- Fixed an issue where files modified in previous workflow steps were
+  incorrectly categorized as unchanged by the action cache logic under some
+  circumstances, causing PackSquash to reuse stale versions of those files.
+  (Thank you __camm_ for reporting this issue over Discord!)
 
 ## [4.0.3] - 2024-12-13
 

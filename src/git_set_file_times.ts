@@ -78,21 +78,18 @@ async function getUnmodifiedIndexedPackFiles(repository: string, packDirectory: 
           const fileIndexData = fileInfoFields[0];
 
           // We should ignore files that were modified by the workflow run, as the repository history
-          // is no longer representative of when they were last modified. To achieve this, do a two-step
-          // check:
-          // 1. Weed out files that were not modified after being created. When cloning, mtime usually
-          //    equals birthtime, but not necessarily (git clone may be running slow enough for timestamp
-          //    differences to be noticeable). This is cheap and saves lots of more expensive hash checks,
-          //    but assumes that the filesystem stores birthtimes, which is the case in GitHub-hosted runners
-          //    and most sane Linux environments.
-          // 2. For the potentially modified files that passed the above check, compute their git object
-          //    hash and compare it with the one stored in the index. If they match, the file is the same;
-          //    else, actual changes were made.
-          // There are several assumptions at play here:
-          // - Only a few files were truly modified (otherwise, it's less work to compare hashes directly)
-          // - People don't modify indexed files by deleting and creating them again (if you do, please file
-          //   an issue and PackSquash will at least make this optimization toggleable, so it can rely on the
-          //   slower hash-only method)
+          // is no longer representative of when they were last modified. To achieve this, compute
+          // their git object hash and compare it with the one stored in the index. If they match,
+          // the file is the same; else, actual changes were made.
+          //
+          // Previous versions of this code tried to weed out files that did not change before computing
+          // hashes by checking beforehand that the modification time was greater than the creation (birth)
+          // time, but that turned out to be too unreliable, as while GitHub-hosted runners use filesystems
+          // that record creation times, some program that edit files in-place, such as `sed -i`, execute
+          // so fast that both times may end up set to the same value. Moreover, not doing that first pass
+          // better accommodates use cases where significant portions of the pack are generated during the
+          // workflow execution, and has less failure modes on contrived scenarios (i.e., if previous steps
+          // set file timestamps to confusing values)
           let fileMeta: Stats;
           try {
             fileMeta = await stat(filePath);
@@ -108,26 +105,17 @@ async function getUnmodifiedIndexedPackFiles(repository: string, packDirectory: 
             return [];
           }
 
-          const wasFilePotentiallyModifiedInWorkflow = fileMeta.mtimeMs > fileMeta.birthtimeMs;
+          const gitOut = await getExecOutput("git", ["-C", repository, "hash-object", filePath], {
+            silent: true,
+          });
 
-          let wasFileModifiedInWorkflow: boolean;
-          if (wasFilePotentiallyModifiedInWorkflow) {
-            const gitOut = await getExecOutput("git", ["-C", repository, "hash-object", filePath], {
-              silent: true,
-            });
+          const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
+          const indexedHash = fileIndexData.split(" ", 3)[1];
 
-            const actualHash = gitOut.stdout.trimEnd(); // Ignore trailing line break
-            const indexedHash = fileIndexData.split(" ", 3)[1];
+          const wasFileModifiedInWorkflow = actualHash !== indexedHash;
 
-            wasFileModifiedInWorkflow = actualHash !== indexedHash;
-
-            if (VERBOSE_LOGGING_ENV_VAR in process.env && wasFileModifiedInWorkflow) {
-              debug(
-                `${filePath} was modified in this run: ${fileMeta.mtimeMs} > ${fileMeta.birthtimeMs}, ${actualHash} != ${indexedHash}`,
-              );
-            }
-          } else {
-            wasFileModifiedInWorkflow = false;
+          if (VERBOSE_LOGGING_ENV_VAR in process.env && wasFileModifiedInWorkflow) {
+            debug(`${filePath} was modified in this run: ${actualHash} != ${indexedHash}`);
           }
 
           // The isPathWithin check is necessary because, even though some file in this repository
