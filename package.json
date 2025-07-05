@@ -38,7 +38,7 @@
     "@actions/exec": "1.1.1",
     "@actions/github": "6.0.1",
     "@actions/http-client": "2.2.3",
-    "smol-toml": "1.4.0",
+    "smol-toml": "1.4.1",
     "unzipper": "0.12.3",
     "uuid": "11.1.0"
   }
