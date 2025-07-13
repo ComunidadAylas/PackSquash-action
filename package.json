@@ -5,8 +5,7 @@
   "scripts": {
     "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
     "check": "biome check --write",
-    "format:ci": "biome ci --error-on-warnings --linter-enabled=false",
-    "lint:ci": "biome ci --error-on-warnings --formatter-enabled=false --organize-imports-enabled=false",
+    "ci:lint": "biome ci --error-on-warnings",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
     "test:pack-in-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml",
     "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml",
