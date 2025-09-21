@@ -25,7 +25,7 @@
     "@biomejs/biome": "2.2.4",
     "@types/unzipper": "0.10.11",
     "@types/uuid": "10.0.0",
-    "@vercel/ncc": "0.38.3",
+    "@vercel/ncc": "0.38.4",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
     "typescript": "5.9.2"
