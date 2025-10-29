@@ -26,7 +26,7 @@ jobs:
       - name: Setup Node.js 20
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: npm
       - name: Install npm development dependencies
         run: npm ci
