@@ -23,10 +23,10 @@ jobs:
     steps:
       - name: Clone repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-      - name: Setup Node.js 24
+      - name: Setup Node.js
         uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6
         with:
-          node-version: 24.x
+          node-version-file: .nvmrc
           cache: npm
       - name: Install npm development dependencies
         run: npm ci
@@ -36,6 +36,6 @@ jobs:
         uses: EndBug/add-and-commit@a94899bca583c204427a224a7af87c02f9b325d5 # v9
         with:
           add: -f dist/main/index.js dist/cleanup_working_directory/index.js
-          message: 'chore(dist): build'
+          message: "chore(dist): build"
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
