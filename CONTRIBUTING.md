@@ -9,7 +9,7 @@ project. Such guidelines are available
 This action is a relatively straightforward facade for downloading, setting up,
 and running the PackSquash command-line interface on a repository checkout. It
 is developed in TypeScript, a stronger-typed superset of JavaScript, targeting a
-Node.js 16 environment. Dependency and build management are automated with
+Node.js 24 environment. Dependency and build management are automated with
 [npm](https://www.npmjs.com/). The transpilation to a single-file JavaScript
 bundle is done automatically by a workflow on push, but it can also be done
 manually by running `npm build`. Node.js actions are the most lightweight and

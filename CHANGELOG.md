@@ -8,6 +8,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Updated the action Node.js runner to 24 from 20.
+
 ### Fixed
 
 - Fixed an issue where files modified in previous workflow steps were
