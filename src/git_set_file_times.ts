@@ -172,7 +172,7 @@ async function setPackFilesModificationTime(repository: string, remainingPackFil
       // files, and only take into account the latest commit that modified them
       if (remainingPackFiles.delete(modifiedFile)) {
         if (VERBOSE_LOGGING_ENV_VAR in process.env) {
-          debug(`Setting ${modifiedFile} modification time to ${new Date(Number.parseInt(commitTime) * 1000)}`);
+          debug(`Setting ${modifiedFile} modification time to ${new Date(Number.parseInt(commitTime, 10) * 1000)}`);
         }
         await utimes(modifiedFile, commitTime, commitTime);
       }

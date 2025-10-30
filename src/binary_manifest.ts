@@ -15,21 +15,12 @@ type PlatformSpecificString = { all?: string } & Record<string, Record<string, s
 /// Increment when a change to the manifest that requires new code to be properly parsed
 /// is made, and then serve the new manifest on its corresponding vX slug. Older manifests
 /// will be eventually removed.
-const CURRENT_MANIFEST_VERSION = 1;
+const CURRENT_MANIFEST_VERSION = 2;
 
-/// The environment variables to builds downloaded according to manifests when running them.
+/// The environment variables to set when running builds, according to their type in the
+/// manifest.
 const BUILD_TYPE_RUN_ENV: Record<BuildManifest["type"], Record<string, string>> = {
   staticBinary: {},
-  appImage: {
-    /// GitHub Actions runners run JavaScript actions directly on the host. For GitHub-hosted
-    /// runners, this means that they run on a virtual machine, where mounting the AppImage
-    /// filesystem with FUSE is not a problem. However, when running the action locally with
-    /// act, a Docker container is used instead by default. Moreover, some AppImage runtimes
-    /// depend on libfuse2, which is no longer included with GitHub Ubuntu 22 images.
-    /// Therefore, play it safe and always extract the image, which does not require FUSE to
-    /// be available
-    APPIMAGE_EXTRACT_AND_RUN: "1",
-  },
 };
 
 /// Represents a PackSquash binary manifest that codifies how to download and run different
@@ -272,7 +263,7 @@ type ActionsWorkflowArtifactFetchManifest = {
 };
 
 interface BuildManifest {
-  type: "staticBinary" | "appImage";
+  type: "staticBinary";
   fetch: HttpGetRequestArtifactFetchManifest | ActionsWorkflowArtifactFetchManifest;
 }
 
