@@ -1,7 +1,7 @@
+import { randomBytes } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { debug, endGroup, setSecret, startGroup } from "@actions/core";
 import { exec } from "@actions/exec";
-import * as uuid from "uuid";
 import { getInputValue } from "./action_input";
 import type { PackSquashOptions } from "./packsquash_options";
 import { addProblemMatcher, removeProblemMatcher } from "./problem_matcher";
@@ -72,7 +72,7 @@ async function getSystemId(workingDirectory: WorkingDirectory) {
   } catch {
     // We don't have a cached system ID or an I/O error happened.
     // Generate a new random one
-    cachedOrGeneratedSystemId = uuid.v4();
+    cachedOrGeneratedSystemId = randomBytes(32).toString("hex");
     await writeFile(workingDirectory.systemIdFile, cachedOrGeneratedSystemId, "utf8");
   }
 
