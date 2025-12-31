@@ -13,7 +13,7 @@ export async function computeCacheKeys(packSquashOptions: PackSquashOptions) {
   // Using different primary and restore keys is necessary to handle jobs
   // executing concurrently: if a job tries to write to a cache key that is
   // already being written to by another job, it will error out
-  const restoreKey = `packsquash-0-${cacheRevision}-${getInputValue("packsquash_version")}-${optionsHash}`;
+  const restoreKey = `packsquash-1-${cacheRevision}-${getInputValue("packsquash_version")}-${optionsHash}`;
   const primaryKey = `${restoreKey}-${context.runId}-${context.job}`;
   return [primaryKey, restoreKey];
 }

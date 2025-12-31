@@ -1,0 +1,56 @@
+{
+  "latestManifestVersion": 2,
+
+  "repoOwner": "ComunidadAylas",
+  "repoName": "PackSquash",
+
+  "latestRelease": "v0.4.1",
+
+  "v0.4.1": {
+    "type": "staticBinary",
+    "fetch": {
+      "strategy": "httpGetRequest",
+      "url": {
+        "linux": {
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.x86_64-unknown-linux-musl.zip",
+          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.aarch64-unknown-linux-musl.zip"
+        },
+        "windows": {
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.x86_64-pc-windows-gnu.zip"
+        },
+        "macos": {
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.universal-apple-darwin.zip",
+          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.universal-apple-darwin.zip"
+        }
+      }
+    }
+  },
+
+  "unstable": [
+    {
+      "applicabilityPeriod": {
+        "from": 1759691990384,
+        "to": "now"
+      },
+      "type": "staticBinary",
+      "fetch": {
+        "strategy": "actionsWorkflowArtifact",
+        "workflowId": 32465409,
+        "branch": "master",
+        "name": {
+          "linux": {
+            "x64": "PackSquash CLI executable (x86_64-unknown-linux-musl)",
+            "arm64": "PackSquash CLI executable (aarch64-unknown-linux-musl)"
+          },
+          "windows": {
+            "x64": "PackSquash CLI executable (x86_64-pc-windows-gnu)"
+          },
+          "macos": {
+            "x64": "PackSquash CLI executable (x86_64-apple-darwin)",
+            "arm64": "PackSquash CLI executable (aarch64-apple-darwin)"
+          }
+        }
+      }
+    }
+  ]
+}
