@@ -8,8 +8,13 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+No changes yet.
+
+## [4.0.4] - 2026-01-01
+
 ### Changed
 
+- Added support for PackSquash v0.4.1.
 - Updated the action Node.js runner to 24 from 20.
 - Dropped support for PackSquash v0.4.0 and older versions due to changes in the
   system identifier format.
@@ -131,7 +136,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   your case so we can consider providing an upgrade path for you.
 
 [Unreleased]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.3...HEAD
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.4...HEAD
+[4.0.4]:
+    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.3...v4.0.4
 [4.0.3]:
     https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.2...v4.0.3
 [4.0.2]:
