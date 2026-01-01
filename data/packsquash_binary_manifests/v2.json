@@ -29,7 +29,7 @@
   "unstable": [
     {
       "applicabilityPeriod": {
-        "from": 1759691990384,
+        "from": 1759691990,
         "to": "now"
       },
       "type": "staticBinary",
