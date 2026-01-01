@@ -12,15 +12,15 @@
       "strategy": "httpGetRequest",
       "url": {
         "linux": {
-          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.x86_64-unknown-linux-musl.zip",
-          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.aarch64-unknown-linux-musl.zip"
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/packsquash-x86_64-unknown-linux-musl.zip",
+          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/packsquash-aarch64-unknown-linux-musl.zip"
         },
         "windows": {
-          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.x86_64-pc-windows-gnu.zip"
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/packsquash.exe-x86_64-pc-windows-gnu.zip"
         },
         "macos": {
-          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.universal-apple-darwin.zip",
-          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/PackSquash.CLI.executable.universal-apple-darwin.zip"
+          "x64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/packsquash-universal2-apple-darwin.zip",
+          "arm64": "https://github.com/ComunidadAylas/PackSquash/releases/download/v0.4.1/packsquash-universal2-apple-darwin.zip"
         }
       }
     }
