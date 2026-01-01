@@ -11,6 +11,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Updated the action Node.js runner to 24 from 20.
+- Dropped support for PackSquash v0.4.0 and older versions due to changes in the
+  system identifier format.
 
 ### Fixed
 
