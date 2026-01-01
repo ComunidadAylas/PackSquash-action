@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { debug } from "@actions/core";
 import { getExecOutput } from "@actions/exec";
-import unzipper from "unzipper";
+import { open as zipOpen } from "yauzl-promise";
 
 /**
  * If caching may be used, and setGitFileModificationTimes should be executed,
@@ -126,6 +126,21 @@ export async function md5Hash(data: string) {
 }
 
 export async function extractFirstFileFromZip(zipPath: string, destinationPath: string) {
-  const centralDirectory = await unzipper.Open.file(zipPath);
-  await pipeline(centralDirectory.files[0].stream(), createWriteStream(destinationPath));
+  const zipFile = await zipOpen(zipPath);
+  try {
+    for await (const entry of zipFile) {
+      // Skip directories
+      if (entry.filename.endsWith("/")) {
+        continue;
+      }
+
+      const readStream = await entry.openReadStream();
+      await pipeline(readStream, createWriteStream(destinationPath));
+      return;
+    }
+
+    throw new Error("No files found in ZIP archive");
+  } finally {
+    await zipFile.close();
+  }
 }

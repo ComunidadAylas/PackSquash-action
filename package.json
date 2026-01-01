@@ -26,7 +26,7 @@
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
-    "@types/unzipper": "0.10.11",
+    "@types/yauzl-promise": "4.0.1",
     "@vercel/ncc": "0.38.4",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
@@ -40,6 +40,6 @@
     "@actions/github": "6.0.1",
     "@actions/http-client": "3.0.0",
     "smol-toml": "1.6.0",
-    "unzipper": "0.12.3"
+    "yauzl-promise": "4.0.0"
   }
 }
