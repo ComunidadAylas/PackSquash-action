@@ -33,12 +33,12 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "@actions/artifact": "5.0.2",
-    "@actions/cache": "5.0.3",
-    "@actions/core": "2.0.2",
+    "@actions/artifact": "5.0.3",
+    "@actions/cache": "5.0.5",
+    "@actions/core": "2.0.3",
     "@actions/exec": "2.0.0",
     "@actions/github": "9.0.0",
-    "@actions/http-client": "3.0.1",
+    "@actions/http-client": "3.0.2",
     "fflate": "0.8.2",
     "smol-toml": "1.6.0"
   }
