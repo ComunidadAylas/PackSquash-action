@@ -33,7 +33,7 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "@actions/artifact": "6.0.0",
+    "@actions/artifact": "6.1.0",
     "@actions/cache": "5.0.5",
     "@actions/core": "3.0.0",
     "@actions/exec": "3.0.0",
