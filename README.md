@@ -370,7 +370,7 @@ repositories.
 
 **Default value**
 
-`Optimized pack`
+`Optimized pack.zip`
 
 **Description**
 

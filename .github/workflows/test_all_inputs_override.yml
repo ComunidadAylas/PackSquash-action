@@ -22,7 +22,7 @@ jobs:
         with:
           packsquash_version: latest
           system_id: c5eb0603-093c-41fd-9c21-88c34a429e3b # <- (Automatically generated)
-          artifact_name: Test Artifact Name # <- Optimized pack
+          artifact_name: Test Artifact Name.zip # <- Optimized pack.zip
           show_emoji_in_packsquash_logs: false # <- true
           enable_color_in_packsquash_logs: false # <- true
           token: ${{ secrets.GITHUB_TOKEN }} # <- ${{ github.token }}

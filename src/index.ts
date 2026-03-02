@@ -6,7 +6,7 @@ import setPackFilesModificationTimesFromCommits from "./git_set_file_times";
 import { printPackSquashVersion, runPackSquash } from "./packsquash";
 import { PackSquashOptions } from "./packsquash_options";
 import { getEnvOrThrow } from "./util";
-import { uploadArtifact } from "./workflow";
+import { uploadPackArtifact } from "./workflow";
 import WorkingDirectory from "./working_directory";
 
 async function run() {
@@ -41,7 +41,7 @@ async function run() {
 
   await runPackSquash(packSquashOptions, binaryEnvironment, workingDirectory);
 
-  await uploadArtifact(packSquashOptions);
+  await uploadPackArtifact(workingDirectory, packSquashOptions);
 
   if (packSquashOptions.mayCacheBeUsed() && !cacheRestored) {
     await savePackSquashCache(workingDirectory, key);

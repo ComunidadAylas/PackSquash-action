@@ -28,6 +28,12 @@ class WorkingDirectory {
     await mkdir(this.path, { recursive: true });
   }
 
+  async temporaryFile(namespace: string, fileName: string) {
+    const dir = path.join(this.path, namespace);
+    await mkdir(dir, { recursive: true });
+    return path.join(dir, fileName);
+  }
+
   get packsquashBinary() {
     return path.join(this.path, `packsquash${this.binaryExtension}`);
   }

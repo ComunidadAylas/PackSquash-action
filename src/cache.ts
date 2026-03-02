@@ -4,7 +4,7 @@ import { context } from "@actions/github";
 import { getInputValue } from "./action_input";
 import type { PackSquashOptions } from "./packsquash_options";
 import { getBranchName, md5Hash } from "./util";
-import { downloadLatestArtifact, getCurrentWorkflowId } from "./workflow";
+import { downloadLatestPackArtifact, getCurrentWorkflowId } from "./workflow";
 import type WorkingDirectory from "./working_directory";
 
 export async function computeCacheKeys(packSquashOptions: PackSquashOptions) {
@@ -51,8 +51,7 @@ export async function restorePackSquashCache(
           throw new Error("Could not get current workflow ID");
         }
 
-        await downloadLatestArtifact(
-          workingDirectory,
+        await downloadLatestPackArtifact(
           owner,
           repo,
           branch,

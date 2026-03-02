@@ -1,3 +1,5 @@
+import { createWriteStream } from "node:fs";
+import { copyFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { pipeline } from "node:stream/promises";
 import { default as artifactClient } from "@actions/artifact";
@@ -6,7 +8,6 @@ import { HttpClient } from "@actions/http-client";
 import { getInputValue } from "./action_input";
 import octokit from "./octokit";
 import type { PackSquashOptions } from "./packsquash_options";
-import { extractFirstFileFromZip } from "./util";
 import type WorkingDirectory from "./working_directory";
 
 export async function getCurrentWorkflowId(owner: string, repo: string, workflow: string) {
@@ -17,28 +18,30 @@ export async function getCurrentWorkflowId(owner: string, repo: string, workflow
   return workflows.data.workflows.find(w => w.name === workflow)?.id;
 }
 
-export async function uploadArtifact(packSquashOptions: PackSquashOptions) {
+export async function uploadPackArtifact(workingDirectory: WorkingDirectory, packSquashOptions: PackSquashOptions) {
   if ("ACT" in process.env) {
     debug("Local act test environment detected. Skipping artifact upload");
     return;
   }
 
   startGroup("Upload generated ZIP file as artifact");
+  const artifactName = getInputValue("artifact_name");
   const outputFilePath = packSquashOptions.getOutputFilePath();
-  const response = await artifactClient.uploadArtifact(
-    getInputValue("artifact_name"),
-    [outputFilePath],
-    dirname(outputFilePath),
-  );
+  const artifactFilePath = await workingDirectory.temporaryFile("pack_artifact_upload", artifactName);
+
+  await copyFile(outputFilePath, artifactFilePath);
+
+  const response = await artifactClient.uploadArtifact(artifactName, [artifactFilePath], dirname(artifactFilePath), {
+    skipArchive: true,
+  });
   endGroup();
 
-  if (!response.size) {
+  if (!response?.size) {
     throw new Error("Artifact upload failed");
   }
 }
 
-export async function downloadLatestArtifact(
-  workingDirectory: WorkingDirectory,
+export async function downloadLatestPackArtifact(
   owner: string,
   repo: string,
   branch: string,
@@ -85,13 +88,12 @@ export async function downloadLatestArtifact(
     artifact_id: artifact.id,
   });
 
-  debug(`Extracting ${artifactName} artifact archive (#${latestRun.run_number})`);
+  debug(`Downloading ${artifactName} artifact (#${latestRun.run_number})`);
   try {
-    await pipeline((await new HttpClient().get(zip.url)).message, workingDirectory.temporaryDownloadFileWriteStream);
+    await pipeline((await new HttpClient().get(zip.url)).message, createWriteStream(destinationPath));
   } catch {
     throw new Error(`Could not download the latest ${artifactName} artifact`);
   }
-  await extractFirstFileFromZip(workingDirectory.temporaryDownloadFile, destinationPath);
 
   info(`Successfully downloaded the latest ${artifactName} artifact`);
 }
