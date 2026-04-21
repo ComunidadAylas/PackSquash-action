@@ -30,7 +30,7 @@
     "@vercel/ncc": "0.38.4",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "dependencies": {
     "@actions/artifact": "6.2.1",
