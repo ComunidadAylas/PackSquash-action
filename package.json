@@ -35,10 +35,10 @@
   "dependencies": {
     "@actions/artifact": "6.2.1",
     "@actions/cache": "6.0.0",
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0",
-    "@actions/github": "9.1.0",
-    "@actions/http-client": "4.0.0",
+    "@actions/github": "9.1.1",
+    "@actions/http-client": "4.0.1",
     "fflate": "0.8.2",
     "smol-toml": "1.6.1"
   }
