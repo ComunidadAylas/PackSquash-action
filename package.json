@@ -27,7 +27,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.16",
     "@types/node": "25.9.2",
-    "@vercel/ncc": "0.38.4",
+    "@vercel/ncc": "0.44.0",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
     "typescript": "6.0.3"
