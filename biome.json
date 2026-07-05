@@ -12,7 +12,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "style": { "noParameterAssign": "off" },
       "suspicious": { "noAssignInExpressions": "off" }
     }
