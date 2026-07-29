@@ -40,6 +40,6 @@
     "@actions/github": "9.1.1",
     "@actions/http-client": "4.0.1",
     "fflate": "0.8.3",
-    "smol-toml": "1.7.0"
+    "smol-toml": "1.7.1"
   }
 }
