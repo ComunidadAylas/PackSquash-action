@@ -10,7 +10,13 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Uploaded pack file ZIP artifacts are no longer wrapped in an additional ZIP file by GitHub. This leverages a recently introduced feature for disabling that behavior added in a [pull request to `actions/toolkit`](https://github.com/actions/toolkit/pull/2256).
+- Uploaded pack file ZIP artifacts are no longer wrapped in an additional ZIP
+  file by GitHub. This leverages a recently introduced feature for disabling that
+  behavior added in a [pull request to
+  `actions/toolkit`](https://github.com/actions/toolkit/pull/2256).
+- Specific action release tags are now immutable, meaning they cannot be
+  modified to point to a different commit once created. Floating tags, such as
+  `v4`, are unaffected, since they refer to different release versions by design.
 
 ## [4.0.4] - 2026-01-01
 
