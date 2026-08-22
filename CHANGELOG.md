@@ -26,7 +26,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed an issue where files modified in previous workflow steps were
   incorrectly categorized as unchanged by the action cache logic under some
   circumstances, causing PackSquash to reuse stale versions of those files.
-  (Thank you __camm_ for reporting this issue over Discord!)
+  (Thank you \__camm_ for reporting this issue over Discord!)
 
 ## [4.0.3] - 2024-12-13
 
@@ -137,15 +137,9 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   being able to upgrade to the latest major release, please let us know about
   your case so we can consider providing an upgrade path for you.
 
-[Unreleased]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.4...HEAD
-[4.0.4]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.3...v4.0.4
-[4.0.3]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.2...v4.0.3
-[4.0.2]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.1...v4.0.2
-[4.0.1]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.0...v4.0.1
-[4.0.0]:
-    https://github.com/ComunidadAylas/PackSquash-action/compare/v3.0.2...v4.0.0
+[Unreleased]: https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.4...HEAD
+[4.0.4]: https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.3...v4.0.4
+[4.0.3]: https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.2...v4.0.3
+[4.0.2]: https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.1...v4.0.2
+[4.0.1]: https://github.com/ComunidadAylas/PackSquash-action/compare/v4.0.0...v4.0.1
+[4.0.0]: https://github.com/ComunidadAylas/PackSquash-action/compare/v3.0.2...v4.0.0
