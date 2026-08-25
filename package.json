@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "devDependencies": {
-    "@biomejs/biome": "2.5.9",
+    "@biomejs/biome": "2.5.10",
     "@types/node": "26.2.0",
     "@vercel/ncc": "0.45.0",
     "all-contributors-cli": "6.26.1",
