@@ -24,6 +24,11 @@ export async function uploadPackArtifact(workingDirectory: WorkingDirectory, pac
     return;
   }
 
+  if(!getInputValue("upload_artifact")) {
+    debug("Skipping artifact upload due to action settings");
+    return;
+  }
+
   startGroup("Upload generated ZIP file as artifact");
   const artifactName = getInputValue("artifact_name");
   const outputFilePath = packSquashOptions.getOutputFilePath();

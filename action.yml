@@ -21,6 +21,10 @@ inputs:
     description: 'The revision of the cache that the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage the system identifier yourself.'
     required: false
     default: ''
+  upload_artifact:
+    description: 'Disable this to skip uploading the generated ZIP file as an artifact to the workflow.'
+    required: false
+    default: 'true'
   artifact_name:
     description: 'The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times.'
     required: false
