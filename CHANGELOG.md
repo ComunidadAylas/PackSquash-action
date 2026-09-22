@@ -10,6 +10,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Add ability to disable automatic uploading of the output ZIP to workflow artifacts.
 - Uploaded pack file ZIP artifacts are no longer wrapped in an additional ZIP
   file by GitHub. This leverages a recently introduced feature for disabling that
   behavior added in a [pull request to
