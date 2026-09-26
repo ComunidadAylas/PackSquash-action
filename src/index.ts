@@ -15,7 +15,7 @@ async function run() {
   await workingDirectory.mkdir();
 
   const packSquashOptions = await PackSquashOptions.parseAndTweak(workingDirectory);
-  await packSquashOptions.show();
+  packSquashOptions.show();
 
   const packDirectory = packSquashOptions.getPackDirectory();
   if (packDirectory === undefined) {
