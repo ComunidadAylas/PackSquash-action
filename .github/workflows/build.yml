@@ -13,6 +13,10 @@ on:
       - opened
       - synchronize
   workflow_dispatch:
+
+permissions:
+  contents: read # For checking out the repository
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,18 +24,27 @@ jobs:
     # Exclude in-repo PRs from running this job
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
+    permissions:
+      contents: write # For pushing commits
+
     steps:
       - name: Clone repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: true # Required for the EndBug/add-and-commit action below
+
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
           cache: npm
+
       - name: Install npm development dependencies
         run: npm ci
+
       - name: Build action
         run: npm run build
+
       - name: Commit and push action bundle
         uses: EndBug/add-and-commit@645ecc0dd0a57f4d86d26c0aa5fc42c0a856fbca # v11
         with:

@@ -5,6 +5,10 @@ on:
     types:
       - opened
       - synchronize
+
+permissions:
+  contents: read # For checking out the repository
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,14 +17,11 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
     steps:
-      - name: Clone action repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          path: action
       - name: Set up empty Git repository with public pack submodules
-        uses: ./action/.github/workflows/actions/set_up_repo_with_submodules
+        uses: $/.github/workflows/actions/set_up_repo_with_submodules
+
       - name: Run PackSquash
-        uses: ./action
+        uses: $/
         with:
           packsquash_version: latest
           options: |

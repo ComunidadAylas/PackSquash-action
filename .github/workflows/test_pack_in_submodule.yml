@@ -5,6 +5,10 @@ on:
     types:
       - opened
       - synchronize
+
+permissions:
+  contents: read # For checking out the repository
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,12 +17,9 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork
 
     steps:
-      - name: Clone action repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          path: action
       - name: Set up empty Git repository with public pack submodules
-        uses: ./action/.github/workflows/actions/set_up_repo_with_submodules
+        uses: $/.github/workflows/actions/set_up_repo_with_submodules
+
       - name: Modify pack files (test that working directory changes are handled well)
         run: |
           touch golden-days/golden-days-base/assets/minecraft/sounds.json
@@ -26,8 +27,9 @@ jobs:
           sed -i 's/:/ :/g' golden-days/golden-days-base/assets/minecraft/models/block/acacia_log.json # mtimeMs == btimeMs (most likely)
           mv golden-days/golden-days-base/credits.txt golden-days/golden-days-base/credits_new.txt
           rm golden-days/golden-days-base/assets/minecraft/optifine/color.properties
+
       - name: Run PackSquash
-        uses: ./action
+        uses: $/
         env:
           PACKSQUASH_ACTION_EXTRA_VERBOSE_FILE_TIMES_LOGGING: 1
         with:

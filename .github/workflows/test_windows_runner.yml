@@ -6,6 +6,10 @@ on:
       - opened
       - synchronize
   workflow_dispatch:
+
+permissions:
+  contents: read # For checking out the repository
+
 jobs:
   test:
     runs-on: windows-latest
@@ -18,8 +22,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
+
       - name: Run PackSquash
-        uses: ./ # Uses an action in the root directory
+        uses: $/ # Uses an action in the root directory
         with:
           packsquash_version: latest
           options: |
