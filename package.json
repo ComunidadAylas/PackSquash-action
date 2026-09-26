@@ -3,7 +3,7 @@
   "version": "4.0.4",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
-    "build": "ncc build src/index.ts -o dist/main -m && ncc build src/cleanup_working_directory.ts -o dist/cleanup_working_directory -m",
+    "build": "parcel build",
     "check": "biome check --write",
     "ci:lint": "biome ci --error-on-warnings",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
@@ -20,17 +20,34 @@
   "bugs": {
     "url": "https://github.com/ComunidadAylas/PackSquash-action/issues"
   },
+  "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "engines": {
     "node": ">=24.0.0 <25.0.0"
   },
-  "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
+  "targets": {
+    "main": {
+      "source": "src/index.ts",
+      "optimize": true,
+      "sourceMap": false,
+      "includeNodeModules": {}
+    },
+    "cleanup_working_directory": {
+      "source": "src/cleanup_working_directory.ts",
+      "optimize": true,
+      "sourceMap": false,
+      "includeNodeModules": {}
+    }
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "devDependencies": {
     "@biomejs/biome": "2.5.14",
-    "@types/node": "26.6.2",
-    "@vercel/ncc": "0.45.0",
+    "@types/node": "26.6.3",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
-    "typescript": "6.0.3"
+    "parcel": "2.16.4",
+    "typescript": "7.0.2"
   },
   "dependencies": {
     "@actions/artifact": "6.2.1",
