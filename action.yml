@@ -36,7 +36,7 @@ inputs:
 runs:
   using: node24
   main: dist/main/index.js
-  post: dist/cleanup_working_directory/index.js
+  post: dist/cleanup_working_directory.js
 branding:
   icon: archive
   color: orange

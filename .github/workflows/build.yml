@@ -35,7 +35,7 @@ jobs:
       - name: Commit and push action bundle
         uses: EndBug/add-and-commit@645ecc0dd0a57f4d86d26c0aa5fc42c0a856fbca # v11
         with:
-          add: -f dist/main/index.js dist/cleanup_working_directory/index.js
+          add: -f dist/main/index.js dist/cleanup_working_directory.js
           message: "chore(dist): build"
           author_name: github-actions[bot]
           author_email: 41898282+github-actions[bot]@users.noreply.github.com
