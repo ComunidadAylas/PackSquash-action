@@ -366,6 +366,16 @@ secret](https://docs.github.com/en/actions/reference/authentication-in-a-workflo
 is used, which is suitable for use in most scenarios, including private
 repositories.
 
+#### `upload_artifact`
+
+**Default value**
+
+`true`
+
+**Description**
+
+Disable this to skip uploading the generated ZIP file as an artifact to the workflow.
+
 #### `artifact_name`
 
 **Default value**
