@@ -26,7 +26,7 @@ export class PackSquashOptions {
       optionsToml = optionsInputValue;
     }
 
-    const options = await TOML.parse(optionsToml);
+    const options = TOML.parse(optionsToml);
 
     // If no output file path was specified, set a default one
     options.output_file_path = options.output_file_path ?? workingDirectory.defaultOutputFile;
