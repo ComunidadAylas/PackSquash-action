@@ -3,9 +3,9 @@
   "version": "4.0.4",
   "description": "Official action to run PackSquash in a GitHub Actions workflow.",
   "scripts": {
-    "build": "tsdown --minify",
-    "check": "biome check --write",
-    "ci:lint": "biome ci --error-on-warnings",
+    "build": "tsc --noEmit && tsdown --minify",
+    "check": "tsc --noEmit && biome check --write",
+    "ci:lint": "tsc --noEmit && biome ci --error-on-warnings",
     "test": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_empty_resource_pack.yml",
     "test:pack-in-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_in_submodule.yml",
     "test:pack-submodule": "npm run build && act --secret-file .act-secrets -W .github/workflows/test_pack_submodule.yml",

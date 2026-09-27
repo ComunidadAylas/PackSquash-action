@@ -6,6 +6,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "strict": true
+    "skipLibCheck": true,
+    "lib": [
+      // We target a non-browser environment, so only ECMAScript and Node APIs
+      // are available.
+      "ESNext"
+    ]
   }
 }

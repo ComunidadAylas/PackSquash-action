@@ -205,6 +205,7 @@ export class PackSquashBinaryManifest {
         await octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts", {
           owner: this.repoOwner,
           repo: this.repoName,
+          // @ts-expect-error Upstream type definitions mix number and bigint here, it's safer to not do any conversion
           run_id: latestWorkflowRun.id,
         })
       ).data.artifacts;

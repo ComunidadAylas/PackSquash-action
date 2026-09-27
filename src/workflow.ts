@@ -75,6 +75,7 @@ export async function downloadLatestPackArtifact(
   const artifacts = await octokit.request("GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts", {
     owner: owner,
     repo: repo,
+    // @ts-expect-error Upstream type definitions mix number and bigint here, it's safer to not do any conversion
     run_id: latestRun.id,
   });
   const artifact = artifacts.data.artifacts.find(a => a.name === artifactName);
