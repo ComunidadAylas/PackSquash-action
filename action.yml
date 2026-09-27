@@ -3,36 +3,36 @@ description: Official action to run PackSquash in a GitHub Actions workflow.
 author: sya-ri, Alejandro "AlexTMjugador" González
 inputs:
   options:
-    description: 'The options to pass to PackSquash, either as a file path or as a TOML string. Relative paths are interpreted from the repository root. If not specified, PackSquash will optimize a pack in the repository root with the default options.'
+    description: "The options to pass to PackSquash, either as a file path or as a TOML string. Relative paths are interpreted from the repository root. If not specified, PackSquash will optimize a pack in the repository root with the default options."
     required: false
     default: 'pack_directory = "."'
   system_id:
-    description: 'The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what you are doing, it is recommended to leave this parameter unset, as doing so will let the action generate and use a suitable system identifier automatically.'
+    description: "The system identifier PackSquash will use to generate cryptographic secrets. Unless you know what you are doing, it is recommended to leave this parameter unset, as doing so will let the action generate and use a suitable system identifier automatically."
     required: false
-    default: ''
+    default: ""
   packsquash_version:
-    description: 'The PackSquash version that the action will use. Please note that too old or too new versions may be incompatible with or not fully supported by the action.'
+    description: "The PackSquash version that the action will use. Please note that too old or too new versions may be incompatible with or not fully supported by the action."
     required: true
   token:
-    description: 'The GitHub API authentication token that will be used for operations that may require authentication.'
+    description: "The GitHub API authentication token that will be used for operations that may require authentication."
     required: false
     default: ${{ github.token }}
   action_cache_revision:
-    description: 'The revision of the cache that the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage the system identifier yourself.'
+    description: "The revision of the cache that the action uses internally. You should only need to change this revision if you want the action to not reuse any cached information, like the system identifier, or want to isolate jobs from each other due to undesired interferences between them. This will render any previously generated ZIP file unusable for speed optimizations unless you manage the system identifier yourself."
     required: false
-    default: ''
+    default: ""
   artifact_name:
-    description: 'The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times.'
+    description: "The name of the workflow artifact containing the generated ZIP file that the action will upload. Later steps in the workflow will be able to download it by this name. Changing this may be needed in complex workflows, where the action runs several times."
     required: false
-    default: 'Optimized pack.zip'
+    default: "Optimized pack.zip"
   show_emoji_in_packsquash_logs:
-    description: 'If true, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead.'
+    description: "If true, the action will instruct PackSquash to use emojis in the logs it generates, which look prettier. Otherwise, plain ASCII decoration characters will be used instead."
     required: false
-    default: 'true'
+    default: "true"
   enable_color_in_packsquash_logs:
-    description: 'If true, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored.'
+    description: "If true, the action will instruct PackSquash to color the log messages it generates, which looks prettier. Otherwise, the messages will not be colored."
     required: false
-    default: 'true'
+    default: "true"
 runs:
   using: node24
   main: dist/main.mjs
