@@ -18,6 +18,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   modified to point to a different commit once created. Floating tags, such as
   `v4`, are unaffected, since they refer to different release versions by design.
 - Added test coverage for macOS runners.
+- Reduced the action's code size from 2.09 MiB to 1.29 MiB (~40%) by switching
+  the bundler from `@vercel/ncc` to `tsdown` (`rolldown`-based).
 
 ## [4.0.4] - 2026-01-01
 
