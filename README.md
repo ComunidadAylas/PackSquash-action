@@ -7,6 +7,7 @@
 Action to run [PackSquash](https://github.com/ComunidadAylas/PackSquash), a
 Minecraft resource and data pack optimizer, in a GitHub Actions workflow, which
 allows it to better integrate in continuous integration processes.
+
 </div>
 
 ## ⚙️ Usage examples
@@ -206,15 +207,16 @@ required authentication credentials. A common solution is to upload releases to
 an external web server directly from a GitHub Actions workflow via SSH.
 
 > [!IMPORTANT]
-> *Keep in mind that just uploading files to the web server may not be enough to
-> make players download the new version the next time they connect*. The
+> _Keep in mind that just uploading files to the web server may not be enough
+> to make players download the new version the next time they connect_. The
 > Minecraft server should be configured with the appropriate resource pack ZIP
 > file URL and hash each time the pack is updated. Otherwise, clients will
-> receive stale information, and may decide to use the copy they have downloaded
-> already, or fail to download the pack for the first time if there is a hash
-> mismatch. This example omits that part on purpose because the precise way of
-> doing it (running plugin commands via RCON, modifying the `server.properties`
-> file and restarting the server, etc.) is environment-specific.
+> receive stale information, and may decide to use the copy they have
+> downloaded already, or fail to download the pack for the first time if there
+> is a hash mismatch. This example omits that part on purpose because the
+> precise way of doing it (running plugin commands via RCON, modifying the
+> `server.properties` file and restarting the server, etc.) is
+> environment-specific.
 
 #### Secrets
 
@@ -222,33 +224,34 @@ This example workflow uses the following
 [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets),
 which can be set in the repository settings.
 
-| Name | Description |
-|---|---|
-| `SSH_HOST` | Web (and/or SSH) server host name or address |
-| `SSH_USERNAME` | Username for SSH authentication |
-| `SSH_PRIVATE_KEY` | Private key for SSH authentication |
-| `SSH_PORT` | SSH server listen port |
-| `DEPLOY_DIRECTORY` | Directory where the pack will be deployed to. Usually `/var/www/` for the web server root |
+| Name               | Description                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `SSH_HOST`         | Web (and/or SSH) server host name or address                                             |
+| `SSH_USERNAME`     | Username for SSH authentication                                                          |
+| `SSH_PRIVATE_KEY`  | Private key for SSH authentication                                                       |
+| `SSH_PORT`         | SSH server listen port                                                                   |
+| `DEPLOY_DIRECTORY` | Directory where the pack will be deployed to. Usually `/var/www` for the web server root |
 
 > [!TIP]
-> *To enhance security, consider not disabling SSH host key verification with
-> the `-o 'StrictHostKeyChecking=no'` option used in the workflow file below.*
+> _To enhance security, consider not disabling SSH host key verification with
+> the `-o 'StrictHostKeyChecking=no'` option used in the workflow file below._
 >
 > Instead, you can add SSHFP records with the expected host key to its DNS host
 > name. When using a DNSSEC-aware resolver with DNSSEC-protected SSHFP records
 > in place, the `-o 'VerifyHostKeyDNS=yes'` SSH client option is enough to
 > automatically and securely authenticate the host key. GitHub-hosted runners
-> have been experimentally sighted to sometimes use a DNSSEC-aware resolver that
-> works well for SSHFP record validation.
+> have been experimentally sighted to sometimes use a DNSSEC-aware resolver
+> that works well for SSHFP record validation.
 >
 > Another similarly secure but simpler to set up approach involves adding the
 > expected host key beforehand to the `/etc/ssh/ssh_known_hosts` or
-> `~/.ssh/known_hosts` file. However, this method leads to a decentralization of
-> the locations where the host key needs to be stored, which may be less
+> `~/.ssh/known_hosts` file. However, this method leads to a decentralization
+> of the locations where the host key needs to be stored, which may be less
 > scalable and maintainable. The format for these files is documented
 > [here](https://man7.org/linux/man-pages/man8/sshd.8.html#SSH_KNOWN_HOSTS_FILE_FORMAT).
 >
 > Further reading:
+>
 > - <https://blog.apnic.net/2022/12/02/improving-sshs-security-with-sshfp-dns-records/>
 > - <https://man7.org/linux/man-pages/man1/ssh.1.html#VERIFYING_HOST_KEYS>
 > - <https://sha256.net/VerifyHostKeyDNS.html>
@@ -295,10 +298,10 @@ below, but feel free to send pull requests to add new reusable templates here!
   bundle them in optimized ZIP files. Each commit is optimized to a ZIP
   artifact. No releases or deployments are made.
 - [`sya-ri/MinecraftResourcePackTemplate`](https://github.com/sya-ri/MinecraftResourcePackTemplate)
-  (in Japanese; uses outdated versions of PackSquash and this action): a
-  template repository for Minecraft resource packs that uses PackSquash to
-  bundle them in optimized ZIP files. Each commit is optimized to a ZIP
-  artifact, and a release is made when a new tag is pushed.
+  (archived; in Japanese; uses outdated versions of PackSquash and this action):
+  a template repository for Minecraft resource packs that uses PackSquash to
+  bundle them in optimized ZIP files. Each commit is optimized to a ZIP artifact,
+  and a release is made when a new tag is pushed.
 
 ## 📝 Input parameters
 
