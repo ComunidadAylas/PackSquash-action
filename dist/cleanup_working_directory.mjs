@@ -1,0 +1,1 @@
+import{g as e,t}from"./working_directory-Cc56wZ38.mjs";new t().rm().catch(t=>e(t));export{};
