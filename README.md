@@ -51,15 +51,18 @@ Repository root
 ```yaml
 name: Optimize resource pack
 on: [push]
+permissions:
+  contents: read # For checking out the repository
 jobs:
   packsquash:
-    name: Optimize resource pack
+    name: Run PackSquash
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
+          persist-credentials: false
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v4
         with:
@@ -98,15 +101,18 @@ Repository root
 ```yaml
 name: Optimize resource pack
 on: [push]
+permissions:
+  contents: read # For checking out the repository
 jobs:
   packsquash:
-    name: Optimize resource pack
+    name: Run PackSquash
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
+          persist-credentials: false
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v4
         with:
@@ -127,26 +133,24 @@ downloading the generated artifact and uploading it again as a release.
 
 #### Workflow file (every push): `.github/workflows/packsquash.yml`
 
-This workflow creates a new tag and release named `action-v{number}` for every
-push event, which is triggered by commits and other tags.
+This workflow creates a new tag and release named `v{number}.{number}` for
+every push event, which is triggered by commits and other tags.
 
 ```yaml
 name: Optimize resource pack
 on: [push]
-# This permissions section explicitly gives the workflow permission to create releases.
-# Most of the time it's not needed to set it, as the default GITHUB_TOKEN permissions
-# are permissive enough, but that's not always the case
 permissions:
-  contents: write
+  contents: write # For creating releases
 jobs:
   packsquash:
-    name: Optimize resource pack
+    name: Run PackSquash
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
+          persist-credentials: false
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v4
         with:
@@ -160,10 +164,9 @@ jobs:
             # without needing to download its artifact in a separate step
             output_file_path = '/tmp/pack.zip'
       - name: Tag and create release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: action-v${{ github.run_number }}
-          files: /tmp/pack.zip
+        run:
+          gh release create 'v${{ github.run_number }}.${{ github.run_attempt }}'
+          --target '${{ github.sha }}' /tmp/pack.zip
 ```
 
 #### Workflow file (every tag push): `.github/workflows/packsquash.yml`
@@ -176,16 +179,19 @@ name: Optimize resource pack
 on:
   push:
     tags:
-      - '**'
+      - "**"
+permissions:
+  contents: write # For creating releases
 jobs:
   packsquash:
-    name: Optimize resource pack
+    name: Run PackSquash
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # A non-shallow repository clone is required
+          persist-credentials: false
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v4
         with:
@@ -194,9 +200,7 @@ jobs:
             pack_directory = '.'
             output_file_path = '/tmp/pack.zip'
       - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: /tmp/pack.zip
+        run: gh release create '${{ github.ref_name }}' --verify-tag /tmp/pack.zip
 ```
 
 ### Advanced: automatic release deployment via SSH
@@ -261,16 +265,15 @@ which can be set in the repository settings.
 ```yaml
 name: Deploy via SSH
 on: [workflow_dispatch]
+permissions:
+  contents: read # For fetching release artifacts
 jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Download latest released pack
-        uses: dsaltares/fetch-gh-release-asset@1.1.2
-        with:
-          file: pack.zip
-          target: pack.zip
+        run: gh release download --pattern pack.zip
       # An unique name guarantees an unique URL. Different URLs
       # compel Minecraft clients to download packs again, but
       # make sure to read and understand the note above before
