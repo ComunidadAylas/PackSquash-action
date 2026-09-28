@@ -385,8 +385,9 @@ action will upload. Later steps in the workflow will be able to download it by
 this name. Changing this may be needed in complex workflows, where the action
 runs several times.
 
-Set this to a blank string to skip uploading the generated ZIP file as an
-artifact to the workflow.
+Setting an empty name string will skip uploading the generated ZIP file as an
+artifact, which may impact performance in future action runs as they won't be
+able to download it to speed up PackSquash's execution.
 
 #### `show_emoji_in_packsquash_logs`
 
