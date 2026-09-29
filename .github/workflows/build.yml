@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read # For checking out the repository
+  contents: write # For pushing to the repository
 
 jobs:
   build:

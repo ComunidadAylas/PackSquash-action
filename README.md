@@ -53,6 +53,7 @@ name: Optimize resource pack
 on: [push]
 permissions:
   contents: read # For checking out the repository
+  actions: read # For downloading latest pack artifacts
 jobs:
   packsquash:
     name: Run PackSquash
@@ -103,6 +104,7 @@ name: Optimize resource pack
 on: [push]
 permissions:
   contents: read # For checking out the repository
+  actions: read # For downloading latest pack artifacts
 jobs:
   packsquash:
     name: Run PackSquash
@@ -141,6 +143,7 @@ name: Optimize resource pack
 on: [push]
 permissions:
   contents: write # For creating releases
+  actions: read # For downloading latest pack artifacts
 jobs:
   packsquash:
     name: Run PackSquash
@@ -182,6 +185,7 @@ on:
       - "**"
 permissions:
   contents: write # For creating releases
+  actions: read # For downloading latest pack artifacts
 jobs:
   packsquash:
     name: Run PackSquash

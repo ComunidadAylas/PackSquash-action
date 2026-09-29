@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read # For checking out the repository
+  actions: read # For downloading latest pack artifacts
 
 jobs:
   test:
