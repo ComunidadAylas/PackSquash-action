@@ -27,7 +27,7 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@types/node": "26.6.3",
+    "@types/node": "26.6.4",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
     "tsdown": "0.23.0",
