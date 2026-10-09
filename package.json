@@ -34,7 +34,7 @@
     "typescript": "7.0.2"
   },
   "dependencies": {
-    "@actions/artifact": "6.2.1",
+    "@actions/artifact": "6.3.1",
     "@actions/cache": "6.3.0",
     "@actions/core": "3.0.1",
     "@actions/exec": "3.0.0",
