@@ -27,7 +27,7 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@types/node": "26.6.4",
+    "@types/node": "26.6.5",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
     "tsdown": "0.23.0",
@@ -41,6 +41,6 @@
     "@actions/github": "9.1.1",
     "@actions/http-client": "4.0.1",
     "fflate": "0.8.3",
-    "smol-toml": "1.9.0"
+    "smol-toml": "1.9.1"
   }
 }
