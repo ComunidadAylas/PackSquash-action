@@ -30,7 +30,7 @@
     "@types/node": "26.6.5",
     "all-contributors-cli": "6.26.1",
     "husky": "9.1.7",
-    "tsdown": "0.23.0",
+    "tsdown": "0.23.1",
     "typescript": "7.0.2"
   },
   "dependencies": {
