@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/ComunidadAylas/PackSquash-action#readme",
   "engines": {
-    "node": ">=24.0.0 <25.0.0"
+    "node": ">=24.0.0 <27.0.0"
   },
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
     "@types/node": "26.6.5",
-    "all-contributors-cli": "6.26.1",
+    "all-contributors-cli": "7.0.0",
     "husky": "9.1.7",
     "tsdown": "0.23.1",
     "typescript": "7.0.2"
