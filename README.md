@@ -167,8 +167,7 @@ jobs:
             # without needing to download its artifact in a separate step
             output_file_path = '/tmp/pack.zip'
       - name: Tag and create release
-        run:
-          gh release create 'v${{ github.run_number }}.${{ github.run_attempt }}'
+        run: gh release create 'v${{ github.run_number }}.${{ github.run_attempt }}'
           --target '${{ github.sha }}' /tmp/pack.zip
 ```
 

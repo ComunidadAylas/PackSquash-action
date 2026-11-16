@@ -14,7 +14,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - Uploaded pack file ZIP artifacts are no longer wrapped in an additional ZIP
   file by GitHub. This leverages a recently introduced feature for disabling that
   behavior added in a [pull request to
-  `actions/toolkit`](https://github.com/actions/toolkit/pull/2256).
+`actions/toolkit`](https://github.com/actions/toolkit/pull/2256).
 - Specific action release tags are now immutable, meaning they cannot be
   modified to point to a different commit once created. Floating tags, such as
   `v4`, are unaffected, since they refer to different release versions by design.
@@ -51,8 +51,8 @@ Versioning](https://semver.org/spec/v2.0.0.html).
   [Biome](https://biomejs.dev/), which is significantly faster and simpler to
   use and set up.
 - Updated dependency on `@actions/cache` to `v4`, bringing [compatibility with
-  new internal GitHub Actions Cache API versions which are claimed to be much
-  faster](https://github.com/actions/toolkit/discussions/1890).
+new internal GitHub Actions Cache API versions which are claimed to be much
+faster](https://github.com/actions/toolkit/discussions/1890).
   - The previous API version is set to shut down in the near future, so this
     update is essential to ensure the action continues functioning as expected.
 
@@ -89,7 +89,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Introduced [internal PackSquash binary
-  manifests](https://github.com/ComunidadAylas/PackSquash-action/tree/master/data/packsquash_binary_manifests)
+manifests](https://github.com/ComunidadAylas/PackSquash-action/tree/master/data/packsquash_binary_manifests)
   with machine-parsable instructions for downloading and executing PackSquash
   versions. These manifests are fetched by the action at runtime, decoupling the
   release cycles of the action and PackSquash and enabling backward and forward
@@ -120,7 +120,7 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 - The **`options_file` input parameter has been renamed to `options`**, and it
   now accepts either a path to a TOML file or an inline TOML string containing
   the [options
-  file](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files) to pass
+file](https://github.com/ComunidadAylas/PackSquash/wiki/Options-files) to pass
   to PackSquash.
   ([#59](https://github.com/ComunidadAylas/PackSquash-action/pull/59))
 - The **`output_file_path` PackSquash option can now be changed**, allowing
